@@ -54,7 +54,7 @@ public class TokeniserServiceTest {
     @Test
     public void test_CharacterReadsUntilLastQuote() throws IOException {
         sut = getSut(CHAR_VALID);
-        Token token = sut.character(CHAR_IDENTIFIER);
+        Token token = sut.character();
 
         assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
         assertEquals("a", token.data);
@@ -63,7 +63,7 @@ public class TokeniserServiceTest {
     @Test
     public void test_CharacterUnterminatedReturnsInvalid() throws IOException {
         sut = getSut(CHAR_UNTERMINATED);
-        Token token = sut.character(CHAR_IDENTIFIER);
+        Token token = sut.character();
 
         assertEquals(Token.TokenClass.INVALID, token.tokenClass);
         assertEquals("a ", token.data);
@@ -72,7 +72,7 @@ public class TokeniserServiceTest {
     @Test
     public void test_CharacterEscapedReturnsLastQuote() throws IOException {
         sut = getSut(CHAR_QUOTE_ESCAPED);
-        Token token = sut.character(CHAR_IDENTIFIER);
+        Token token = sut.character();
 
         assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
         assertEquals("\\'", token.data);

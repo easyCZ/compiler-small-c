@@ -57,6 +57,7 @@ public class TokeniserService {
             return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
 
+        scanner.next(); // consume end quotes
         return new Token(Token.TokenClass.STRING_LITERAL, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
@@ -92,6 +93,9 @@ public class TokeniserService {
         return new Token(Token.TokenClass.CHARACTER, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
+//    public Token voidType() {
+//    }
+
     private boolean nextIsWhitespace() throws IOException {
         return Character.isWhitespace(scanner.peek());
     }
@@ -109,4 +113,8 @@ public class TokeniserService {
         return next;
     }
 
+
+    public Token voidType() {
+        return new Token(Token.TokenClass.INVALID, 1, 1);
+    }
 }
