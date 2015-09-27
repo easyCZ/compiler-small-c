@@ -23,7 +23,7 @@ public class Token {
 
         MAIN,  // main function identifier
         PRINT, // print function identifier
-	READ,  // read function identifier
+	    READ,  // read function identifier
 
         // types
         INT,

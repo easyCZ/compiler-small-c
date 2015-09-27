@@ -62,10 +62,31 @@ public class Tokeniser {
         if (Character.isWhitespace(c) || Character.isWhitespace(scanner.peek()))
             return next();
 
-	    // recognises the plus operator
+        if (matchesPair(c, "==")) return new Token(TokenClass.EQ, line, column);
+        if (matchesPair(c, "!=")) return new Token(TokenClass.NE, line, column);
+        if (matchesPair(c, "<=")) return new Token(TokenClass.LE, line, column);
+        if (matchesPair(c, ">=")) return new Token(TokenClass.GE, line, column);
+
         if (c == '+') return new Token(TokenClass.PLUS, line, column);
+        if (c == ';') return new Token(TokenClass.SEMICOLON, line, column);
+        if (c == ',') return new Token(TokenClass.COMMA, line, column);
+        if (c == '(') return new Token(TokenClass.LPAR, line, column);
+        if (c == ')') return new Token(TokenClass.RPAR, line, column);
+        if (c == '{') return new Token(TokenClass.LBRA, line, column);
+        if (c == '}') return new Token(TokenClass.RBRA, line, column);
+        if (c == '=') return new Token(TokenClass.ASSIGN, line, column);
+        if (c == '-') return new Token(TokenClass.MINUS, line, column);
+        if (c == '*') return new Token(TokenClass.TIMES, line, column);
+        if (c == '%') return new Token(TokenClass.MOD, line, column);
+        if (c == '/') return new Token(TokenClass.DIV, line, column);
+
+        if (c == '<') return new Token(TokenClass.LT, line, column);
+        if (c == '>') return new Token(TokenClass.GT, line, column);
 
         if (c == '#') return service.include(c);
+
+        if (Character.isDigit(c)) return new Token(TokenClass.NUMBER, line, column);
+        if (c == '\'') return service.character(c);
 
 
         final String chunk = getNextChunk();
@@ -84,6 +105,10 @@ public class Tokeniser {
             buffer.append(scanner.next());
         }
         return buffer.toString();
+    }
+
+    private boolean matchesPair(char current, String expected) throws IOException {
+        return expected.equals(current + scanner.peek());
     }
 
 }

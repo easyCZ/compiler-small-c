@@ -2,6 +2,7 @@ package lexer;
 
 import lexer.exceptions.UnexpectedCharacter;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 public class TokeniserService {
@@ -16,7 +17,7 @@ public class TokeniserService {
         We have detected that we have # symbol, read the rest and validate.
      */
     public Token include(char startChar) throws IOException {
-        StringBuffer buffer = new StringBuffer(startChar + "");
+        StringBuffer buffer = new StringBuffer(Character.toString(startChar));
 
         try {
             buffer.append(readAndAssert('i'));
@@ -42,6 +43,56 @@ public class TokeniserService {
         return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
+//    public Token stringLiteral(char startChar) throws IOException {
+//        StringBuffer buffer = new StringBuffer(Character.toString(startChar));
+//
+//        while (!nextIsWhitespace()) {
+//            buffer.append(scanner.next());
+//        }
+//
+//
+//    }
+
+    public String readUntilWhitespace() throws IOException {
+        StringBuffer buffer = new StringBuffer();
+
+
+        while (!nextIsWhitespace()) {
+            char next = scanner.next();
+            buffer.append(next);
+        }
+
+        return buffer.toString();
+    }
+
+    public Token character(char character) throws IOException {
+        StringBuffer buffer = new StringBuffer();
+
+        // Read until we reach a closing quote
+        // Escaped quotes should be skipped
+        char c;
+        try {
+            c = scanner.peek();
+
+            while (scanner.peek() != '\'' || isEscaped(c /* previous */)) {
+                c = scanner.next();
+                buffer.append(c);
+            }
+        } catch (EOFException e) {
+            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+
+        return new Token(Token.TokenClass.CHARACTER, buffer.toString(), scanner.getLine(), scanner.getColumn());
+    }
+
+    private boolean nextIsWhitespace() throws IOException {
+        return Character.isWhitespace(scanner.peek());
+    }
+
+    private boolean isEscaped(char previous) {
+        return previous == '\\';
+    }
+
     private char readAndAssert(char expected) throws IOException, UnexpectedCharacter {
         char next = scanner.next();
 
@@ -50,18 +101,5 @@ public class TokeniserService {
 
         return next;
     }
-
-    public String readUntilWhitespace() throws IOException {
-        StringBuffer buffer = new StringBuffer();
-
-
-        while (!Character.isWhitespace(scanner.peek())) {
-            char next = scanner.next();
-            buffer.append(next);
-        }
-
-        return buffer.toString();
-    }
-
 
 }
