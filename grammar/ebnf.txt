@@ -7,14 +7,23 @@
 
 
 program     = includes vardecls (procedure)* main EOF
+
 includes    = ("#include" STRING_LITERAL)*
+
 stmtlist    = (stmt)*
+
 main        = "void" "main" "(" ")" body
+
 procedure   = type IDENT "(" args ")" body
+
 type        = "int" | "char" | "void"
+
 args        = [ typeident ("," typeident)* ]
+
 body        = "{" vardecls stmtlist "}"
+
 typeident   = type IDENT
+
 exp         = lexp ">" lexp
             | lexp "<" lexp
             | lexp ">=" lexp
@@ -23,6 +32,7 @@ exp         = lexp ">" lexp
             | lexp "==" lexp
             | lexp
 vardecls       = (typeident ";")*
+
 stmt        = "{" vardecls stmtlist "}"
             | "while" "(" exp ")" stmt
             | "if" "(" exp ")" stmt ["else" stmt]
@@ -30,12 +40,15 @@ stmt        = "{" vardecls stmtlist "}"
             | "return" [lexp] ";"
             | "print_s" "(" STRING_LITERAL ")" ";"
             | "print_c" "(" lexp ")" ";"
-	    | "print_i" "(" lexp ")" ";"
-	    | "read_c" "(" ")";
-   	    | "read_i" "(" ")";
+	        | "print_i" "(" lexp ")" ";"
+	        | "read_c" "(" ")";
+   	        | "read_i" "(" ")";
             | IDENT "(" [ IDENT ("," IDENT)* ] ")" ";"
+
 lexp        = term (("+"|"-") term)*
+
 term        = factor (("/"|"*"|"%") factor)*
+
 factor      = "(" lexp ")"
             | ["-"] (IDENT|NUMBER)
             | CHARACTER

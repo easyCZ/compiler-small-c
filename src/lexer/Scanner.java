@@ -17,6 +17,14 @@ public class Scanner {
         input = new BufferedReader(new FileReader(source));
     }
 
+    /*
+        Helper constructor for testing
+     */
+    public Scanner(String source) {
+        StringReader reader = new StringReader(source);
+        input = new BufferedReader(reader);
+    }
+
 
     public int getColumn() {
         return column;

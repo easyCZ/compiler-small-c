@@ -10,7 +10,10 @@ import java.io.IOException;
  */
 public class Tokeniser {
 
+    final String INCLUDE = "include";
+
     private Scanner scanner;
+    private final TokeniserService service;
 
     private int error = 0;
     public int getErrorCount() {
@@ -19,6 +22,7 @@ public class Tokeniser {
 
     public Tokeniser(Scanner scanner) {
         this.scanner = scanner;
+        this.service = new TokeniserService(scanner);
     }
 
     private void error(char c, int line, int col) {
@@ -51,18 +55,21 @@ public class Tokeniser {
         int line = scanner.getLine();
         int column = scanner.getColumn();
 
-	// get the next character
+	    // get the next character
         char c = scanner.next();
 
         // skip white spaces
-        if (Character.isWhitespace(c))
+        if (Character.isWhitespace(c) || Character.isWhitespace(scanner.peek()))
             return next();
 
-	// recognises the plus operator
-        if (c == '+')
-	    return new Token(TokenClass.PLUS, line, column);       
+	    // recognises the plus operator
+        if (c == '+') return new Token(TokenClass.PLUS, line, column);
 
-	// ... to be completed
+        if (c == '#') return service.include(c);
+
+
+        final String chunk = getNextChunk();
+        System.out.println("Chunk: " + chunk);
 	
 
         // if we reach this point, it means we did not recognise a valid token
@@ -70,5 +77,13 @@ public class Tokeniser {
         return new Token(TokenClass.INVALID, line, column);
     }
 
+
+    private String getNextChunk() throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        while (!Character.isWhitespace(scanner.peek())) {
+            buffer.append(scanner.next());
+        }
+        return buffer.toString();
+    }
 
 }

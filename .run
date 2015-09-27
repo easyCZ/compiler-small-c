@@ -1,0 +1,2 @@
+ant build
+java -cp bin Main -lexer ./tests/include/include_valid.c ./out/include/include_valid.out
