@@ -43,15 +43,22 @@ public class TokeniserService {
         return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
-//    public Token stringLiteral(char startChar) throws IOException {
-//        StringBuffer buffer = new StringBuffer(Character.toString(startChar));
-//
-//        while (!nextIsWhitespace()) {
-//            buffer.append(scanner.next());
-//        }
-//
-//
-//    }
+    public Token stringLiteral() throws IOException {
+        StringBuffer buffer = new StringBuffer();
+
+        char c;
+        try {
+            c = scanner.peek();
+            while (scanner.peek() != '"' || isEscaped(c)) {
+                c = scanner.next();
+                buffer.append(c);
+            }
+        } catch (EOFException e) {
+            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+
+        return new Token(Token.TokenClass.STRING_LITERAL, buffer.toString(), scanner.getLine(), scanner.getColumn());
+    }
 
     public String readUntilWhitespace() throws IOException {
         StringBuffer buffer = new StringBuffer();
@@ -65,7 +72,7 @@ public class TokeniserService {
         return buffer.toString();
     }
 
-    public Token character(char character) throws IOException {
+    public Token character() throws IOException {
         StringBuffer buffer = new StringBuffer();
 
         // Read until we reach a closing quote

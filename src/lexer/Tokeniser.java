@@ -86,7 +86,8 @@ public class Tokeniser {
         if (c == '#') return service.include(c);
 
         if (Character.isDigit(c)) return new Token(TokenClass.NUMBER, line, column);
-        if (c == '\'') return service.character(c);
+        if (c == '\'') return service.character();
+        if (c == '"') return service.stringLiteral();
 
 
         final String chunk = getNextChunk();
