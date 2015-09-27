@@ -17,7 +17,7 @@ public class TokeniserService {
         We have detected that we have # symbol, read the rest and validate.
      */
     public Token include(char startChar) throws IOException {
-        StringBuffer buffer = new StringBuffer(Character.toString(startChar));
+        StringBuilder buffer = new StringBuilder(Character.toString(startChar));
 
         try {
             buffer.append(readAndAssert('i'));
@@ -44,7 +44,7 @@ public class TokeniserService {
     }
 
     public Token stringLiteral() throws IOException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         char c;
         try {
@@ -61,7 +61,7 @@ public class TokeniserService {
     }
 
     public String readUntilWhitespace() throws IOException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
 
         while (!nextIsWhitespace()) {
@@ -73,7 +73,7 @@ public class TokeniserService {
     }
 
     public Token character() throws IOException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         // Read until we reach a closing quote
         // Escaped quotes should be skipped
