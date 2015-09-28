@@ -13,14 +13,14 @@ void main() {
     This is a multiline comment
   */
   n = read_i();
-  
+
   first = 0;
   second = 1;
-    
+
   print_s("First ");
   print_i(n);
   print_s(" terms of Fibonacci series are : ");
- 
+
   c = 0;
   while (c < n) {
     if ( c <= 1 )

@@ -1,75 +1,65 @@
 package lexer;
 
 import lexer.Token.TokenClass;
-import lexer.tokens.AbstractToken;
-import lexer.tokens.SimpleToken;
-import lexer.tokens.StringLiteral;
+import lexer.exceptions.UnexpectedCharacter;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author cdubach
  */
 public class Tokeniser {
 
-    final String INCLUDE = "include";
-    final List<Character> delimiters;
+    private static final Logger LOGGER = Logger.getLogger(Tokeniser.class.getName());
 
     private Scanner scanner;
-    private final TokeniserService service;
 
     private int error = 0;
     public int getErrorCount() {
 	return this.error;
     }
 
-    private final List<AbstractToken> matchers;
+    private final HashMap<Character, TokenClass> uniqueMatchers;
+    private final HashMap<String, TokenClass> lookaheadMatchers;
+
 
     public Tokeniser(Scanner scanner) {
         this.scanner = scanner;
-        this.service = new TokeniserService(scanner);
 
-        this.delimiters = new ArrayList<Character>();
-        delimiters.add('{');
-        delimiters.add('}');
-        delimiters.add('(');
-        delimiters.add(')');
-        delimiters.add(';');
-        delimiters.add(',');
-
-
-        this.matchers = new ArrayList<>();
-
-        matchers.add(new StringLiteral('"', scanner));
-
-        addSimpleMatcher('+', TokenClass.PLUS);
-        addSimpleMatcher(';', TokenClass.SEMICOLON);
-        addSimpleMatcher(',', TokenClass.COMMA);
-        addSimpleMatcher('(', TokenClass.LPAR);
-        addSimpleMatcher(')', TokenClass.RPAR);
-        addSimpleMatcher('{', TokenClass.LBRA);
-        addSimpleMatcher('}', TokenClass.RBRA);
-        addSimpleMatcher('=', TokenClass.ASSIGN);
-        addSimpleMatcher('-', TokenClass.MINUS);
-        addSimpleMatcher('*', TokenClass.TIMES);
-        addSimpleMatcher('%', TokenClass.MOD);
-        addSimpleMatcher('/', TokenClass.DIV);
-
-        addSimpleMatcher('<', TokenClass.LT);
-        addSimpleMatcher('>', TokenClass.GT);
-
+        this.uniqueMatchers = buildUniqueMatchers();
+        this.lookaheadMatchers = buildLookaheadMatchers();
     }
 
-    private void addSimpleMatcher(char identifier, TokenClass tokenClass) {
-        matchers.add(new SimpleToken(identifier, scanner, tokenClass));
+    private HashMap<String, TokenClass> buildLookaheadMatchers() {
+        HashMap<String, TokenClass> matchers = new HashMap<>();
+        matchers.put("==", TokenClass.EQ);
+        matchers.put("!=", TokenClass.NE);
+        matchers.put("<=", TokenClass.LE);
+        matchers.put(">=", TokenClass.GE);
+        return matchers;
     }
 
-    private void error(char c, int line, int col) {
-        System.out.println("Lexing error: unrecognised character ("+c+") at "+line+":"+col);
-	error++;
+    private HashMap<Character, TokenClass> buildUniqueMatchers() {
+        HashMap<Character, TokenClass> matchers = new HashMap<>();
+        matchers.put('+', TokenClass.PLUS);
+        matchers.put(';', TokenClass.SEMICOLON);
+        matchers.put(',', TokenClass.COMMA);
+        matchers.put('(', TokenClass.LPAR);
+        matchers.put(')', TokenClass.RPAR);
+        matchers.put('{', TokenClass.LBRA);
+        matchers.put('}', TokenClass.RBRA);
+        matchers.put('=', TokenClass.ASSIGN);
+        matchers.put('-', TokenClass.MINUS);
+        matchers.put('*', TokenClass.TIMES);
+        matchers.put('%', TokenClass.MOD);
+        matchers.put('/', TokenClass.DIV);
+        matchers.put('<', TokenClass.LT);
+        matchers.put('>', TokenClass.GT);
+        return matchers;
     }
 
 
@@ -89,25 +79,6 @@ public class Tokeniser {
         return result;
     }
 
-//    private Token next1() throws IOException {
-//        char current = scanner.next();
-//        char next = scanner.peek();
-//
-//        if (Character.isWhitespace(current)) {
-//            return next1();
-//        }
-//
-//        for (AbstractToken abstractToken : matchers) {
-//            if (abstractToken.test(current, next)) {
-//                return abstractToken.tokenize(current);
-//            }
-//
-//        }
-//
-//        error(c, scanner.getLine(), scanner.getColumn());
-//        return new Token(TokenClass.INVALID, scanner.getLine(), scanner.getColumn());
-//    }
-
     /*
      * To be completed
      */
@@ -123,34 +94,42 @@ public class Tokeniser {
         if (Character.isWhitespace(c))
             return next();
 
-        if (matchesPair(c, "==")) return new Token(TokenClass.EQ, line, column);
-        if (matchesPair(c, "!=")) return new Token(TokenClass.NE, line, column);
-        if (matchesPair(c, "<=")) return new Token(TokenClass.LE, line, column);
-        if (matchesPair(c, ">=")) return new Token(TokenClass.GE, line, column);
-        if (matchesPair(c, "//")) return comment(c);
-        if (matchesPair(c, "/*")) return multilineComment(c);
+        // Attempt a peak, otherwise fall back to single tokens
+        try {
+            char peek = scanner.peek();
+            String pair = Character.toString(c) + Character.toString(peek);
 
-        if (c == '+') return new Token(TokenClass.PLUS, line, column);
-        if (c == ';') return new Token(TokenClass.SEMICOLON, line, column);
-        if (c == ',') return new Token(TokenClass.COMMA, line, column);
-        if (c == '(') return new Token(TokenClass.LPAR, line, column);
-        if (c == ')') return new Token(TokenClass.RPAR, line, column);
-        if (c == '{') return new Token(TokenClass.LBRA, line, column);
-        if (c == '}') return new Token(TokenClass.RBRA, line, column);
-        if (c == '=') return new Token(TokenClass.ASSIGN, line, column);
-        if (c == '-') return new Token(TokenClass.MINUS, line, column);
-        if (c == '*') return new Token(TokenClass.TIMES, line, column);
-        if (c == '%') return new Token(TokenClass.MOD, line, column);
-        if (c == '/') return new Token(TokenClass.DIV, line, column);
+            if (lookaheadMatchers.containsKey(pair)) {
+                TokenClass tokenClass = lookaheadMatchers.get(pair);
+                return buildTokenPair(pair, tokenClass, line, column);
+            }
 
-        if (c == '<') return new Token(TokenClass.LT, line, column);
-        if (c == '>') return new Token(TokenClass.GT, line, column);
+            // There are still comments to consider
+            if (pair.equals("//")) return comment(c);
+            if (pair.equals("/*")) return multilineComment(c);
 
-        if (c == '#') return service.include(c);
+        } catch (EOFException e) {
+            // Token cannot be a lookahead token
+            LOGGER.log(Level.INFO, "Attempted to perform a look ahead match. EOF encountered. Falling back to single char matchers.");
+        }
+
+
+        // Time for single char matches
+        if (uniqueMatchers.containsKey(c)) {
+            TokenClass tokenClass = uniqueMatchers.get(c);
+            return new Token(tokenClass, line, column);
+        }
 
         if (Character.isDigit(c)) return new Token(TokenClass.NUMBER, line, column);
-        if (c == '\'') return service.character();
-        if (c == '"') return service.stringLiteral();
+
+        // Headers
+        if (c == '#') return include(c);
+
+        // Char
+        if (c == '\'') return character();
+
+        // String
+        if (c == '"') return stringLiteral();
 
         String identifier = identifier(c);
 
@@ -175,6 +154,85 @@ public class Tokeniser {
 //        return new Token(TokenClass.INVALID, line, column);
     }
 
+    /*
+        We have detected that we have # symbol, read the rest and validate.
+     */
+    public Token include(char startChar /* # */) throws IOException {
+        StringBuilder buffer = new StringBuilder(Character.toString(startChar));
+
+        int line = scanner.getLine();
+        int col = scanner.getColumn();
+
+        try {
+            buffer.append(readAndAssert('i'));
+            buffer.append(readAndAssert('n'));
+            buffer.append(readAndAssert('c'));
+            buffer.append(readAndAssert('l'));
+            buffer.append(readAndAssert('u'));
+            buffer.append(readAndAssert('d'));
+            buffer.append(readAndAssert('e'));
+        }
+        catch (UnexpectedCharacter e) {
+
+            buffer.append(e.character);
+            error(e.character, scanner.getLine(), scanner.getColumn());
+
+            // Read until the next whitespace, mark everything as unexpected
+            if (!Character.isWhitespace(e.character))
+                buffer.append(readToWhitespace());
+
+            LOGGER.log(Level.WARNING, "Failed to parse include: " + buffer.toString());
+            return new Token(Token.TokenClass.INVALID, buffer.toString(), line, col);
+        }
+
+
+        return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
+    }
+
+    public Token character() throws IOException {
+        StringBuilder buffer = new StringBuilder();
+
+        // Read until we reach a closing quote
+        // Escaped quotes should be skipped
+        char c;
+        try {
+            c = scanner.peek();
+
+            while (scanner.peek() != '\'' || isEscaped(c /* previous */)) {
+                c = scanner.next();
+                buffer.append(c);
+            }
+        } catch (EOFException e) {
+            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+
+        return new Token(Token.TokenClass.CHARACTER, buffer.toString(), scanner.getLine(), scanner.getColumn());
+    }
+
+    public Token stringLiteral() throws IOException {
+        StringBuilder buffer = new StringBuilder();
+
+        char c;
+        try {
+            c = scanner.peek();
+            while (scanner.peek() != '"' || isEscaped(c)) {
+                c = scanner.next();
+                buffer.append(c);
+            }
+        } catch (EOFException e) {
+            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+
+        scanner.next(); // consume end quotes
+        return new Token(Token.TokenClass.STRING_LITERAL, buffer.toString(), scanner.getLine(), scanner.getColumn());
+    }
+
+    private Token buildTokenPair(String pair, TokenClass tokenClass, int line, int column) throws IOException {
+        // We have read the first character, peeked the second. Advance the scanner pointer
+        scanner.next();
+        return new Token(tokenClass, pair, line, column);
+    }
+
     private Token multilineComment(char c) throws IOException {
 
         StringBuilder buffer = new StringBuilder(Character.toString(c));
@@ -196,7 +254,6 @@ public class Tokeniser {
                 buffer.append(c);
             }
 
-
             last = c;
         }
 
@@ -215,27 +272,6 @@ public class Tokeniser {
             next = scanner.peek();
         }
         return next();
-    }
-
-    private boolean matchesPair(char current, String expected) throws IOException {
-        try {
-            return expected.equals(Character.toString(current) + scanner.peek());
-        } catch (EOFException e) {
-            return false;
-        }
-
-    }
-
-    private String readUntilDelimiter() throws IOException {
-        StringBuilder buffer = new StringBuilder();
-
-
-        char next = scanner.peek();
-        while (!delimiters.contains(next) && !Character.isWhitespace(next)) {
-            buffer.append(scanner.next());
-            next = scanner.peek();
-        }
-        return buffer.toString();
     }
 
     private String identifier(char c) throws IOException {
@@ -259,6 +295,33 @@ public class Tokeniser {
         return buffer.toString();
     }
 
+    private void error(char c, int line, int col) {
+        System.out.println("Lexing error: unrecognised character ("+c+") at "+line+":"+col);
+        error++;
+    }
 
+    private char readAndAssert(char expected) throws IOException, UnexpectedCharacter {
+        char next = scanner.next();
+
+        if (next != expected)
+            throw new UnexpectedCharacter(next, scanner.getLine(), scanner.getColumn());
+
+        return next;
+    }
+
+    private String readToWhitespace() throws IOException {
+        StringBuilder buffer = new StringBuilder();
+
+        while (!Character.isWhitespace(scanner.peek())) {
+            char next = scanner.next();
+            buffer.append(next);
+        }
+
+        return buffer.toString();
+    }
+
+    private boolean isEscaped(char c) {
+        return c == '\\';
+    }
 
 }
