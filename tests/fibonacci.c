@@ -9,6 +9,9 @@ void main() {
   char t;
 
   // read n from the standard input
+  /*
+    This is a multiline comment
+  */
   n = read_i();
   
   first = 0;

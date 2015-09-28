@@ -128,6 +128,7 @@ public class Tokeniser {
         if (matchesPair(c, "<=")) return new Token(TokenClass.LE, line, column);
         if (matchesPair(c, ">=")) return new Token(TokenClass.GE, line, column);
         if (matchesPair(c, "//")) return comment(c);
+        if (matchesPair(c, "/*")) return multilineComment(c);
 
         if (c == '+') return new Token(TokenClass.PLUS, line, column);
         if (c == ';') return new Token(TokenClass.SEMICOLON, line, column);
@@ -172,6 +173,38 @@ public class Tokeniser {
 //        if we reach this point, it means we did not recognise a valid token
 //        error(c,line,column);
 //        return new Token(TokenClass.INVALID, line, column);
+    }
+
+    private Token multilineComment(char c) throws IOException {
+
+        StringBuilder buffer = new StringBuilder(Character.toString(c));
+        // Consume astrix
+        buffer.append(scanner.next());
+
+        char last = scanner.next();
+        // Start reading comment
+        buffer.append(last);
+
+
+        while (c != '*' && scanner.peek() != '/' && last != '\\') {
+            c = scanner.next();
+            buffer.append(c);
+
+            if (c == '\\') { // We're escaping
+                // Force read the next char to consume it
+                c = scanner.next();
+                buffer.append(c);
+            }
+
+
+            last = c;
+        }
+
+        // We've reached closing *, consume /
+        buffer.append(scanner.next());
+
+//        System.out.println("Multiline Comment: " + buffer);
+        return next();
     }
 
     private Token comment(char c) throws IOException {
