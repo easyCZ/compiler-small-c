@@ -120,7 +120,7 @@ public class Tokeniser {
             return new Token(tokenClass, line, column);
         }
 
-        if (Character.isDigit(c)) return new Token(TokenClass.NUMBER, line, column);
+        if (Character.isDigit(c)) return number(c);
 
         // Headers
         if (c == '#') return include(c);
@@ -154,6 +154,23 @@ public class Tokeniser {
 //        return new Token(TokenClass.INVALID, line, column);
     }
 
+    private Token number(char c) throws IOException {
+        StringBuilder buffer = new StringBuilder(Character.toString(c));
+
+        int line = scanner.getLine();
+        int col = scanner.getColumn();
+
+        try {
+            while (Character.isDigit(scanner.peek())) {
+                buffer.append(scanner.next());
+            }
+        } catch (EOFException e) {
+            return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
+        }
+
+        return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
+    }
+
     /*
         We have detected that we have # symbol, read the rest and validate.
      */
@@ -163,14 +180,13 @@ public class Tokeniser {
         int line = scanner.getLine();
         int col = scanner.getColumn();
 
+        char expected = 'i';
+        final String include = "include";
         try {
-            buffer.append(readAndAssert('i'));
-            buffer.append(readAndAssert('n'));
-            buffer.append(readAndAssert('c'));
-            buffer.append(readAndAssert('l'));
-            buffer.append(readAndAssert('u'));
-            buffer.append(readAndAssert('d'));
-            buffer.append(readAndAssert('e'));
+            for (Character c : include.toCharArray()) {
+                expected = c;
+                buffer.append(readAndAssert(c));
+            }
         }
         catch (UnexpectedCharacter e) {
 
@@ -178,13 +194,16 @@ public class Tokeniser {
             error(e.character, scanner.getLine(), scanner.getColumn());
 
             // Read until the next whitespace, mark everything as unexpected
-            if (!Character.isWhitespace(e.character))
-                buffer.append(readToWhitespace());
+//            if (!Character.isWhitespace(e.character))
+//                buffer.append(readToWhitespace());
 
             LOGGER.log(Level.WARNING, "Failed to parse include: " + buffer.toString());
             return new Token(Token.TokenClass.INVALID, buffer.toString(), line, col);
         }
-
+        catch (EOFException e) {
+            error(expected, line, col);
+            return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+        }
 
         return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
@@ -203,8 +222,11 @@ public class Tokeniser {
                 buffer.append(c);
             }
         } catch (EOFException e) {
-            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+            return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
+
+        // Consume closing '
+        scanner.next();
 
         return new Token(Token.TokenClass.CHARACTER, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }

@@ -154,6 +154,105 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.LT, token.tokenClass);
     }
 
+    @Test public void next_MatchesSingleDigit() {
+        Token token = getTokeniser("5").nextToken();
+        assertEquals(Token.TokenClass.NUMBER, token.tokenClass);
+    }
+
+    @Test public void next_MatchesMultipleDigitsAsOne() {
+        Tokeniser tokeniser = getTokeniser("12345");
+
+        Token token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.NUMBER, token.tokenClass);
+        assertEquals("12345", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MatchesInclude() {
+        Tokeniser tokeniser = getTokeniser("#include");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INCLUDE, token.tokenClass);
+        assertEquals("#include", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MarksTokenInvalidIfNotInclude() {
+        Tokeniser tokeniser = getTokeniser("#includ");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("#includ", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MarksTokenInvalidIfTooLong() {
+        Tokeniser tokeniser = getTokeniser("#includee");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("#includee", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MatchesIncludeAndStringLiteralReference() {
+        Tokeniser tokeniser = getTokeniser("#include \"io.h\"");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INCLUDE, token.tokenClass);
+        assertEquals("#include", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.STRING_LITERAL, token.tokenClass);
+        assertEquals("io.h", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MatchesCharacter() {
+        Tokeniser tokeniser = getTokeniser("'a'");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
+        assertEquals("a", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MatchesEscapedCharacter() {
+        Tokeniser tokeniser = getTokeniser("'\\\''");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
+        assertEquals("\\\'", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MarksUnclosedCharacterAsInvalid() {
+        Tokeniser tokeniser = getTokeniser("'a");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("'a", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+
+
 
 
     private Tokeniser getTokeniser(String content) {
