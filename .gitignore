@@ -1,5 +1,6 @@
 bin
 logs/
+src/Main.java
 
 .DS_Store
 
