@@ -129,7 +129,7 @@ public class Tokeniser {
         if (c == '\'') return character();
 
         // String
-        if (c == '"') return stringLiteral();
+        if (c == '"') return stringLiteral(c);
 
         String identifier = identifier(c);
 
@@ -243,21 +243,40 @@ public class Tokeniser {
         return new Token(Token.TokenClass.CHARACTER, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
-    public Token stringLiteral() throws IOException {
+    public Token stringLiteral(char c) throws IOException {
         StringBuilder buffer = new StringBuilder();
 
-        char c;
+        int line = scanner.getLine();
+        int col = scanner.getColumn() - 1;
+
         try {
             c = scanner.peek();
-            while (scanner.peek() != '"' || isEscaped(c)) {
+
+            while ((scanner.peek() != '"' || isEscaped(c))) {
                 c = scanner.next();
                 buffer.append(c);
+
+//                // Cannot allow multiline strings
+//                if (c == '\n') {
+//                    error(c, line, col);
+//                    return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+//                }
+
             }
+
+            c = scanner.next(); // consume end quotes
+
         } catch (EOFException e) {
+            error(c, line, col);
             return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
 
-        scanner.next(); // consume end quotes
+        int newLineIndex = buffer.indexOf("\n");
+        if (newLineIndex > -1) {
+            error(buffer.charAt(newLineIndex), line, col + newLineIndex);
+            return new Token(TokenClass.INVALID, buffer.toString(), line, col + newLineIndex);
+        }
+
         return new Token(Token.TokenClass.STRING_LITERAL, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 

@@ -1,0 +1,1 @@
+"This is a string literal \n spread across more lines"

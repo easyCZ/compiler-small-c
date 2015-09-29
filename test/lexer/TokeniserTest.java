@@ -266,6 +266,25 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    /* String Literals */
+    @Test public void next_MatchesSimpleStringLiteral() {
+        verifyTokenFollowedByEOF(
+            "\"I am a string Literal;\"",
+            Token.TokenClass.STRING_LITERAL,
+            "I am a string Literal;"
+        );
+    }
+
+    @Test public void next_MarksMultilineStringLiteralInvalid() {
+        verifyTokenFollowedByEOF(
+                "\"I am a string Literal;" +
+                        "\n" +
+                        "More String Literal here\"",
+                Token.TokenClass.INVALID,
+                "I am a string Literal;\nMore String Literal here"
+        );
+    }
+
 
     /*
         Full Program tests
@@ -314,6 +333,17 @@ public class TokeniserTest {
         }
 
         assertEquals(errorCount, tokeniser.getErrorCount());
+    }
+
+    private void verifyTokenFollowedByEOF(String program, Token.TokenClass clazz, String data) {
+        Tokeniser tokeniser = getTokeniser(program);
+        Token token = tokeniser.nextToken();
+
+        assertEquals(clazz, token.tokenClass);
+        assertEquals(data, token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
     private Tokeniser getTokeniser(String content) {
