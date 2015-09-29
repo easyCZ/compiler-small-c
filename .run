@@ -1,2 +1,2 @@
 ant build
-java -cp bin Main -lexer ./tests/identifier/identifier.c ./out/identifier/identifier.out
+java -cp bin Main -lexer ./tests/fibonacci.c ./out/fibonacci.out
