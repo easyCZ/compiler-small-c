@@ -274,6 +274,10 @@ public class TokeniserTest {
     }
 
     private void verifyTokenSequence(String content, List<Token> expectedTokens) {
+        verifyTokenSequence(content, expectedTokens, 0);
+    }
+
+    private void verifyTokenSequence(String content, List<Token> expectedTokens, int errorCount) {
         Tokeniser tokeniser = getTokeniser(content);
 
         Token next = tokeniser.nextToken();
@@ -283,6 +287,8 @@ public class TokeniserTest {
             next = tokeniser.nextToken();
             i++;
         }
+
+        assertEquals(errorCount, tokeniser.getErrorCount());
     }
 
     private Tokeniser getTokeniser(String content) {
