@@ -133,19 +133,19 @@ public class Tokeniser {
 
         String identifier = identifier(c);
 
-        if (identifier.equals("int")) return new Token(TokenClass.INT, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("void")) return new Token(TokenClass.VOID, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("char")) return new Token(TokenClass.CHAR, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("if")) return new Token(TokenClass.IF, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("else")) return new Token(TokenClass.ELSE, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("while")) return new Token(TokenClass.WHILE, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("return")) return new Token(TokenClass.RETURN, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("print_s")) return new Token(TokenClass.PRINT, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("print_c")) return new Token(TokenClass.PRINT, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("print_i")) return new Token(TokenClass.PRINT, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("main")) return new Token(TokenClass.MAIN, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("read_c")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
-        else if (identifier.equals("read_i")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
+        if (identifier.equals("int")) return new Token(TokenClass.INT, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("void")) return new Token(TokenClass.VOID, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("char")) return new Token(TokenClass.CHAR, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("if")) return new Token(TokenClass.IF, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("else")) return new Token(TokenClass.ELSE, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("while")) return new Token(TokenClass.WHILE, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("return")) return new Token(TokenClass.RETURN, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("print_s")) return new Token(TokenClass.PRINT, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("print_c")) return new Token(TokenClass.PRINT, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("print_i")) return new Token(TokenClass.PRINT, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("main")) return new Token(TokenClass.MAIN, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("read_c")) return new Token(TokenClass.READ, scanner.getLine(), scanner.getColumn());
+        else if (identifier.equals("read_i")) return new Token(TokenClass.READ, scanner.getLine(), scanner.getColumn());
         else return new Token(TokenClass.IDENTIFIER, identifier, line, column);
 
 

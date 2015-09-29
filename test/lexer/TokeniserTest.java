@@ -2,6 +2,9 @@ package lexer;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class TokeniserTest {
@@ -192,17 +195,6 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
-    @Test public void next_MarksTokenInvalidIfTooLong() {
-        Tokeniser tokeniser = getTokeniser("#includee");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
-        assertEquals("#includee", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
-    }
-
     @Test public void next_MatchesIncludeAndStringLiteralReference() {
         Tokeniser tokeniser = getTokeniser("#include \"io.h\"");
         Token token = tokeniser.nextToken();
@@ -253,7 +245,45 @@ public class TokeniserTest {
 
 
 
+    @Test public void tokeniserProducesCorrectSequenceSimpleIncrementBy2() {
+        ArrayList<Token> expected = new ArrayList<>();
 
+        expected.add(new Token(Token.TokenClass.INT, 1, 0));
+        expected.add(new Token(Token.TokenClass.IDENTIFIER, "foo", 1, 5));
+        expected.add(new Token(Token.TokenClass.LPAR, 1, 7));
+        expected.add(new Token(Token.TokenClass.INT, 1, 8));
+        expected.add(new Token(Token.TokenClass.IDENTIFIER, "i", 1, 12));
+        expected.add(new Token(Token.TokenClass.RPAR, 1, 13));
+        expected.add(new Token(Token.TokenClass.LBRA, 1, 15));
+
+        expected.add(new Token(Token.TokenClass.RETURN, 2, 5));
+        expected.add(new Token(Token.TokenClass.IDENTIFIER, "i", 2, 12));
+        expected.add(new Token(Token.TokenClass.PLUS, 2, 14));
+        expected.add(new Token(Token.TokenClass.NUMBER, "2", 2, 16));
+        expected.add(new Token(Token.TokenClass.SEMICOLON, 2, 17));
+
+        expected.add(new Token(Token.TokenClass.RBRA, 3, 1));
+//        expected.add(new Token(Token.TokenClass.EOF, 3, 2));
+
+        String program = "" +
+                "int foo (int i) {\n" +
+                "    return i + 2;\n" +
+                "}";
+
+        verifyTokenSequence(program, expected);
+    }
+
+    private void verifyTokenSequence(String content, List<Token> expectedTokens) {
+        Tokeniser tokeniser = getTokeniser(content);
+
+        Token next = tokeniser.nextToken();
+        int i = 0;
+        while (next.tokenClass != Token.TokenClass.EOF) {
+            assertEquals(expectedTokens.get(i), next);
+            next = tokeniser.nextToken();
+            i++;
+        }
+    }
 
     private Tokeniser getTokeniser(String content) {
         return new Tokeniser(new Scanner(content));

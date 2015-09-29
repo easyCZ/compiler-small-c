@@ -90,6 +90,19 @@ public class Token {
             return tokenClass.toString()+"("+data+")";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj != null && obj instanceof Token) {
+            Token t = (Token) obj;
+            return t.data.equals(this.data);
+//                    &&
+//                t.tokenClass.equals(this.tokenClass) &&
+//                t.position.toString().equals(this.position.toString());
+        }
+
+        return false;
+    }
 }
 
 
