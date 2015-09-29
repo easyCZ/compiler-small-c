@@ -173,6 +173,29 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    @Test public void next_MatchesZeroAsDigit() {
+        Tokeniser tokeniser = getTokeniser("0");
+
+        Token token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.NUMBER, token.tokenClass);
+        assertEquals("0", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_MarksDigitsStartingWithZeroFollowedByOtherDigitsAsInvalid() {
+        Tokeniser tokeniser = getTokeniser("01234");
+
+        Token token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("01234", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        assertEquals(1, tokeniser.getErrorCount());
+    }
+
     @Test public void next_MatchesInclude() {
         Tokeniser tokeniser = getTokeniser("#include");
         Token token = tokeniser.nextToken();
@@ -244,7 +267,9 @@ public class TokeniserTest {
     }
 
 
-
+    /*
+        Full Program tests
+     */
     @Test public void tokeniserProducesCorrectSequenceSimpleIncrementBy2() {
         ArrayList<Token> expected = new ArrayList<>();
 

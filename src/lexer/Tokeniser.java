@@ -155,17 +155,29 @@ public class Tokeniser {
     }
 
     private Token number(char c) throws IOException {
-        StringBuilder buffer = new StringBuilder(Character.toString(c));
 
         int line = scanner.getLine();
-        int col = scanner.getColumn();
+        int col = scanner.getColumn() -1; // Need to mark the previous col
+        StringBuilder buffer = new StringBuilder(Character.toString(c));
 
         try {
             while (Character.isDigit(scanner.peek())) {
                 buffer.append(scanner.next());
             }
         } catch (EOFException e) {
+            if (buffer.charAt(0) == '0' && buffer.length() > 1) {
+                // Cannot have a number starting with a 0 and followed by other digits
+                error(c, line, col);
+                return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+            }
+
             return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
+        }
+
+        if (buffer.charAt(0) == '0' && buffer.length() > 1) {
+            // Cannot have a number starting with a 0 and followed by other digits
+            error(c, line, col);
+            return new Token(TokenClass.INVALID, buffer.toString(), line, col);
         }
 
         return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
