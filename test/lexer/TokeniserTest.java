@@ -285,6 +285,17 @@ public class TokeniserTest {
         );
     }
 
+    /* Unknown */
+    @Test public void next_MarksUnknownTokenAsInvalid() {
+        ArrayList<Token> expected = new ArrayList<>();
+        expected.add(new Token(Token.TokenClass.INVALID, "&", 1, 1));
+        expected.add(new Token(Token.TokenClass.IDENTIFIER, "hello", 1, 1));
+
+
+        verifyTokenSequence("&hello", expected, 1);
+//        verifyTokenFollowedByEOF("&hello", Token.TokenClass.INVALID, "&he");
+    }
+
 
     /*
         Full Program tests

@@ -153,7 +153,7 @@ public class Tokeniser {
 
 //        if we reach this point, it means we did not recognise a valid token
         error(c,line,column);
-        return new Token(TokenClass.INVALID, line, column);
+        return new Token(TokenClass.INVALID, Character.toString(c), line, column);
     }
 
     private Token number(char c) throws IOException {
