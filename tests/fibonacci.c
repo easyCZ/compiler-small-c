@@ -1,5 +1,8 @@
 #include "io.h"
 
+int variable1;
+char variable2;
+
 void main() {
   int n;
   int first;

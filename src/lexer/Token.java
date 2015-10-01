@@ -103,5 +103,14 @@ public class Token {
         return false;
     }
 
+    /*
+        Test if the current token is a type
+     */
+    public boolean isType() {
+        return this.tokenClass == TokenClass.CHAR ||
+                this.tokenClass == TokenClass.INT ||
+                this.tokenClass == TokenClass.VOID;
+    }
+
 }
 

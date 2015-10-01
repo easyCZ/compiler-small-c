@@ -233,6 +233,7 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    /* Characters */
     @Test public void next_MatchesCharacter() {
         Tokeniser tokeniser = getTokeniser("'a'");
         Token token = tokeniser.nextToken();

@@ -130,7 +130,7 @@ public class Parser {
     }
 
     private void parseIncludes() {
-	if (accept(TokenClass.INCLUDE)) {
+	    if (accept(TokenClass.INCLUDE)) {
             nextToken();
             expect(TokenClass.STRING_LITERAL);
             parseIncludes();
@@ -138,7 +138,18 @@ public class Parser {
     }
 
     private void parseDecls() {
-	// to be completed ...
+	    variableDeclarations();
+    }
+
+    private void variableDeclarations() {
+        Token ahead = lookAhead(1);
+        if (accept(TokenClass.CHAR, TokenClass.INT, TokenClass.VOID) && ahead.tokenClass != TokenClass.MAIN) {
+            nextToken();
+            expect(TokenClass.IDENTIFIER);
+            expect(TokenClass.SEMICOLON);
+
+            variableDeclarations();
+        }
     }
 
     private void parseProcs() {
@@ -148,6 +159,7 @@ public class Parser {
     private void parseMain() {
         // to be completed ...
     }
+
 
     // to be completed ...        
 }
