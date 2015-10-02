@@ -1,10 +1,11 @@
 package parser;
 
 import lexer.Token;
-import lexer.Tokeniser;
 import lexer.Token.TokenClass;
+import lexer.Tokeniser;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
@@ -107,6 +108,23 @@ public class Parser {
 
         error(expected);
         return null;
+    }
+
+    private boolean matchesSequence(List<TokenClass> expected) {
+        if (expected.size() == 0) return false;
+        if (expected.size() == 1) return this.token.tokenClass == expected.get(0);
+
+
+        for (int i = 1; i < expected.size() - 2; i++) {
+            Token ahead = lookAhead(i);
+            if (ahead != null && expected.get(i) == ahead.tokenClass)
+                return false;
+        }
+        return true;
+    }
+
+    private boolean isVariableDeclaration() {
+        return matchesSequence(Token.TYPES);
     }
 
     /*

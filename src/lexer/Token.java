@@ -2,6 +2,9 @@ package lexer;
 
 import util.Position;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author cdubach
  */
@@ -64,6 +67,12 @@ public class Token {
         EOF,    // signal end of file
         INVALID // in case we cannot recognise a character as part of a valid token
     }
+
+    public static final List<TokenClass> TYPES = Arrays.asList(
+            TokenClass.INT,
+            TokenClass.VOID,
+            TokenClass.CHAR
+    );
 
 
     public final TokenClass tokenClass;
