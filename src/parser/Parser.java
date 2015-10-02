@@ -123,9 +123,9 @@ public class Parser {
         return true;
     }
 
-    private boolean isVariableDeclaration() {
-        return matchesSequence(Token.TYPES);
-    }
+//    private boolean isVariableDeclaration() {
+//        return matchesSequence(Token.TYPES);
+//    }
 
     /*
     * Returns true if the current token is equals to any of the expected ones.

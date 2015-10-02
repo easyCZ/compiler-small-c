@@ -10,6 +10,9 @@ import java.util.List;
  */
 public class Token {
 
+    public static final int DUMMY_LINE = -1;
+    public static final int DUMMY_COL = -1;
+
     public enum TokenClass {
 
         IDENTIFIER, // ('a'|...|'z'|'A'|...|'Z')('0'|...|'9'|'a'|...|'z'|'A'|...|'Z')*
@@ -68,7 +71,7 @@ public class Token {
         INVALID // in case we cannot recognise a character as part of a valid token
     }
 
-    public static final List<TokenClass> TYPES = Arrays.asList(
+    public final List<TokenClass> TYPES = Arrays.asList(
             TokenClass.INT,
             TokenClass.VOID,
             TokenClass.CHAR
@@ -88,6 +91,10 @@ public class Token {
         this.tokenClass = tokenClass;
         this.data = data;
         this.position = new Position(lineNum, colNum);
+    }
+
+    public Token(TokenClass tokenClass) {
+        this(tokenClass, "", DUMMY_LINE, DUMMY_COL);
     }
 
 
