@@ -13,9 +13,9 @@ def main():
             pass_count = len([m.start() for m in re.finditer('Pass', text)])
             ranks.append((filename, pass_count))
 
-    ranks = sorted(ranks, key=lambda x: x[1], reverse=True)
+    ranks.sort(key=lambda x: x[1], reverse=True)
     for rank in ranks:
-        print rank[0].replace(SCOREBOARD_DIR, ''), rank[1]
+        print rank[0].replace(SCOREBOARD_DIR, '').replace('.%s' % FILE_TYPE, ''), rank[1]
 
 
 if __name__ == "__main__":
