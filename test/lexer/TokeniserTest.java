@@ -357,8 +357,25 @@ public class TokeniserTest {
         verifyTokenSequence(program, expected);
     }
 
-    @Test public void interleaveCommentsWithProgram() {
+    @Test public void interleaveMultilineCommentsWithProgram() {
         String program = "int foo = \"test\" /* this is a comment */;";
+
+        ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
+                new Token(Token.TokenClass.INT),
+                new Token(Token.TokenClass.IDENTIFIER, "foo"),
+                new Token(Token.TokenClass.ASSIGN),
+                new Token(Token.TokenClass.STRING_LITERAL, "test"),
+                new Token(Token.TokenClass.SEMICOLON)
+        ));
+
+        verifyTokenSequence(program, expected);
+    }
+
+    @Test public void interleaveCommentsWithProgram() {
+        String program = "" +
+                "int foo = \"test\" \n" +
+                "   /* this is a comment */" +
+                ";";
 
         ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
                 new Token(Token.TokenClass.INT),
