@@ -97,6 +97,10 @@ public class Token {
         this(tokenClass, "", DUMMY_LINE, DUMMY_COL);
     }
 
+    public Token(TokenClass tokenClass, String data) {
+        this(tokenClass, data, DUMMY_LINE, DUMMY_COL);
+    }
+
 
 
     @Override

@@ -3,6 +3,7 @@ package lexer;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -330,29 +331,42 @@ public class TokeniserTest {
         Full Program tests
      */
     @Test public void tokeniserProducesCorrectSequenceSimpleIncrementBy2() {
-        ArrayList<Token> expected = new ArrayList<>();
+        ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
+            new Token(Token.TokenClass.INT, 1, 0),
+            new Token(Token.TokenClass.IDENTIFIER, "foo", 1, 5),
+            new Token(Token.TokenClass.LPAR, 1, 7),
+            new Token(Token.TokenClass.INT, 1, 8),
+            new Token(Token.TokenClass.IDENTIFIER, "i", 1, 12),
+            new Token(Token.TokenClass.RPAR, 1, 13),
+            new Token(Token.TokenClass.LBRA, 1, 15),
 
-        expected.add(new Token(Token.TokenClass.INT, 1, 0));
-        expected.add(new Token(Token.TokenClass.IDENTIFIER, "foo", 1, 5));
-        expected.add(new Token(Token.TokenClass.LPAR, 1, 7));
-        expected.add(new Token(Token.TokenClass.INT, 1, 8));
-        expected.add(new Token(Token.TokenClass.IDENTIFIER, "i", 1, 12));
-        expected.add(new Token(Token.TokenClass.RPAR, 1, 13));
-        expected.add(new Token(Token.TokenClass.LBRA, 1, 15));
+            new Token(Token.TokenClass.RETURN, 2, 5),
+            new Token(Token.TokenClass.IDENTIFIER, "i", 2, 12),
+            new Token(Token.TokenClass.PLUS, 2, 14),
+            new Token(Token.TokenClass.NUMBER, "2", 2, 16),
+            new Token(Token.TokenClass.SEMICOLON, 2, 17),
 
-        expected.add(new Token(Token.TokenClass.RETURN, 2, 5));
-        expected.add(new Token(Token.TokenClass.IDENTIFIER, "i", 2, 12));
-        expected.add(new Token(Token.TokenClass.PLUS, 2, 14));
-        expected.add(new Token(Token.TokenClass.NUMBER, "2", 2, 16));
-        expected.add(new Token(Token.TokenClass.SEMICOLON, 2, 17));
-
-        expected.add(new Token(Token.TokenClass.RBRA, 3, 1));
-//        expected.add(new Token(Token.TokenClass.EOF, 3, 2));
+            new Token(Token.TokenClass.RBRA, 3, 1)
+        ));
 
         String program = "" +
                 "int foo (int i) {\n" +
                 "    return i + 2;\n" +
                 "}";
+
+        verifyTokenSequence(program, expected);
+    }
+
+    @Test public void interleaveCommentsWithProgram() {
+        String program = "int foo = \"test\" /* this is a comment */;";
+
+        ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
+                new Token(Token.TokenClass.INT),
+                new Token(Token.TokenClass.IDENTIFIER, "foo"),
+                new Token(Token.TokenClass.ASSIGN),
+                new Token(Token.TokenClass.STRING_LITERAL, "test"),
+                new Token(Token.TokenClass.SEMICOLON)
+        ));
 
         verifyTokenSequence(program, expected);
     }
