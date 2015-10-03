@@ -157,6 +157,18 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.LT, token.tokenClass);
     }
 
+    @Test public void next_SkipsMultilineCommentsWithANewLineAfter() {
+        Tokeniser tokeniser = getTokeniser("/*\n" +
+                "  Some more after program contents, generally a license\n" +
+                "*/\n");
+
+        Token token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+
+//        token = tokeniser.nextToken();
+//        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
     @Test public void next_MatchesSingleDigit() {
         Token token = getTokeniser("5").nextToken();
         assertEquals(Token.TokenClass.NUMBER, token.tokenClass);

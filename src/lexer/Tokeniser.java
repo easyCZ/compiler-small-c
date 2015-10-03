@@ -75,11 +75,11 @@ public class Tokeniser {
 
     private Token next() throws IOException {
 
-        int line = scanner.getLine();
-        int column = scanner.getColumn();
-
 	    // get the next character
         char c = scanner.next();
+
+        int line = scanner.getLine();
+        int col = scanner.getColumn();
 
         // skip white spaces
         if (Character.isWhitespace(c))
@@ -92,7 +92,7 @@ public class Tokeniser {
 
             if (lookaheadMatchers.containsKey(pair)) {
                 TokenClass tokenClass = lookaheadMatchers.get(pair);
-                return buildTokenPair(pair, tokenClass, line, column);
+                return buildTokenPair(pair, tokenClass, line, col);
             }
 
             // There are still comments to consider
@@ -100,14 +100,16 @@ public class Tokeniser {
             if (pair.equals("/*")) return multilineComment(c);
 
         } catch (EOFException e) {
-            // Token cannot be a lookahead token
+            if (line != scanner.getLine() || col != scanner.getColumn())
+                // comments have processed some stream, go again
+                next();
         }
 
 
         // Time for single char matches
         if (uniqueMatchers.containsKey(c)) {
             TokenClass tokenClass = uniqueMatchers.get(c);
-            return new Token(tokenClass, line, column);
+            return new Token(tokenClass, line, col);
         }
 
         if (Character.isDigit(c)) return number(c);
@@ -137,13 +139,13 @@ public class Tokeniser {
             else if (identifier.equals("main")) return new Token(TokenClass.MAIN, scanner.getLine(), scanner.getColumn());
             else if (identifier.equals("read_c")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
             else if (identifier.equals("read_i")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
-            else return new Token(TokenClass.IDENTIFIER, identifier, line, column);
+            else return new Token(TokenClass.IDENTIFIER, identifier, line, col);
         }
 
 
         // if we reach this point, it means we did not recognise a valid token
-        error(c, line, column);
-        return new Token(TokenClass.INVALID, Character.toString(c), line, column);
+        error(c, line, col);
+        return new Token(TokenClass.INVALID, Character.toString(c), line, col);
     }
 
     private Token number(char c) throws IOException {
@@ -290,7 +292,8 @@ public class Tokeniser {
         }
 
         // We've reached closing *, consume /
-        buffer.append(scanner.next());
+        c = scanner.next();
+        buffer.append(c);
 
 //        System.out.println("Multiline Comment: " + buffer);
         return next();
