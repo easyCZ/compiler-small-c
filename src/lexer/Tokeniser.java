@@ -6,11 +6,8 @@ import lexer.exceptions.UnexpectedCharacter;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
 
-/**
- * @author cdubach
- */
+
 public class Tokeniser {
 
     private Scanner scanner;
@@ -76,9 +73,6 @@ public class Tokeniser {
         return result;
     }
 
-    /*
-     * To be completed
-     */
     private Token next() throws IOException {
 
         int line = scanner.getLine();
@@ -147,8 +141,8 @@ public class Tokeniser {
         }
 
 
-//        if we reach this point, it means we did not recognise a valid token
-        error(c,line,column);
+        // if we reach this point, it means we did not recognise a valid token
+        error(c, line, column);
         return new Token(TokenClass.INVALID, Character.toString(c), line, column);
     }
 
@@ -202,11 +196,6 @@ public class Tokeniser {
 
             buffer.append(e.character);
             error(e.character, scanner.getLine(), scanner.getColumn());
-
-            // Read until the next whitespace, mark everything as unexpected
-//            if (!Character.isWhitespace(e.character))
-//                buffer.append(readToWhitespace());
-
             return new Token(Token.TokenClass.INVALID, buffer.toString(), line, col);
         }
         catch (EOFException e) {
@@ -252,13 +241,6 @@ public class Tokeniser {
             while ((scanner.peek() != '"' || isEscaped(c))) {
                 c = scanner.next();
                 buffer.append(c);
-
-//                // Cannot allow multiline strings
-//                if (c == '\n') {
-//                    error(c, line, col);
-//                    return new Token(TokenClass.INVALID, buffer.toString(), line, col);
-//                }
-
             }
 
             c = scanner.next(); // consume end quotes
@@ -357,17 +339,6 @@ public class Tokeniser {
             throw new UnexpectedCharacter(next, scanner.getLine(), scanner.getColumn());
 
         return next;
-    }
-
-    private String readToWhitespace() throws IOException {
-        StringBuilder buffer = new StringBuilder();
-
-        while (!Character.isWhitespace(scanner.peek())) {
-            char next = scanner.next();
-            buffer.append(next);
-        }
-
-        return buffer.toString();
     }
 
     private boolean isEscaped(char c) {
