@@ -373,8 +373,7 @@ public class TokeniserTest {
 
     @Test public void interleaveCommentsWithProgram() {
         String program = "" +
-                "int foo = \"test\" \n" +
-                "   /* this is a comment */" +
+                "int foo = \"test\" // this is a comment" +
                 ";";
 
         ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
