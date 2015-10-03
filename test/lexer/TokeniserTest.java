@@ -196,6 +196,22 @@ public class TokeniserTest {
         assertEquals(1, tokeniser.getErrorCount());
     }
 
+    @Test public void next_MarksDigitsFollowedByIdentifiarsInvalid() {
+        Tokeniser tokeniser = getTokeniser("123abs");
+
+        Token token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.NUMBER, token.tokenClass);
+        assertEquals("123", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.IDENTIFIER, token.tokenClass);
+        assertEquals("abs", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        assertEquals(0, tokeniser.getErrorCount());
+    }
+
     @Test public void next_MatchesInclude() {
         Tokeniser tokeniser = getTokeniser("#include");
         Token token = tokeniser.nextToken();

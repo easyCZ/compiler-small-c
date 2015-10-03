@@ -7,14 +7,11 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author cdubach
  */
 public class Tokeniser {
-
-    private static final Logger LOGGER = Logger.getLogger(Tokeniser.class.getName());
 
     private Scanner scanner;
 
@@ -110,7 +107,6 @@ public class Tokeniser {
 
         } catch (EOFException e) {
             // Token cannot be a lookahead token
-            LOGGER.log(Level.INFO, "Attempted to perform a look ahead match. EOF encountered. Falling back to single char matchers.");
         }
 
 
@@ -211,7 +207,6 @@ public class Tokeniser {
 //            if (!Character.isWhitespace(e.character))
 //                buffer.append(readToWhitespace());
 
-            LOGGER.log(Level.WARNING, "Failed to parse include: " + buffer.toString());
             return new Token(Token.TokenClass.INVALID, buffer.toString(), line, col);
         }
         catch (EOFException e) {
