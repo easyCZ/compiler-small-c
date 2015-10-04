@@ -71,7 +71,7 @@ public class Token {
         INVALID // in case we cannot recognise a character as part of a valid token
     }
 
-    public final List<TokenClass> TYPES = Arrays.asList(
+    public static final List<TokenClass> TYPES = Arrays.asList(
             TokenClass.INT,
             TokenClass.VOID,
             TokenClass.CHAR

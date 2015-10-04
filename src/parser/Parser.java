@@ -138,6 +138,13 @@ public class Parser {
         return result;
     }
 
+    private boolean accept(List<TokenClass> expected) {
+        boolean result = false;
+        for (TokenClass t: expected)
+            result |= t == token.tokenClass;
+        return result;
+    }
+
 
     private void parseProgram() {
         parseIncludes();
@@ -161,7 +168,7 @@ public class Parser {
 
     private void variableDeclarations() {
         Token ahead = lookAhead(1);
-        if (accept(TokenClass.CHAR, TokenClass.INT, TokenClass.VOID) && ahead.tokenClass != TokenClass.MAIN) {
+        if (accept(Token.TYPES) && ahead.tokenClass != TokenClass.MAIN) {
             nextToken();
             expect(TokenClass.IDENTIFIER);
             expect(TokenClass.SEMICOLON);
