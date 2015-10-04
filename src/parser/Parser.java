@@ -162,13 +162,26 @@ public class Parser {
     }
 
     private void parseProcs() {
-//        throw new NotImplementedException();
+
+    }
+
+    private boolean isTypeIdent() {
+        return accept(Token.TYPES) && lookAhead(1).tokenClass == TokenClass.IDENTIFIER;
+    }
+
+    private boolean isMain() {
+        return accept(Token.TYPES) && lookAhead(1).tokenClass == TokenClass.MAIN;
+    }
+
+    private void parseTypeIdent() {
+        if (isTypeIdent()) {
+            nextToken();
+            expect(TokenClass.IDENTIFIER);
+        }
     }
 
     private void parseMain() {
-        Token ahead = lookAhead(1);
-
-        if (accept(Token.TYPES) && ahead.tokenClass == TokenClass.MAIN) {
+        if (isMain()) {
             nextToken(); // consume type
 
             expect(TokenClass.MAIN);
