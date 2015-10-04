@@ -97,7 +97,7 @@ public class Tokeniser {
 
             // There are still comments to consider
             if (pair.equals("//")) return comment(c);
-            if (pair.equals("/*")) return multilineComment(c);
+                if (pair.equals("/*")) return multilineComment(c);
 
         } catch (EOFException e) {
             if (line != scanner.getLine() || col != scanner.getColumn())

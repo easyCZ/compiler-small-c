@@ -40,6 +40,17 @@ public class ParserTest {
             new Token(Token.TokenClass.SEMICOLON)
     );
 
+    private static final List<Token> VOID_MAIN_EMPTY_FUNC = Arrays.asList(
+            new Token(Token.TokenClass.VOID),
+            new Token(Token.TokenClass.MAIN),
+            new Token(Token.TokenClass.LPAR),
+            new Token(Token.TokenClass.RPAR),
+            new Token(Token.TokenClass.LBRA),
+            new Token(Token.TokenClass.RBRA)
+    );
+
+    /* include */
+
     @Test public void parseIncludes_CorrectlyParsesSingleInclude() {
         Parser parser = getParserAndParse(INCLUDE_STATEMENT);
         assertEquals(0, parser.getErrorCount());
@@ -49,6 +60,8 @@ public class ParserTest {
         Parser parser = getParser(duplicate(INCLUDE_STATEMENT, 3));
         assertEquals(0, parser.getErrorCount());
     }
+
+    /* Var decls */
 
     @Test public void parseIntegerVariableDeclaration() {
         Parser parser = getParserAndParse(INT_VAR_DECL);
@@ -89,6 +102,12 @@ public class ParserTest {
         assertEquals(0, parser.getErrorCount());
     }
 
+    /* procedures */
+    @Test public void parsesMainWithNoContent() {
+        Parser parser = getParserAndParse(VOID_MAIN_EMPTY_FUNC);
+        assertErrorCountAndEOF(parser);
+    }
+
 
 
 
@@ -112,6 +131,16 @@ public class ParserTest {
         p.parse();
         return p;
 
+    }
+
+    private void assertErrorCountAndEOF(Parser p) {
+        assertErrorCountAndEOF(p, 0);
+    }
+
+    private void assertErrorCountAndEOF(Parser p, int count) {
+        assertEquals(0, p.getErrorCount());
+        // End of file is followed by null
+        assertEquals(null, p.getToken());
     }
 
     private List<Token> duplicate(List<Token> what, int times) {

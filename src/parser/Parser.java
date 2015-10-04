@@ -110,6 +110,8 @@ public class Parser {
         return null;
     }
 
+
+
     private boolean matchesSequence(List<TokenClass> expected) {
         if (expected.size() == 0) return false;
         if (expected.size() == 1) return this.token.tokenClass == expected.get(0);
@@ -178,13 +180,31 @@ public class Parser {
     }
 
     private void parseProcs() {
-        // to be completed ...
+//        throw new NotImplementedException();
     }
 
     private void parseMain() {
-        // to be completed ...
+        Token ahead = lookAhead(1);
+
+        if (accept(Token.TYPES) && ahead.tokenClass == TokenClass.MAIN) {
+            nextToken(); // consume type
+
+            expect(TokenClass.MAIN);
+            expect(TokenClass.LPAR);
+            expect(TokenClass.RPAR);
+
+            expect(TokenClass.LBRA);
+            parseBody();
+            expect(TokenClass.RBRA);
+        }
     }
 
+    private void parseBody() {
+        // TODO
+    }
 
-    // to be completed ...        
+    public Token getToken() {
+        return token;
+    }
+
 }
