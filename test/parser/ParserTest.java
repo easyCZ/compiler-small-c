@@ -113,7 +113,22 @@ public class ParserTest {
 
 
 
+    /* Partial Integration Tests */
+    @Test public void parsesWithVarDeclarationsBeforeMain() {
+        List<Token> tokens = new ArrayList<>(duplicate(INT_VAR_DECL, 3));
+        tokens.addAll(VOID_MAIN_EMPTY_FUNC);
 
+        Parser parser = getParserAndParse(tokens);
+        assertErrorCountAndEOF(parser);
+    }
+
+    @Test public void failsWithVarDeclarationsAfterMain() {
+        List<Token> tokens = new ArrayList<>(VOID_MAIN_EMPTY_FUNC);
+        tokens.addAll(duplicate(INT_VAR_DECL, 3));
+
+        Parser parser = getParserAndParse(tokens);
+        assertEquals(parser.getErrorCount(), 1);
+    }
 
 
     private Parser getParser(String program) {
