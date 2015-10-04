@@ -102,7 +102,7 @@ public class Tokeniser {
         } catch (EOFException e) {
             if (line != scanner.getLine() || col != scanner.getColumn())
                 // comments have processed some stream, go again
-                next();
+                return next();
         }
 
 
