@@ -138,7 +138,7 @@ public class ParserTest {
     }
 
     private void assertErrorCountAndEOF(Parser p, int count) {
-        assertEquals(0, p.getErrorCount());
+        assertEquals(count, p.getErrorCount());
         // End of file is followed by null
         assertEquals(null, p.getToken());
     }
