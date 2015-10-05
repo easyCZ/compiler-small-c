@@ -97,7 +97,7 @@ public class Tokeniser {
 
             // There are still comments to consider
             if (pair.equals("//")) return comment(c);
-                if (pair.equals("/*")) return multilineComment(c);
+            if (pair.equals("/*")) return multilineComment(c);
 
         } catch (EOFException e) {
             if (line != scanner.getLine() || col != scanner.getColumn())
@@ -273,29 +273,22 @@ public class Tokeniser {
         // Consume astrix
         buffer.append(scanner.next());
 
-        char last = scanner.next();
+        c = scanner.next();
         // Start reading comment
-        buffer.append(last);
+        buffer.append(c);
 
-
-        while (c != '*' && scanner.peek() != '/' && last != '\\') {
+        while (!buffer.substring(buffer.length() - 2, buffer.length()).equals("*/")) {
             c = scanner.next();
             buffer.append(c);
 
-            if (c == '\\') { // We're escaping
-                // Force read the next char to consume it
-                c = scanner.next();
-                buffer.append(c);
-            }
+//            if (c == '\\') { // We're escaping
+//                // Force read the next char to consume it
+//                c = scanner.next();
+//                buffer.append(c);
+//            }
 
-            last = c;
         }
 
-        // We've reached closing *, consume /
-        c = scanner.next();
-        buffer.append(c);
-
-//        System.out.println("Multiline Comment: " + buffer);
         return next();
     }
 

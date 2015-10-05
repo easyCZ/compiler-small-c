@@ -117,6 +117,12 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.LT, token.tokenClass);
     }
 
+    @Test public void next_SkipsNestedComments() {
+        Token token = getTokeniser("/*    //comment //comment */").nextToken();
+
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
     @Test public void next_SkipsMultipleSingleLineComments() {
         Token token = getTokeniser("" +
                 "// This is a comment\n" +
