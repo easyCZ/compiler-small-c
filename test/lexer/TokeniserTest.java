@@ -351,6 +351,22 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    @Test public void next_marksInvalidCharButParsesIdentifier() {
+        Tokeniser tokeniser = getTokeniser("''abc");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("''", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.IDENTIFIER, token.tokenClass);
+        assertEquals("abc", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+
     @Test public void next_MatchesCharacterComma() {
         Tokeniser tokeniser = getTokeniser("','");
         Token token = tokeniser.nextToken();

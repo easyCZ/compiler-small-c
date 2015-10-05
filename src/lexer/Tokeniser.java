@@ -217,6 +217,12 @@ public class Tokeniser {
             c = scanner.next();
             buffer.append(c);
 
+            // There's no content - invalid
+            if (c == '\'') {
+                return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+            }
+
+
             if (c == '\\') { // We're escaping
                 buffer.append(scanner.next());
             }
