@@ -219,6 +219,7 @@ public class Tokeniser {
 
             // There's no content - invalid
             if (c == '\'') {
+                error(c, scanner.getLine(), scanner.getColumn());
                 return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
             }
 
@@ -237,6 +238,7 @@ public class Tokeniser {
                 // Consume terminating quote
                 buffer.append(scanner.next());
 
+                error(c, scanner.getLine(), scanner.getColumn());
                 return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
             }
 //
@@ -247,6 +249,7 @@ public class Tokeniser {
 //                buffer.append(c);
 //            }
         } catch (EOFException e) {
+            error(c, scanner.getLine(), scanner.getColumn());
             return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
 
