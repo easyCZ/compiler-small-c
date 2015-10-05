@@ -118,7 +118,7 @@ public class Tokeniser {
         if (c == '#') return include(c);
 
         // Char
-        if (c == '\'') return character();
+        if (c == '\'') return character(c);
 
         // String
         if (c == '"') return stringLiteral(c);
@@ -208,19 +208,38 @@ public class Tokeniser {
         return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
     }
 
-    public Token character() throws IOException {
+    public Token character(char c) throws IOException {
         StringBuilder buffer = new StringBuilder();
 
         // Read until we reach a closing quote
         // Escaped quotes should be skipped
-        char c;
         try {
-            c = scanner.peek();
+            c = scanner.next();
+            buffer.append(c);
 
-            while (scanner.peek() != '\'' || isEscaped(c /* previous */)) {
-                c = scanner.next();
-                buffer.append(c);
+            if (c == '\\') { // We're escaping
+                buffer.append(scanner.next());
             }
+
+            // We should be expecting a closing quote
+            if (scanner.peek() != '\'') {
+                // Read until we find a quote
+                while (scanner.peek() != '\'') {
+                    buffer.append(scanner.next());
+                }
+
+                // Consume terminating quote
+                buffer.append(scanner.next());
+
+                return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+            }
+//
+//            c = scanner.peek();
+//
+//            while (scanner.peek() != '\'' || isEscaped(c /* previous */)) {
+//                c = scanner.next();
+//                buffer.append(c);
+//            }
         } catch (EOFException e) {
             return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
