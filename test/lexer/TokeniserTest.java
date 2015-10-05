@@ -123,6 +123,11 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    @Test public void next_SkipsTwoCommentsAfterEachOther() {
+        Token token = getTokeniser("/*abc*//*abc*/").nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
     @Test public void next_SkipsMultipleSingleLineComments() {
         Token token = getTokeniser("" +
                 "// This is a comment\n" +
@@ -359,6 +364,32 @@ public class TokeniserTest {
                 "int foo (int i) {\n" +
                 "    return i + 2;\n" +
                 "}";
+
+        verifyTokenSequence(program, expected);
+    }
+
+    @Test public void characterAssign() {
+        String program = "char foo = 'c'";
+        ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
+                new Token(Token.TokenClass.CHAR),
+                new Token(Token.TokenClass.IDENTIFIER, "foo"),
+                new Token(Token.TokenClass.ASSIGN),
+                new Token(Token.TokenClass.CHARACTER, "c"),
+                new Token(Token.TokenClass.SEMICOLON)
+        ));
+
+        verifyTokenSequence(program, expected);
+    }
+
+    @Test public void characterAssignEscapedChar() {
+        String program = "char foo = '\\\''";
+        ArrayList<Token> expected = new ArrayList<>(Arrays.asList(
+                new Token(Token.TokenClass.CHAR),
+                new Token(Token.TokenClass.IDENTIFIER, "foo"),
+                new Token(Token.TokenClass.ASSIGN),
+                new Token(Token.TokenClass.CHARACTER, "\\\'"),
+                new Token(Token.TokenClass.SEMICOLON)
+        ));
 
         verifyTokenSequence(program, expected);
     }
