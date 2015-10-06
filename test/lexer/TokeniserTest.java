@@ -502,7 +502,6 @@ public class TokeniserTest {
 
 
         verifyTokenSequence("&hello", expected, 1);
-//        verifyTokenFollowedByEOF("&hello", Token.TokenClass.INVALID, "&he");
     }
 
 
