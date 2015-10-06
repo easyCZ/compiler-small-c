@@ -387,6 +387,38 @@ public class TokeniserTest {
         );
     }
 
+    @Test public void string_literal_escape_tab() {
+        verifyTokenFollowedByEOF("\"\\t\"", Token.TokenClass.STRING_LITERAL, "\\t");
+    }
+
+    @Test public void string_literal_escape_backspace() {
+        verifyTokenFollowedByEOF("\"\\b\"", Token.TokenClass.STRING_LITERAL, "\\b");
+    }
+
+    @Test public void string_literal_escape_newline() {
+        verifyTokenFollowedByEOF("\"\\n\"", Token.TokenClass.STRING_LITERAL, "\\n");
+    }
+
+    @Test public void string_literal_escape_carriage_return() {
+        verifyTokenFollowedByEOF("\"\\r\"", Token.TokenClass.STRING_LITERAL, "\\r");
+    }
+
+    @Test public void string_literal_escape_formfeed() {
+        verifyTokenFollowedByEOF("\"\\f\"", Token.TokenClass.STRING_LITERAL, "\\f");
+    }
+
+    @Test public void string_literal_escape_single_quote() {
+        verifyTokenFollowedByEOF("\"\\'\"", Token.TokenClass.STRING_LITERAL, "\\'");
+    }
+
+    @Test public void string_literal_escape_double_quote() {
+        verifyTokenFollowedByEOF("\"\\\"\"", Token.TokenClass.STRING_LITERAL, "\\\"");
+    }
+
+    @Test public void string_literal_escape_backslash() {
+        verifyTokenFollowedByEOF("\"\\\\\"", Token.TokenClass.STRING_LITERAL, "\\\\");
+    }
+
     @Test public void next_MarksMultilineStringLiteralInvalid() {
         verifyTokenFollowedByEOF(
                 "\"I am a string Literal;" +
