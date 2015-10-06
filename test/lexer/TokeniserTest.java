@@ -275,80 +275,31 @@ public class TokeniserTest {
 
     /* Characters */
     @Test public void next_MatchesCharacter() {
-        Tokeniser tokeniser = getTokeniser("'a'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("a", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'a'", Token.TokenClass.CHARACTER, "a");
     }
 
     @Test public void next_MatchesCharacterAlphabeticalLowercase() {
-        Tokeniser tokeniser = getTokeniser("'z'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("z", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'z'", Token.TokenClass.CHARACTER, "z");
     }
 
     @Test public void next_MatchesCharacterAlphabeticalUppercase() {
-        Tokeniser tokeniser = getTokeniser("'A'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("A", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'A'", Token.TokenClass.CHARACTER, "A");
     }
 
     @Test public void next_MatchesCharacterTab() {
-        Tokeniser tokeniser = getTokeniser("'\\t'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("\\t", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'\\t'", Token.TokenClass.CHARACTER, "\\t");
     }
 
     @Test public void next_MatchesCharacterNewline() {
-        Tokeniser tokeniser = getTokeniser("'\\n'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("\\n", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'\\n'", Token.TokenClass.CHARACTER, "\\n");
     }
 
     @Test public void next_marksInvalidChar() {
-        Tokeniser tokeniser = getTokeniser("'ab'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
-        assertEquals("'ab'", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'ab'", Token.TokenClass.INVALID, "'ab'");
     }
 
     @Test public void next_MatchesCharacterDot() {
-        Tokeniser tokeniser = getTokeniser("'.'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals(Character.toString('.'), token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'.'", Token.TokenClass.CHARACTER, ".");
     }
 
     @Test public void next_marksInvalidCharButParsesIdentifier() {
@@ -368,15 +319,13 @@ public class TokeniserTest {
 
 
     @Test public void next_MatchesCharacterComma() {
-        Tokeniser tokeniser = getTokeniser("','");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals(Character.toString(','), token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("','", Token.TokenClass.CHARACTER, ",");
     }
+
+    @Test public void next_MatchesCharacter2() {
+        verifyTokenFollowedByEOF("'2'", Token.TokenClass.CHARACTER, "2");
+    }
+
 
     @Test public void next_CharacterEscapeWithoutContentMarkedInvalid() {
         Tokeniser tokeniser = getTokeniser("'\\' abc");
@@ -405,36 +354,15 @@ public class TokeniserTest {
     }
 
     @Test public void next_MatchesCharacterUnderscore() {
-        Tokeniser tokeniser = getTokeniser("'_'");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals(Character.toString('_'), token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'_'", Token.TokenClass.CHARACTER, "_");
     }
 
     @Test public void next_MatchesEscapedCharacter() {
-        Tokeniser tokeniser = getTokeniser("'\\''   ");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("\\'", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'\\''", Token.TokenClass.CHARACTER, "\\'");
     }
 
     @Test public void next_MarksUnclosedCharacterAsInvalid() {
-        Tokeniser tokeniser = getTokeniser("'a");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
-        assertEquals("'a", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'a", Token.TokenClass.INVALID, "'a");
     }
 
     /* String Literals */
