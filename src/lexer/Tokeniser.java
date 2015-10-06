@@ -123,7 +123,7 @@ public class Tokeniser {
         // String
         if (c == '"') return stringLiteral(c);
 
-        if (Character.isAlphabetic(c)) {
+        if (Character.isAlphabetic(c) || c == '_') {
             String identifier = identifier(c);
 
             if (identifier.equals("int")) return new Token(TokenClass.INT, scanner.getLine(), scanner.getColumn());

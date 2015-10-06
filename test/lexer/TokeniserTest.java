@@ -456,6 +456,44 @@ public class TokeniserTest {
         );
     }
 
+    /* Identifiers */
+    @Test public void next_CorrectlyMarksSimpleIdentifier() {
+        verifyTokenFollowedByEOF("foo", Token.TokenClass.IDENTIFIER, "foo");
+    }
+
+    @Test public void next_CorrectlyMarksUppercaseIdentifiers() {
+        verifyTokenFollowedByEOF("FOO", Token.TokenClass.IDENTIFIER, "FOO");
+    }
+
+    @Test public void next_CorrectlyMarksUppercaseLowercaseIdentifiers() {
+        verifyTokenFollowedByEOF("fOObaZZ", Token.TokenClass.IDENTIFIER, "fOObaZZ");
+    }
+
+    @Test public void next_CorrectlyMarksUnderscoreIdentifiers() {
+        verifyTokenFollowedByEOF("_", Token.TokenClass.IDENTIFIER, "_");
+    }
+
+    @Test public void next_CorrectlyMarksUnderscoreAndTextIdentifiers() {
+        verifyTokenFollowedByEOF("hello_there", Token.TokenClass.IDENTIFIER, "hello_there");
+    }
+
+    @Test public void next_CorrectlyMarksStartingUnderscoreAndTextIdentifiers() {
+        verifyTokenFollowedByEOF("_there", Token.TokenClass.IDENTIFIER, "_there");
+    }
+
+    @Test public void next_CorrectlyMarksIdentifiersWithDigits() {
+        verifyTokenFollowedByEOF("foo123", Token.TokenClass.IDENTIFIER, "foo123");
+    }
+
+    @Test public void next_MarksIdentifiersStartingWithDigitsInvalid() {
+        List<Token> expected = Arrays.asList(
+            new Token(Token.TokenClass.NUMBER, "123"),
+            new Token(Token.TokenClass.IDENTIFIER, "foo")
+        );
+
+        verifyTokenSequence("123foo", expected, 0);
+    }
+
     /* Unknown */
     @Test public void next_MarksUnknownTokenAsInvalid() {
         ArrayList<Token> expected = new ArrayList<>();
