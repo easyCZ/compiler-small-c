@@ -258,13 +258,6 @@ public class Tokeniser {
                 error(c, scanner.getLine(), scanner.getColumn());
                 return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
             }
-//
-//            c = scanner.peek();
-//
-//            while (scanner.peek() != '\'' || isEscaped(c /* previous */)) {
-//                c = scanner.next();
-//                buffer.append(c);
-//            }
         } catch (EOFException e) {
             error(c, scanner.getLine(), scanner.getColumn());
             return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
