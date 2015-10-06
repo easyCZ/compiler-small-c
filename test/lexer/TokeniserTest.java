@@ -378,6 +378,32 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.EOF, token.tokenClass);
     }
 
+    @Test public void next_CharacterEscapeWithoutContentMarkedInvalid() {
+        Tokeniser tokeniser = getTokeniser("'\\' abc");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
+        assertEquals("'\\' abc", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
+    @Test public void next_CharacterEscapedQuoteShouldBeValid() {
+        Tokeniser tokeniser = getTokeniser("'\\'' abc");
+        Token token = tokeniser.nextToken();
+
+        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
+        assertEquals("\\'", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.IDENTIFIER, token.tokenClass);
+        assertEquals("abc", token.data);
+
+        token = tokeniser.nextToken();
+        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+    }
+
     @Test public void next_MatchesCharacterUnderscore() {
         Tokeniser tokeniser = getTokeniser("'_'");
         Token token = tokeniser.nextToken();

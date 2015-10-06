@@ -225,7 +225,24 @@ public class Tokeniser {
 
 
             if (c == '\\') { // We're escaping
-                buffer.append(scanner.next());
+                c = scanner.next();
+                buffer.append(c);
+                char peek = scanner.peek();
+
+                // No escaped content
+                if (c == '\'' && peek != '\'' ) {
+                    // Read until we find a quote
+                    while (scanner.peek() != '\'') {
+                        buffer.append(scanner.next());
+                    }
+
+                    // Consume terminating quote
+                    buffer.append(scanner.next());
+
+                    error(c, scanner.getLine(), scanner.getColumn());
+                    return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+                }
+
             }
 
             // We should be expecting a closing quote
