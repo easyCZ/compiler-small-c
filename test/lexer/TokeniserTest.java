@@ -316,6 +316,38 @@ public class TokeniserTest {
         verifyTokenFollowedByEOF("','", Token.TokenClass.CHARACTER, ",");
     }
 
+    @Test public void character_escape_tab() {
+        verifyTokenFollowedByEOF("'\\t'", Token.TokenClass.CHARACTER, "\\t");
+    }
+
+    @Test public void character_escape_backspace() {
+        verifyTokenFollowedByEOF("'\\b'", Token.TokenClass.CHARACTER, "\\b");
+    }
+
+    @Test public void character_escape_newline() {
+        verifyTokenFollowedByEOF("'\\n'", Token.TokenClass.CHARACTER, "\\n");
+    }
+
+    @Test public void character_escape_carriage_return() {
+        verifyTokenFollowedByEOF("'\\r'", Token.TokenClass.CHARACTER, "\\r");
+    }
+
+    @Test public void character_escape_formfeed() {
+        verifyTokenFollowedByEOF("'\\f'", Token.TokenClass.CHARACTER, "\\f");
+    }
+
+    @Test public void character_escape_single_quote() {
+        verifyTokenFollowedByEOF("'\\''", Token.TokenClass.CHARACTER, "\\'");
+    }
+
+    @Test public void character_escape_double_quote() {
+        verifyTokenFollowedByEOF("'\\\"'", Token.TokenClass.CHARACTER, "\\\"");
+    }
+
+    @Test public void character_escape_backslash() {
+        verifyTokenFollowedByEOF("'\\\\'", Token.TokenClass.CHARACTER, "\\\\");
+    }
+
     @Test public void next_MatchesCharacter2() {
         verifyTokenFollowedByEOF("'2'", Token.TokenClass.CHARACTER, "2");
     }
