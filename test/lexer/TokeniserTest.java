@@ -303,18 +303,12 @@ public class TokeniserTest {
     }
 
     @Test public void next_marksInvalidCharButParsesIdentifier() {
-        Tokeniser tokeniser = getTokeniser("''abc");
-        Token token = tokeniser.nextToken();
+        List<Token> expected = Arrays.asList(
+                new Token(Token.TokenClass.INVALID, "''"),
+                new Token(Token.TokenClass.IDENTIFIER, "abc")
+        );
 
-        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
-        assertEquals("''", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.IDENTIFIER, token.tokenClass);
-        assertEquals("abc", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenSequence("''abc", expected, 1);
     }
 
 
@@ -328,29 +322,16 @@ public class TokeniserTest {
 
 
     @Test public void next_CharacterEscapeWithoutContentMarkedInvalid() {
-        Tokeniser tokeniser = getTokeniser("'\\' abc");
-        Token token = tokeniser.nextToken();
-
-        assertEquals(Token.TokenClass.INVALID, token.tokenClass);
-        assertEquals("'\\' abc", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenFollowedByEOF("'\\' abc", Token.TokenClass.INVALID, "'\\' abc");
     }
 
     @Test public void next_CharacterEscapedQuoteShouldBeValid() {
-        Tokeniser tokeniser = getTokeniser("'\\'' abc");
-        Token token = tokeniser.nextToken();
+        List<Token> expected = Arrays.asList(
+                new Token(Token.TokenClass.CHARACTER, "\\'"),
+                new Token(Token.TokenClass.IDENTIFIER, "abc")
+        );
 
-        assertEquals(Token.TokenClass.CHARACTER, token.tokenClass);
-        assertEquals("\\'", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.IDENTIFIER, token.tokenClass);
-        assertEquals("abc", token.data);
-
-        token = tokeniser.nextToken();
-        assertEquals(Token.TokenClass.EOF, token.tokenClass);
+        verifyTokenSequence("'\\'' abc", expected, 0);
     }
 
     @Test public void next_MatchesCharacterUnderscore() {
