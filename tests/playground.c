@@ -3,6 +3,10 @@
 int variable1;
 char variable2;
 
+void test_method(int value) {
+  print_s("Test method returns: ");print_i(value);
+  return value + 1;
+}
 
 void main() {
   int n;
@@ -39,11 +43,6 @@ void main() {
     print_s(" ");
     c = c+1;
   }
-}
-
-void test_method(int value) {
-  print_s("Test method returns: ");print_i(value);
-  return value + 1;
 }
 
 /*

@@ -155,6 +155,9 @@ public class Parser {
 
     private void parseVariableDeclaration() {
         parseTypeIdent();
+
+        if (accept(TokenClass.SEMICOLON))
+
         expect(TokenClass.SEMICOLON);
     }
 
@@ -166,23 +169,16 @@ public class Parser {
     }
 
     private void parseProcedure() {
-        if (isProcedure()) {
-            nextToken();
+        parseTypeIdent();
+        expect(TokenClass.LPAR);
+        parseParams();
+        expect(TokenClass.RPAR);
+        parseBody();
 
-            parseType();
-            expect(TokenClass.IDENTIFIER);
-            expect(TokenClass.LPAR);
-            parseParams();
-            expect(TokenClass.RPAR);
-            parseBody();
-
-        }
     }
 
     private void parseParams() {
         if (isTypeIdentifier()) {
-            nextToken();
-
             parseTypeIdent();
 
             if (isParamRepetition()) {
@@ -223,7 +219,7 @@ public class Parser {
     }
 
     private boolean isVariableDeclaration() {
-        return isTypeIdentifier();
+        return isTypeIdentifier() && lookAhead(2).tokenClass == TokenClass.SEMICOLON;
     }
 
     private boolean isMain() {
@@ -250,7 +246,123 @@ public class Parser {
     }
 
     private void parseBody() {
+        expect(TokenClass.LBRA);
+        parseVariableDeclarations();
+        parserStatementList();
+        expect(TokenClass.RBRA);
+    }
+
+    private void parserStatementList() {
+        if (isStatement()) {
+            parseStatement();
+            parserStatementList();
+        }
+    }
+
+    private void parseStatement() {
+        if (isFuncationCall()) {
+            parseFunctionCall();
+            return;
+        }
+
+        switch (token.tokenClass) {
+            case RBRA:
+                expect(TokenClass.LBRA);
+                parseVariableDeclarations();
+                parserStatementList();
+                expect(TokenClass.RBRA);
+                break;
+
+            case WHILE:
+                expect(TokenClass.WHILE);
+                expect(TokenClass.LPAR);
+                parseExpression();
+                expect(TokenClass.RPAR);
+                parseStatement();
+                break;
+
+            case IF:
+                expect(TokenClass.LPAR);
+                parseExpression();
+                expect(TokenClass.RPAR);
+                parseStatement();
+                parseElseStatement();
+                break;
+
+            case IDENTIFIER:
+                expect(TokenClass.IDENTIFIER);
+                expect(TokenClass.EQ);
+                parseLexicalExpression();
+                expect(TokenClass.SEMICOLON);
+                break;
+
+            case RETURN:
+                expect(TokenClass.RETURN);
+                parseReturnOptional();
+                expect(TokenClass.SEMICOLON);
+                break;
+
+            case PRINT:
+                expect(TokenClass.PRINT);
+                expect(TokenClass.LPAR);
+                parseLexicalExpression();
+                expect(TokenClass.RPAR);
+                expect(TokenClass.SEMICOLON);
+                break;
+
+            case READ:
+                expect(TokenClass.READ);
+                expect(TokenClass.LPAR);
+                expect(TokenClass.RPAR);
+                expect(TokenClass.SEMICOLON);
+        }
+    }
+
+    private void parseFunctionCall() {
         // TODO
+    }
+
+    private void parseReturnOptional() {
+        if (!accept(TokenClass.SEMICOLON)) {
+            parseLexicalExpression();
+        }
+    }
+
+    private void parseLexicalExpression() {
+        parseTerm();
+        parseLexicalExpressionRepetition();
+    }
+
+    private void parseLexicalExpressionRepetition() {
+        // TODO
+    }
+
+    private void parseTerm() {
+        // TODO
+    }
+
+    private void parseElseStatement() {
+        // TODO
+    }
+
+    private void parseExpression() {
+        // TODO
+    }
+
+    private boolean isStatement() {
+        return accept(
+                TokenClass.RBRA,
+                TokenClass.WHILE,
+                TokenClass.IF,
+                TokenClass.IDENTIFIER,
+                TokenClass.RETURN,
+                TokenClass.PRINT,
+                TokenClass.READ
+        ) || isFuncationCall();
+    }
+
+    private boolean isFuncationCall() {
+        return accept(TokenClass.IDENTIFIER) && lookAhead(1).tokenClass == TokenClass.LPAR;
     }
 
     public Token getToken() {
