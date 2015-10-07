@@ -437,25 +437,18 @@ public class Parser {
         parseLexicalExpression();
 
         if (isComparator(token)) {
-            expect(
-                    TokenClass.GT,
+            expect(TokenClass.GT,
                     TokenClass.LT,
                     TokenClass.GE,
                     TokenClass.LE,
                     TokenClass.NE,
-                    TokenClass.EQ
-            );
+                    TokenClass.EQ);
             parseLexicalExpression();
         }
     }
 
     private boolean isComparator(Token ahead) {
-        return accept(TokenClass.GT,
-                TokenClass.LT,
-                TokenClass.GE,
-                TokenClass.LE,
-                TokenClass.NE,
-                TokenClass.EQ);
+        return accept(Token.COMPARATORS);
     }
 
     private boolean isStatement() {

@@ -77,6 +77,15 @@ public class Token {
             TokenClass.CHAR
     );
 
+    public static final List<TokenClass> COMPARATORS = Arrays.asList(
+            TokenClass.GT,
+            TokenClass.LT,
+            TokenClass.GE,
+            TokenClass.LE,
+            TokenClass.NE,
+            TokenClass.EQ
+    );
+
     public static final String PRINT_S = "print_s";
     public static final String PRINT_C = "print_c";
     public static final String PRINT_I = "print_i";
