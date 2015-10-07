@@ -431,6 +431,10 @@ public class TokeniserTest {
         verifyTokenFollowedByEOF("\"\\\"", Token.TokenClass.INVALID, "\\\"");
     }
 
+    @Test public void string_literal_only_valid_escapes_are_allowed() {
+        verifyTokenFollowedByEOF("\"\\&\"", Token.TokenClass.INVALID, "\"\\&\"");
+    }
+
 
     @Test public void next_MarksMultilineStringLiteralInvalid() {
         verifyTokenFollowedByEOF(

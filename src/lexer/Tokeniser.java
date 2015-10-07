@@ -153,7 +153,7 @@ public class Tokeniser {
             else if (identifier.equals("read_i")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
             else return new Token(TokenClass.IDENTIFIER, identifier, line, col);
         }
-        
+
         // if we reach this point, it means we did not recognise a valid token
         return error(c, Character.toString(c), line, col);
     }
@@ -272,7 +272,7 @@ public class Tokeniser {
         try {
             c = scanner.peek();
 
-            while ((scanner.peek() != '"')) {
+            while (scanner.peek() != '"') {
 
                 c = scanner.next();
                 buffer.append(c);
@@ -288,7 +288,17 @@ public class Tokeniser {
         }
 
         catch (UnexpectedCharacter uc) {
-            return error(uc.character, buffer.toString(), uc.line, uc.col);
+            // read until next "
+            while (scanner.peek() != '"') {
+                c = scanner.next();
+                buffer.append(c);
+            }
+
+            // Read closing "
+            c = scanner.next();
+            buffer.append(c);
+
+            return error(uc.character, "\"" + buffer.toString(), uc.line, uc.col);
         }
 
         int newLineIndex = buffer.indexOf("\n");
