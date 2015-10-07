@@ -153,11 +153,9 @@ public class Tokeniser {
             else if (identifier.equals("read_i")) return new Token(TokenClass.READ, identifier, scanner.getLine(), scanner.getColumn());
             else return new Token(TokenClass.IDENTIFIER, identifier, line, col);
         }
-
-
+        
         // if we reach this point, it means we did not recognise a valid token
-        error(c, line, col);
-        return new Token(TokenClass.INVALID, Character.toString(c), line, col);
+        return error(c, Character.toString(c), line, col);
     }
 
     private Token number(char c) throws IOException {
@@ -173,8 +171,7 @@ public class Tokeniser {
         } catch (EOFException e) {
             if (buffer.charAt(0) == '0' && buffer.length() > 1) {
                 // Cannot have a number starting with a 0 and followed by other digits
-                error(c, line, col);
-                return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+                return error(c, buffer.toString(), line, col);
             }
 
             return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
@@ -182,8 +179,7 @@ public class Tokeniser {
 
         if (buffer.charAt(0) == '0' && buffer.length() > 1) {
             // Cannot have a number starting with a 0 and followed by other digits
-            error(c, line, col);
-            return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+            return error(c, buffer.toString(), line, col);
         }
 
         return new Token(TokenClass.NUMBER, buffer.toString(), line, col);
@@ -207,14 +203,11 @@ public class Tokeniser {
             }
         }
         catch (UnexpectedCharacter e) {
-
             buffer.append(e.character);
-            error(e.character, scanner.getLine(), scanner.getColumn());
-            return new Token(Token.TokenClass.INVALID, buffer.toString(), line, col);
+            return error(expected, buffer.toString(), line, col);
         }
         catch (EOFException e) {
-            error(expected, line, col);
-            return new Token(TokenClass.INVALID, buffer.toString(), line, col);
+            return error(expected, buffer.toString());
         }
 
         return new Token(Token.TokenClass.INCLUDE, buffer.toString(), scanner.getLine(), scanner.getColumn());
@@ -231,31 +224,10 @@ public class Tokeniser {
 
             // There's no content - invalid
             if (c == '\'') {
-                error(c, scanner.getLine(), scanner.getColumn());
-                return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+                return error(c, "'" + buffer.toString());
             }
 
-
-            if (c == '\\') { // We're escaping
-                c = scanner.next();
-                buffer.append(c);
-                char peek = scanner.peek();
-
-                // No escaped content
-                if (c == '\'' && peek != '\'' ) {
-                    // Read until we find a quote
-                    while (scanner.peek() != '\'') {
-                        buffer.append(scanner.next());
-                    }
-
-                    // Consume terminating quote
-                    buffer.append(scanner.next());
-
-                    error(c, scanner.getLine(), scanner.getColumn());
-                    return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
-                }
-
-            }
+            if (isBackslash(c)) buffer.append(escape(c));
 
             // We should be expecting a closing quote
             if (scanner.peek() != '\'') {
@@ -267,12 +239,22 @@ public class Tokeniser {
                 // Consume terminating quote
                 buffer.append(scanner.next());
 
-                error(c, scanner.getLine(), scanner.getColumn());
-                return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+                return error(c, "'" + buffer.toString());
             }
-        } catch (EOFException e) {
-            error(c, scanner.getLine(), scanner.getColumn());
-            return new Token(Token.TokenClass.INVALID, "'" + buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+        catch (EOFException e) {
+            return error(c, "'" + buffer.toString());
+        }
+        catch (UnexpectedCharacter unexpectedCharacter) {
+            // Read until we find a quote
+            while (scanner.peek() != '\'') {
+                buffer.append(scanner.next());
+            }
+
+            // Consume terminating quote
+            buffer.append(scanner.next());
+
+            return error(c, buffer.toString(), scanner.getLine(), scanner.getColumn());
         }
 
         // Consume closing '
@@ -302,19 +284,16 @@ public class Tokeniser {
 
         }
         catch (EOFException e) {
-            error(c, line, col);
-            return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+            return error(c, buffer.toString());
         }
 
         catch (UnexpectedCharacter uc) {
-            error(uc.character, uc.line, uc.col);
-            return new Token(TokenClass.INVALID, buffer.toString(), uc.line, uc.col);
+            return error(uc.character, buffer.toString(), uc.line, uc.col);
         }
 
         int newLineIndex = buffer.indexOf("\n");
         if (newLineIndex > -1) {
-            error(buffer.charAt(newLineIndex), line, col + newLineIndex);
-            return new Token(TokenClass.INVALID, buffer.toString(), line, col + newLineIndex);
+            return error(buffer.charAt(newLineIndex), buffer.toString(), line, col + newLineIndex);
         }
 
         return new Token(Token.TokenClass.STRING_LITERAL, buffer.toString(), scanner.getLine(), scanner.getColumn());
@@ -378,6 +357,16 @@ public class Tokeniser {
     private void error(char c, int line, int col) {
         System.out.println("Lexing error: unrecognised character ("+c+") at "+line+":"+col);
         error++;
+    }
+
+    private Token error(char c, String data, int line, int col) {
+        error(c, line, col);
+        return new Token(TokenClass.INVALID, data, line, col);
+    }
+
+    private Token error(char c, String data) {
+        error(c, scanner.getLine(), scanner.getColumn());
+        return new Token(TokenClass.INVALID, data, scanner.getLine(), scanner.getColumn());
     }
 
     private char readAndAssert(char expected) throws IOException, UnexpectedCharacter {

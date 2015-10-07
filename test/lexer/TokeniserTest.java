@@ -486,7 +486,6 @@ public class TokeniserTest {
         expected.add(new Token(Token.TokenClass.INVALID, "&", 1, 1));
         expected.add(new Token(Token.TokenClass.IDENTIFIER, "hello", 1, 1));
 
-
         verifyTokenSequence("&hello", expected, 1);
     }
 
