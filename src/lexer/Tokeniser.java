@@ -278,9 +278,18 @@ public class Tokeniser {
         try {
             c = scanner.peek();
 
-            while ((scanner.peek() != '"' || isEscaped(c))) {
+            while ((scanner.peek() != '"')) {
+
                 c = scanner.next();
                 buffer.append(c);
+
+                // Escape
+                if (c == '\\') {
+                    // Consume next
+                    c = scanner.next();
+                    buffer.append(c);
+
+                }
             }
 
             c = scanner.next(); // consume end quotes
