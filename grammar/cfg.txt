@@ -1,0 +1,68 @@
+# simples
+type            ::= "int"
+                  | "char"
+                  | "void"
+typeident       ::= type IDENT
+program         ::= includes vardecls procedures main EOF
+includes        ::= include includes
+                  | <empty>
+include         ::= "#include" STRING_LITERAL
+stmtlist        ::= stmt stmlist
+                  | <empty>
+main            ::= "void" "main" "(" ")" body
+body            ::= "{" vardecls stmtlist "}"
+procedures      ::= procedure procedures
+                  |  <empty>
+procedure       ::= type IDENT "(" params ")" body
+params          ::= typeident params
+                  |  <empty>
+paramRep        ::= "," typeident
+                  | <empty>
+exp             ::= lexp ">" lexp
+                  | lexp "<" lexp
+                  | lexp ">=" lexp
+                  | lexp "<=" lexp
+                  | lexp "!=" lexp
+                  | lexp "==" lexp
+                  | lexp
+lexp            ::= term lexpRep
+lexpRep         ::= "+" term lexpRep
+                  | "-" term lexpRep
+                  | <empty>
+term            ::= factor termRep
+termRep         ::= / factor termRep
+                  | * factor termRep
+                  | % factor termRep
+                  | <empty>
+factor          ::= "(" lexp ")"
+                  | IDENT
+                  | NUMBER
+                  | - IDENT
+                  | - NUMBER
+                  | CHARACTER
+                  | funcall
+                  | "read_c" "(" ")"
+                  | "read_i" "(" ")"
+funcall         ::= IDENT "(" arglist ")"
+arglist         ::= IDENT argrep
+                  | <empty>
+argrep          ::= "," IDENT argrep
+                  | <empty>
+vardecl         ::= typeident ";"
+vardecls        ::= vardecl vardecls
+                  | <empty>
+stmt            ::= "{" vardecls stmtlist "}"
+                  | "while" "(" exp ")" stmt
+                  | if "(" exp ")" stmt elseStmt
+                  | IDENT "=" lexp ";"
+                  | "return" returnOptional ";"
+                  | "print_s" "(" STRING_LITERAL ")" ";"
+                  | "print_c" "(" lexp ")" ";"
+                  | "print_i" "(" lexp ")" ";"
+                  | funcall ";"
+                  | "read_c" "(" ")" ";"
+                  | "read_i" "(" ")" ";"
+returnOptional  ::= lexp
+                  | <empty>
+elseStmt        ::= "else" stmt
+                  | <empty>
