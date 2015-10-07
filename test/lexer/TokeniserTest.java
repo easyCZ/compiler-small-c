@@ -423,9 +423,9 @@ public class TokeniserTest {
         verifyTokenFollowedByEOF("\"\\\"\\\"\\\"\"", Token.TokenClass.STRING_LITERAL, "\\\"\\\"\\\"");
     }
 
-//    @Test public void string_literal_single_backslash_is_invalid() {
-//        verifyTokenFollowedByEOF("\"\\\"", Token.TokenClass.INVALID, "\"\\\"");
-//    }
+    @Test public void string_literal_single_backslash_is_invalid() {
+        verifyTokenFollowedByEOF("\"\\\"", Token.TokenClass.INVALID, "\\\"");
+    }
 
 
     @Test public void next_MarksMultilineStringLiteralInvalid() {
