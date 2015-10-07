@@ -156,8 +156,6 @@ public class Parser {
     private void parseVariableDeclaration() {
         parseTypeIdent();
 
-        if (accept(TokenClass.SEMICOLON))
-
         expect(TokenClass.SEMICOLON);
     }
 
@@ -239,9 +237,7 @@ public class Parser {
             expect(TokenClass.LPAR);
             expect(TokenClass.RPAR);
 
-            expect(TokenClass.LBRA);
             parseBody();
-            expect(TokenClass.RBRA);
         }
     }
 
@@ -265,8 +261,17 @@ public class Parser {
             return;
         }
 
+        if (isPrintString()) {
+            expect(TokenClass.PRINT);
+            expect(TokenClass.LPAR);
+            expect(TokenClass.STRING_LITERAL);
+            expect(TokenClass.RPAR);
+            expect(TokenClass.SEMICOLON);
+            return;
+        }
+
         switch (token.tokenClass) {
-            case RBRA:
+            case LBRA:
                 expect(TokenClass.LBRA);
                 parseVariableDeclarations();
                 parserStatementList();
@@ -282,6 +287,7 @@ public class Parser {
                 break;
 
             case IF:
+                expect(TokenClass.IF);
                 expect(TokenClass.LPAR);
                 parseExpression();
                 expect(TokenClass.RPAR);
@@ -291,7 +297,7 @@ public class Parser {
 
             case IDENTIFIER:
                 expect(TokenClass.IDENTIFIER);
-                expect(TokenClass.EQ);
+                expect(TokenClass.ASSIGN);
                 parseLexicalExpression();
                 expect(TokenClass.SEMICOLON);
                 break;
@@ -318,8 +324,31 @@ public class Parser {
         }
     }
 
+    private boolean isPrintString() {
+        return token.tokenClass == TokenClass.PRINT && token.data.equals(Token.PRINT_S);
+    }
+
     private void parseFunctionCall() {
-        // TODO
+        expect(TokenClass.IDENTIFIER);
+        expect(TokenClass.LPAR);
+        parseArgumentList();
+        expect(TokenClass.RPAR);
+    }
+
+    private void parseArgumentList() {
+        if (accept(TokenClass.IDENTIFIER)) {
+            expect(TokenClass.IDENTIFIER);
+            parseArgumentRepetition();
+        }
+    }
+
+    private void parseArgumentRepetition() {
+        if (accept(TokenClass.COMMA)) {
+            expect(TokenClass.COMMA);
+            expect(TokenClass.IDENTIFIER);
+
+            parseArgumentRepetition();
+        }
     }
 
     private void parseReturnOptional() {
@@ -334,24 +363,104 @@ public class Parser {
     }
 
     private void parseLexicalExpressionRepetition() {
-        // TODO
+        if (isLexicalExpressionRep()) {
+            expect(TokenClass.PLUS, TokenClass.MINUS);
+            parseTerm();
+            parseLexicalExpressionRepetition();
+        }
+    }
+
+    private boolean isLexicalExpressionRep() {
+        return accept(TokenClass.PLUS, TokenClass.MINUS);
     }
 
     private void parseTerm() {
-        // TODO
+        parseFactor();
+        parseTermRepetition();
+    }
+
+    private void parseTermRepetition() {
+        if (isTermRepetition()) {
+            parseFactor();
+            parseTermRepetition();
+        }
+    }
+
+    private boolean isTermRepetition() {
+        return accept(TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD);
+    }
+
+    private void parseFactor() {
+        if (isFuncationCall()) {
+            parseFunctionCall();
+        }
+
+        switch (token.tokenClass) {
+            case LPAR:
+                expect(TokenClass.LPAR);
+                parseLexicalExpression();
+                expect(TokenClass.RPAR);
+                break;
+
+            case IDENTIFIER:
+                expect(TokenClass.IDENTIFIER);
+                break;
+
+            case NUMBER:
+                expect(TokenClass.NUMBER);
+                break;
+
+            case MINUS:
+                expect(TokenClass.MINUS);
+                expect(TokenClass.IDENTIFIER, TokenClass.NUMBER);
+                break;
+
+            case READ:
+                expect(TokenClass.READ);
+                expect(TokenClass.LPAR);
+                expect(TokenClass.RPAR);
+        }
     }
 
     private void parseElseStatement() {
-        // TODO
+        if (isElse()) {
+            expect(TokenClass.ELSE);
+            parseStatement();
+        }
+    }
+
+    private boolean isElse() {
+        return accept(TokenClass.ELSE);
     }
 
     private void parseExpression() {
-        // TODO
+        parseLexicalExpression();
+
+        if (isComparator(token)) {
+            expect(
+                    TokenClass.GT,
+                    TokenClass.LT,
+                    TokenClass.GE,
+                    TokenClass.LE,
+                    TokenClass.NE,
+                    TokenClass.EQ
+            );
+            parseLexicalExpression();
+        }
+    }
+
+    private boolean isComparator(Token ahead) {
+        return accept(TokenClass.GT,
+                TokenClass.LT,
+                TokenClass.GE,
+                TokenClass.LE,
+                TokenClass.NE,
+                TokenClass.EQ);
     }
 
     private boolean isStatement() {
         return accept(
-                TokenClass.RBRA,
+                TokenClass.LBRA,
                 TokenClass.WHILE,
                 TokenClass.IF,
                 TokenClass.IDENTIFIER,

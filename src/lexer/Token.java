@@ -77,6 +77,10 @@ public class Token {
             TokenClass.CHAR
     );
 
+    public static final String PRINT_S = "print_s";
+    public static final String PRINT_C = "print_c";
+    public static final String PRINT_I = "print_i";
+
 
     public final TokenClass tokenClass;
     public final String data;
