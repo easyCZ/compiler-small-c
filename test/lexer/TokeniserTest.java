@@ -142,12 +142,6 @@ public class TokeniserTest {
         assertEquals(Token.TokenClass.LT, token.tokenClass);
     }
 
-//    @Test public void next_SkipsMultiLineCommentsSingleLineWithEscaping() {
-//        Token token = getTokeniser("" +
-//                "/* The syntax for comment is \\/* \\*\\/ */<").nextToken();
-//        assertEquals(Token.TokenClass.LT, token.tokenClass);
-//    }
-
     @Test public void next_SkipsMultiLineCommentsTerminalOnNewLine() {
         Token token = getTokeniser("" +
                 "/*\n" +
