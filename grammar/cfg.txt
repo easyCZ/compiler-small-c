@@ -14,9 +14,9 @@ body            ::= "{" vardecls stmtlist "}"
 procedures      ::= procedure procedures
                   |  <empty>
 procedure       ::= type IDENT "(" params ")" body
-params          ::= typeident params
+params          ::= typeident paramRep
                   |  <empty>
-paramRep        ::= "," typeident
+paramRep        ::= "," params
                   | <empty>
 exp             ::= lexp ">" lexp
                   | lexp "<" lexp

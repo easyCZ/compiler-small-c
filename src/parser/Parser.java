@@ -132,8 +132,8 @@ public class Parser {
 
     private void parseProgram() {
         parseIncludes();
-        parseDecls();
-        parseProcs();
+        parseVariableDeclarations();
+        parseProcedures();
         parseMain();
         expect(TokenClass.EOF);
     }
@@ -146,27 +146,84 @@ public class Parser {
         }
     }
 
-    private void parseDecls() {
-	    variableDeclarations();
-    }
-
-    private void variableDeclarations() {
-        Token ahead = lookAhead(1);
-        if (accept(Token.TYPES) && ahead.tokenClass != TokenClass.MAIN) {
-            nextToken();
-            expect(TokenClass.IDENTIFIER);
-            expect(TokenClass.SEMICOLON);
-
-            variableDeclarations();
+    private void parseVariableDeclarations() {
+        if (isVariableDeclaration()) {
+            parseVariableDeclaration();
+            parseVariableDeclarations();
         }
     }
 
-    private void parseProcs() {
-
+    private void parseVariableDeclaration() {
+        parseTypeIdent();
+        expect(TokenClass.SEMICOLON);
     }
 
-    private boolean isTypeIdent() {
-        return accept(Token.TYPES) && lookAhead(1).tokenClass == TokenClass.IDENTIFIER;
+    private void parseProcedures() {
+        if (isProcedure()) {
+            parseProcedure();
+            parseProcedures();
+        }
+    }
+
+    private void parseProcedure() {
+        if (isProcedure()) {
+            nextToken();
+
+            parseType();
+            expect(TokenClass.IDENTIFIER);
+            expect(TokenClass.LPAR);
+            parseParams();
+            expect(TokenClass.RPAR);
+            parseBody();
+
+        }
+    }
+
+    private void parseParams() {
+        if (isTypeIdentifier()) {
+            nextToken();
+
+            parseTypeIdent();
+
+            if (isParamRepetition()) {
+                nextToken();
+
+                parseParamRepetition();
+            }
+        }
+    }
+
+    private void parseParamRepetition() {
+        expect(TokenClass.COMMA);
+        parseTypeIdent();
+
+        parseParams();
+    }
+
+
+    private boolean isParamRepetition() {
+        return accept(TokenClass.COMMA);
+    }
+
+
+    private void parseType() {
+        expect(TokenClass.INT, TokenClass.CHAR,TokenClass.VOID);
+    }
+
+    private boolean isProcedure() {
+        return isTypeIdentifier();
+    }
+
+    private boolean isTypeIdentifier() {
+        return isType() && lookAhead(1).tokenClass == TokenClass.IDENTIFIER;
+    }
+
+    private boolean isType() {
+        return accept(Token.TYPES);
+    }
+
+    private boolean isVariableDeclaration() {
+        return isTypeIdentifier();
     }
 
     private boolean isMain() {
@@ -174,10 +231,8 @@ public class Parser {
     }
 
     private void parseTypeIdent() {
-        if (isTypeIdent()) {
-            nextToken();
+            parseType();
             expect(TokenClass.IDENTIFIER);
-        }
     }
 
     private void parseMain() {
