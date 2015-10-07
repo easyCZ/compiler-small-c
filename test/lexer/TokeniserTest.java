@@ -370,6 +370,10 @@ public class TokeniserTest {
         verifyTokenFollowedByEOF("'_'", Token.TokenClass.CHARACTER, "_");
     }
 
+    @Test public void character_empty_is_invalid() {
+        verifyTokenFollowedByEOF("''", Token.TokenClass.INVALID, "''");
+    }
+
     @Test public void next_MatchesEscapedCharacter() {
         verifyTokenFollowedByEOF("'\\''", Token.TokenClass.CHARACTER, "\\'");
     }

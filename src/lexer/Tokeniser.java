@@ -5,7 +5,9 @@ import lexer.exceptions.UnexpectedCharacter;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Tokeniser {
@@ -19,6 +21,16 @@ public class Tokeniser {
 
     private final HashMap<Character, TokenClass> uniqueMatchers;
     private final HashMap<String, TokenClass> lookaheadMatchers;
+    private final List<String> ESCAPABLES = Arrays.asList(
+            "\\t",
+            "\\b",
+            "\\n",
+            "\\r",
+            "\\f",
+            "\\'",
+            "\\\"",
+            "\\\\"
+    );
 
 
     public Tokeniser(Scanner scanner) {
@@ -283,20 +295,20 @@ public class Tokeniser {
                 c = scanner.next();
                 buffer.append(c);
 
-                // Escape
-                if (c == '\\') {
-                    // Consume next
-                    c = scanner.next();
-                    buffer.append(c);
-
-                }
+                if (isBackslash(c)) buffer.append(escape(c));
             }
 
             c = scanner.next(); // consume end quotes
 
-        } catch (EOFException e) {
+        }
+        catch (EOFException e) {
             error(c, line, col);
             return new Token(Token.TokenClass.INVALID, buffer.toString(), scanner.getLine(), scanner.getColumn());
+        }
+
+        catch (UnexpectedCharacter uc) {
+            error(uc.character, uc.line, uc.col);
+            return new Token(TokenClass.INVALID, buffer.toString(), uc.line, uc.col);
         }
 
         int newLineIndex = buffer.indexOf("\n");
@@ -327,13 +339,6 @@ public class Tokeniser {
         while (!buffer.substring(buffer.length() - 2, buffer.length()).equals("*/")) {
             c = scanner.next();
             buffer.append(c);
-
-//            if (c == '\\') { // We're escaping
-//                // Force read the next char to consume it
-//                c = scanner.next();
-//                buffer.append(c);
-//            }
-
         }
 
         return next();
@@ -384,7 +389,16 @@ public class Tokeniser {
         return next;
     }
 
-    private boolean isEscaped(char c) {
+    private char escape(char c) throws UnexpectedCharacter, IOException {
+        // Received a \, next should be an escape char
+        if (ESCAPABLES.contains(Character.toString(c) + scanner.peek())) {
+            // consume and pass back
+            return scanner.next();
+        }
+        throw new UnexpectedCharacter(scanner.peek(), scanner.getLine(), scanner.getColumn());
+    }
+
+    private boolean isBackslash(char c) {
         return c == '\\';
     }
 
