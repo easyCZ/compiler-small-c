@@ -413,6 +413,10 @@ public class Parser {
                 expect(TokenClass.IDENTIFIER, TokenClass.NUMBER);
                 break;
 
+            case CHARACTER:
+                expect(TokenClass.CHARACTER);
+                break;
+
             case READ:
                 expect(TokenClass.READ);
                 expect(TokenClass.LPAR);

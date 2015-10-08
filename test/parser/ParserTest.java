@@ -124,10 +124,14 @@ public class ParserTest {
     /* chars */
     @Test public void parsesCharDeclarations() {
         Parser p = getParserAndParse("" +
+                "char a; \n" +
+                "char b;\n" +
+                "char abcd;\n" +
+
                 "void main() {\n" +
-                    "char a = 'a'; \n" +
-                    "char b = 'b'\n" +
-                    "char abcd = '\\'';\n" +
+                    "a = 'a'; \n" +
+                    "b = 'b';\n" +
+                    "abcd = '\\'';\n" +
                 "}"
         );
         assertErrorCountAndEOF(p, 0);
@@ -185,7 +189,7 @@ public class ParserTest {
     private void assertErrorCountAndEOF(Parser p, int count) {
         assertEquals(count, p.getErrorCount());
         // End of file is followed by null
-        assertEquals(null, p.getToken());
+        assertEquals(Token.TokenClass.EOF, p.getToken().tokenClass);
     }
 
     private void assertErrorCountAndToken(Parser p, int count, Token.TokenClass t) {
