@@ -230,15 +230,13 @@ public class Parser {
     }
 
     private void parseMain() {
-        if (isMain()) {
-            nextToken(); // consume type
+        nextToken(); // consume type
 
-            expect(TokenClass.MAIN);
-            expect(TokenClass.LPAR);
-            expect(TokenClass.RPAR);
+        expect(TokenClass.MAIN);
+        expect(TokenClass.LPAR);
+        expect(TokenClass.RPAR);
 
-            parseBody();
-        }
+        parseBody();
     }
 
     private void parseBody() {

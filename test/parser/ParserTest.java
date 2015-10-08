@@ -51,61 +51,86 @@ public class ParserTest {
 
     /* include */
 
-    @Test public void parseIncludes_CorrectlyParsesSingleInclude() {
-        Parser parser = getParserAndParse(INCLUDE_STATEMENT);
-        assertEquals(0, parser.getErrorCount());
+//    @Test public void parseIncludes_CorrectlyParsesSingleInclude() {
+//        Parser parser = getParserAndParse(INCLUDE_STATEMENT);
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parsesMultipleIncludeStatements() {
+//        Parser parser = getParser(duplicate(INCLUDE_STATEMENT, 3));
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    /* Var decls */
+//
+//    @Test public void parseIntegerVariableDeclaration() {
+//        Parser parser = getParserAndParse(INT_VAR_DECL);
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parseMultipleIntegerVariableDeclarations() {
+//        Parser parser = getParserAndParse(duplicate(INT_VAR_DECL, 3));
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parseCharacterVariableDeclaration() {
+//        Parser parser = getParserAndParse(CHAR_VAR_DECL);
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parserMultipleCharacterVariableDeclarations() {
+//        Parser parser = getParserAndParse(duplicate(CHAR_VAR_DECL, 3));
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parseVoidVariableDeclaration() {
+//        Parser parser = getParserAndParse(VOID_VAR_DECL);
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parseMultipleVoidVariableDeclarations() {
+//        Parser parser = getParserAndParse(duplicate(VOID_VAR_DECL, 3));
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    @Test public void parsesMixedVariableDeclarations() {
+//        List<Token> exp = new ArrayList<>(INT_VAR_DECL);
+//        exp.addAll(CHAR_VAR_DECL);
+//        exp.addAll(VOID_VAR_DECL);
+//
+//        Parser parser = getParserAndParse(exp);
+//        assertEquals(0, parser.getErrorCount());
+//    }
+//
+//    /* procedures */
+//    @Test public void parsesMainWithNoContent() {
+//        Parser parser = getParserAndParse(VOID_MAIN_EMPTY_FUNC);
+//        assertErrorCountAndEOF(parser);
+//    }
+
+    /* Comments */
+    @Test public void failsWithSingleComment() {
+        Parser p = getParserAndParse("// This is a comment");
+        assertErrorCountAndToken(p, 1, Token.TokenClass.EOF);
     }
 
-    @Test public void parsesMultipleIncludeStatements() {
-        Parser parser = getParser(duplicate(INCLUDE_STATEMENT, 3));
-        assertEquals(0, parser.getErrorCount());
+    @Test public void failsWithMultilineComment() {
+        Parser p = getParserAndParse("/* This is a\n" +
+                "multiline\n" +
+                "comment */");
+        assertErrorCountAndToken(p, 1, Token.TokenClass.EOF);
     }
 
-    /* Var decls */
-
-    @Test public void parseIntegerVariableDeclaration() {
-        Parser parser = getParserAndParse(INT_VAR_DECL);
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parseMultipleIntegerVariableDeclarations() {
-        Parser parser = getParserAndParse(duplicate(INT_VAR_DECL, 3));
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parseCharacterVariableDeclaration() {
-        Parser parser = getParserAndParse(CHAR_VAR_DECL);
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parserMultipleCharacterVariableDeclarations() {
-        Parser parser = getParserAndParse(duplicate(CHAR_VAR_DECL, 3));
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parseVoidVariableDeclaration() {
-        Parser parser = getParserAndParse(VOID_VAR_DECL);
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parseMultipleVoidVariableDeclarations() {
-        Parser parser = getParserAndParse(duplicate(VOID_VAR_DECL, 3));
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    @Test public void parsesMixedVariableDeclarations() {
-        List<Token> exp = new ArrayList<>(INT_VAR_DECL);
-        exp.addAll(CHAR_VAR_DECL);
-        exp.addAll(VOID_VAR_DECL);
-
-        Parser parser = getParserAndParse(exp);
-        assertEquals(0, parser.getErrorCount());
-    }
-
-    /* procedures */
-    @Test public void parsesMainWithNoContent() {
-        Parser parser = getParserAndParse(VOID_MAIN_EMPTY_FUNC);
-        assertErrorCountAndEOF(parser);
+    /* chars */
+    @Test public void parsesCharDeclarations() {
+        Parser p = getParserAndParse("" +
+                "void main() {\n" +
+                    "char a = 'a'; \n" +
+                    "char b = 'b'\n" +
+                    "char abcd = '\\'';\n" +
+                "}"
+        );
+        assertErrorCountAndEOF(p, 0);
     }
 
 
@@ -145,7 +170,12 @@ public class ParserTest {
         Parser p = getParser(tokens);
         p.parse();
         return p;
+    }
 
+    private Parser getParserAndParse(String program) {
+        Parser p = getParser(program);
+        p.parse();
+        return p;
     }
 
     private void assertErrorCountAndEOF(Parser p) {
@@ -156,6 +186,11 @@ public class ParserTest {
         assertEquals(count, p.getErrorCount());
         // End of file is followed by null
         assertEquals(null, p.getToken());
+    }
+
+    private void assertErrorCountAndToken(Parser p, int count, Token.TokenClass t) {
+        assertEquals(count, p.getErrorCount());
+        assertEquals(t, p.getToken().tokenClass);
     }
 
     private List<Token> duplicate(List<Token> what, int times) {
