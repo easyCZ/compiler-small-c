@@ -245,6 +245,31 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    /* Comparison expressions */
+    @Test public void parseExpression_failsWithEmptyBothComparisons() {
+        Parser p = getParser(" == ");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p, 2);
+    }
+
+    @Test public void parseExpression_failsWithEmptyRightComparison() {
+        Parser p = getParser("a == ");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p, 1);
+    }
+
+    @Test public void parseExpression_failsWithEmptyLeftComparison() {
+        Parser p = getParser(" == a");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p, 1);
+    }
+
 
 
 

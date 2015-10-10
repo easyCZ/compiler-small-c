@@ -5,8 +5,14 @@ char variable2;
 
 void test_method(int value) {
   print_s("Test method returns: ");print_i(value);
-  return value + 1;
+
+  if ( == ) {}
+
+  return value + 2;
+
 }
+
+void foo() {}
 
 void main() {
   int n;

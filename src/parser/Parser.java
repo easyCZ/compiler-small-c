@@ -421,6 +421,11 @@ public class Parser {
                 expect(TokenClass.READ);
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
+                break;
+
+            default:
+                error(TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.MINUS, TokenClass.CHARACTER, TokenClass.READ);
+                break;
         }
     }
 
@@ -435,7 +440,7 @@ public class Parser {
         return accept(TokenClass.ELSE);
     }
 
-    private void parseExpression() {
+    public void parseExpression() {
         parseLexicalExpression();
 
         if (isComparator(token)) {
