@@ -531,6 +531,26 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseProcedures_ParsesProceduresWithSingleArgument() {
+        Parser p = getParser("" +
+                "void foo(int a) {} \n" +
+                "int bar(char b) {} \n" +
+                "char zoo(int a) {}");
+        p.nextToken();
+        p.parseProcedures();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseProcedures_ParsesProceduresWithMultipleArguments() {
+        Parser p = getParser("" +
+                "int foo(int a, char b, void c) {}");
+        p.nextToken();
+        p.parseProcedures();
+
+        assertErrorCountAndEOF(p);
+    }
+
     /* Function calls */
     @Test public void functionCall() {
         Parser p = getParser("foo(a);");

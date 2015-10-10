@@ -155,7 +155,6 @@ public class Parser {
 
     private void parseVariableDeclaration() {
         parseTypeIdent();
-
         expect(TokenClass.SEMICOLON);
     }
 
@@ -180,19 +179,18 @@ public class Parser {
             parseTypeIdent();
 
             if (isParamRepetition()) {
-                nextToken();
-
-                parseParamRepetition();
+                expect(TokenClass.COMMA);
+                parseParams();
             }
         }
     }
 
-    private void parseParamRepetition() {
-        expect(TokenClass.COMMA);
-        parseTypeIdent();
-
-        parseParams();
-    }
+//    private void parseParamRepetition() {
+//        expect(TokenClass.COMMA);
+//        parseTypeIdent();
+//
+//        parseParams();
+//    }
 
 
     private boolean isParamRepetition() {
@@ -201,7 +199,7 @@ public class Parser {
 
 
     private void parseType() {
-        expect(TokenClass.INT, TokenClass.CHAR,TokenClass.VOID);
+        expect(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
     }
 
     private boolean isProcedure() {
