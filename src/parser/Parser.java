@@ -86,7 +86,7 @@ public class Parser {
     /*
      * Consumes the next token from the tokeniser or the buffer if not empty.
      */
-    private void nextToken() {
+    public void nextToken() {
         if (!buffer.isEmpty())
             token = buffer.remove();
         else
@@ -253,7 +253,7 @@ public class Parser {
         }
     }
 
-    private void parseStatement() {
+    public void parseStatement() {
         if (isFuncationCall()) {
             parseFunctionCall();
             return;
@@ -326,7 +326,7 @@ public class Parser {
         return token.tokenClass == TokenClass.PRINT && token.data.equals(Token.PRINT_S);
     }
 
-    private void parseFunctionCall() {
+    public void parseFunctionCall() {
         expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LPAR);
         parseArgumentList();

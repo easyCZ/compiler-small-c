@@ -143,6 +143,62 @@ public class ParserTest {
         assertErrorCountAndEOF(p, 1);
     }
 
+    @Test public void parsFunctionCall_CorrectlyParsesMultipleArguments() {
+        Parser p = getParser("hello(a, b, c)");
+        p.nextToken();
+        p.parseFunctionCall();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parsFunctionCall_CorrectlyParsesNoArguments() {
+        Parser p = getParser("hello()");
+        p.nextToken();
+        p.parseFunctionCall();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parsFunctionCall_FailsWithInnerFunctionCall() {
+        Parser p = getParser("hello(foo())");
+        p.nextToken();
+        p.parseFunctionCall();
+
+        assertErrorCountAndToken(p, 1, Token.TokenClass.LPAR);
+    }
+
+    @Test public void parsFunctionCall_FailsWithTrailingComma() {
+        Parser p = getParser("hello(a,)");
+        p.nextToken();
+        p.parseFunctionCall();
+
+        assertErrorCountAndEOF(p, 1);
+    }
+
+    // Prints
+    @Test public void parseStatement_PrintString() {
+        Parser p = getParser("print_s(\"Hello world!\");");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_PrintInteger() {
+        Parser p = getParser("print_i(1234);");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_PrintCharacter() {
+        Parser p = getParser("print_c('c');");
+        p.nextToken();
+        p.parseStatement();
+        assertErrorCountAndEOF(p);
+    }
+
 
 
 
