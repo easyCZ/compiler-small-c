@@ -315,6 +315,23 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseNestedStatement() {
+        Parser p = getParser("" +
+                "k = read_i() + -15 * -12;");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_WithFunctionCalls() {
+        Parser p = getParser("a = foo() + foo(a) + bar(b, c, d, e);");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
     @Test public void parseStatement_ParsesNestedIfWithElse() {
         Parser p = getParser("" +
                 "if (a == b) { \n" +
@@ -388,7 +405,7 @@ public class ParserTest {
     }
 
     @Test public void parseStatement_ParsesWhileWithTwoFunctionCallsAndComaprison() {
-        Parser p = getParser("while (foo() + bar() <= 'a') {}");
+        Parser p = getParser("while (foo() + bar() + 10 <= 'a') {}");
         p.nextToken();
         p.parseStatement();
 
@@ -551,9 +568,33 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseProcedures_ParseRecursiveFunCalls() {
+        Parser p = getParser("" +
+                "int foo(int a, char b, void c) {" +
+                "   int k;" +
+                "   int blah;" +
+
+                "   blah = 2;" +
+                "   k = foo(blah, b, c);" +
+                "   return foo(blah, b, c) + foo(k, b, c);" +
+                "}");
+        p.nextToken();
+        p.parseProcedures();
+
+        assertErrorCountAndEOF(p);
+    }
+
     /* Function calls */
     @Test public void functionCall() {
         Parser p = getParser("foo(a);");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void printRead() {
+        Parser p = getParser("print_c(read_c());");
         p.nextToken();
         p.parseStatement();
 

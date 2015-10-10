@@ -185,14 +185,6 @@ public class Parser {
         }
     }
 
-//    private void parseParamRepetition() {
-//        expect(TokenClass.COMMA);
-//        parseTypeIdent();
-//
-//        parseParams();
-//    }
-
-
     private boolean isParamRepetition() {
         return accept(TokenClass.COMMA);
     }
@@ -216,10 +208,6 @@ public class Parser {
 
     private boolean isVariableDeclaration() {
         return isTypeIdentifier() && lookAhead(2).tokenClass == TokenClass.SEMICOLON;
-    }
-
-    private boolean isMain() {
-        return accept(Token.TYPES) && lookAhead(1).tokenClass == TokenClass.MAIN;
     }
 
     private void parseTypeIdent() {
@@ -448,10 +436,7 @@ public class Parser {
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 break;
-//
-//            default:
-//                error(TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.MINUS, TokenClass.CHARACTER, TokenClass.READ);
-//                break;
+
         }
     }
 
