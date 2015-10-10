@@ -270,6 +270,79 @@ public class ParserTest {
         assertErrorCountAndEOF(p, 1);
     }
 
+    @Test public void parseExpression_GreaterThan() {
+        Parser p = getParser("1 > 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_LessThan() {
+        Parser p = getParser("1 < 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_LessThanEqual() {
+        Parser p = getParser("1 <= 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_GreaterThanEqual() {
+        Parser p = getParser("1 >= 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_Equal() {
+        Parser p = getParser("1 == 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_NotEqual() {
+        Parser p = getParser("1 != 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_NestedSimple() {
+        Parser p = getParser("-1 - 1 + 3 == 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_Nested() {
+        Parser p = getParser("1 > 2 < 3 >= 4 <= 5 != 6 == 6");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseExpression_Single() {
+        Parser p = getParser("1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+
     /* Conditionals */
     @Test public void parseStatement_ParsesIf() {
         Parser p = getParser("if (a == b) {}");
