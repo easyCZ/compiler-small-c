@@ -1,31 +1,8 @@
 #include "io.h"
 
-//int variable1;
-//char variable2;
-//
-//void test_method(int value) {
-//  print_s("Test method returns: ");print_i(value);
-//  return value + 2;
-//}
-
-void foo() {
-  if (a == b) if (c == d) if (d == e) {} else {} else {} else {
-    if (foo <= bar) {} else {}
-  }
-}
-
 void main() {
-  int n;
-  int first;
-  int second;
-  int next;
-  int c;
-  char t;
 
   // read n from the standard input
-  /*
-    This is a multiline comment
-  */
   n = read_i();
 
   first = 0;
@@ -41,16 +18,12 @@ void main() {
       next = c;
     else
       {
-    next = first + second;
-    first = second;
-    second = next;
+	next = first + second;
+	first = second;
+	second = next;
       }
     print_i(next);
     print_s(" ");
     c = c+1;
   }
 }
-
-/*
-  Some more after program contents, generally a license
-*/

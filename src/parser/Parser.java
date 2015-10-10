@@ -378,7 +378,7 @@ public class Parser {
     }
 
     private boolean isFactor() {
-        return accept(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR) || isFuncationCall();
+        return accept(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR, TokenClass.READ) || isFuncationCall();
     }
 
     private void errorExpectedFactor() {
