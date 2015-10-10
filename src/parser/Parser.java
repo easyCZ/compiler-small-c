@@ -239,7 +239,7 @@ public class Parser {
         parseBody();
     }
 
-    private void parseBody() {
+    public void parseBody() {
         expect(TokenClass.LBRA);
         parseVariableDeclarations();
         parserStatementList();

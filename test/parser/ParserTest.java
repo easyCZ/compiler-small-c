@@ -410,6 +410,19 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    /* While */
+    // TODO
+
+    /* Body */
+    @Test public void parseBody_EmptyIsValid() {
+        Parser p = getParser("{{{{{{{{{{}}}}}}}}}}");
+        p.nextToken(); 
+        p.parseBody();
+
+        assertErrorCountAndEOF(p);
+
+    }
+
     /* Terms */
     @Test public void parseTerms_ParsesSingle() {
         Parser p = getParser("1");
