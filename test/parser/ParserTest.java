@@ -410,6 +410,88 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    /* Terms */
+    @Test public void parseTerms_ParsesSingle() {
+        Parser p = getParser("1");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChainedDiv() {
+        Parser p = getParser("1 / 1");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChainedTimes() {
+        Parser p = getParser("1 * 1");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChainedMod() {
+        Parser p = getParser("1 % 1");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChained() {
+        Parser p = getParser("1 / 1 * 5 % 3");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChainedWithFunctionCalls() {
+        Parser p = getParser("1 / foo() * bar() % 3");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseTerms_ParsesChainedWithIdentifiers() {
+        Parser p = getParser("a / b * c % 3");
+        p.nextToken();
+        p.parseTerm();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    /* Lexical expressions */
+    @Test public void parseLexicalExpression_Arithmetic() {
+        Parser p = getParser("1 + 2 + 3");
+        p.nextToken();
+        p.parseLexicalExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseLexicalExpression_ArithmeticWithTimes() {
+        Parser p = getParser("1 + 2 * 3");
+        p.nextToken();
+        p.parseLexicalExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseLexicalExpression_ArithmeticWithEquals() {
+        Parser p = getParser("1 + 2 * 3 == 7");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
     /* Functions */
     @Test public void parseProcedures_ParsesEmptyFunction() {
         Parser p = getParser("void foo() {}");

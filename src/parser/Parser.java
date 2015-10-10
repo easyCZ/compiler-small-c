@@ -364,7 +364,7 @@ public class Parser {
         }
     }
 
-    private void parseLexicalExpression() {
+    public void parseLexicalExpression() {
         if (isTerm()) {
             parseTerm();
             parseLexicalExpressionRepetition();
@@ -398,7 +398,7 @@ public class Parser {
         return accept(TokenClass.PLUS, TokenClass.MINUS);
     }
 
-    private void parseTerm() {
+    public void parseTerm() {
         parseFactor();
         parseTermRepetition();
     }
