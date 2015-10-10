@@ -270,6 +270,75 @@ public class ParserTest {
         assertErrorCountAndEOF(p, 1);
     }
 
+    /* Conditionals */
+    @Test public void parseStatement_ParsesIf() {
+        Parser p = getParser("if (a == b) {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesIfAndElse() {
+        Parser p = getParser("if (a == b) {} else {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesNestedIf() {
+        Parser p = getParser("" +
+                "if (a == b) { \n" +
+                "   if (c == b) {} \n" +
+                "}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesNestedIfWithElse() {
+        Parser p = getParser("" +
+                "if (a == b) { \n" +
+                "   if (c == b) {} else {}\n" +
+                "}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesNestedInlineIf() {
+        Parser p = getParser("" +
+                "if (a == b) if (c == b) {} else {} else {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_CrazyNestedIf() {
+        Parser p = getParser("" +
+                "if (a == b) " +
+                "   if (c == d) " +
+                "       if (d == e) {} " +
+                "       else {} " +
+                "   else {} " +
+                "else {\n" +
+                "   if (foo <= bar) {} " +
+                "   else " +
+                "       if (1 <= 2) print_i(1);" +
+                "       else print_i(3);" +
+                "}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+
+
 
 
 

@@ -1,18 +1,18 @@
 #include "io.h"
 
-int variable1;
-char variable2;
+//int variable1;
+//char variable2;
+//
+//void test_method(int value) {
+//  print_s("Test method returns: ");print_i(value);
+//  return value + 2;
+//}
 
-void test_method(int value) {
-  print_s("Test method returns: ");print_i(value);
-
-  if ( == ) {}
-
-  return value + 2;
-
+void foo() {
+  if (a == b) if (c == d) if (d == e) {} else {} else {} else {
+    if (foo <= bar) {} else {}
+  }
 }
-
-void foo() {}
 
 void main() {
   int n;
