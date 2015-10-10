@@ -319,6 +319,15 @@ public class Parser {
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 expect(TokenClass.SEMICOLON);
+                break;
+
+            default:
+                error(
+                        TokenClass.LBRA,
+                        TokenClass.WHILE,
+                        TokenClass.IF,
+                        TokenClass.IDENTIFIER,
+                        TokenClass.READ);
         }
     }
 
@@ -356,8 +365,25 @@ public class Parser {
     }
 
     private void parseLexicalExpression() {
-        parseTerm();
-        parseLexicalExpressionRepetition();
+        if (isTerm()) {
+            parseTerm();
+            parseLexicalExpressionRepetition();
+        }
+        else errorExpectedFactor();
+
+
+    }
+
+    private boolean isTerm() {
+        return isFactor();
+    }
+
+    private boolean isFactor() {
+        return accept(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR) || isFuncationCall();
+    }
+
+    private void errorExpectedFactor() {
+        error(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR);
     }
 
     private void parseLexicalExpressionRepetition() {
@@ -422,10 +448,10 @@ public class Parser {
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 break;
-
-            default:
-                error(TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.MINUS, TokenClass.CHARACTER, TokenClass.READ);
-                break;
+//
+//            default:
+//                error(TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.MINUS, TokenClass.CHARACTER, TokenClass.READ);
+//                break;
         }
     }
 
