@@ -159,7 +159,7 @@ public class Parser {
         expect(TokenClass.SEMICOLON);
     }
 
-    private void parseProcedures() {
+    public void parseProcedures() {
         if (isProcedure()) {
             parseProcedure();
             parseProcedures();
@@ -405,6 +405,7 @@ public class Parser {
 
     private void parseTermRepetition() {
         if (isTermRepetition()) {
+            expect(TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD);
             parseFactor();
             parseTermRepetition();
         }

@@ -327,7 +327,7 @@ public class ParserTest {
     }
 
     @Test public void parseExpression_Nested() {
-        Parser p = getParser("1 > 2 < 3 >= 4 <= 5 != 6 == 6");
+        Parser p = getParser("15 * 1 - 3 <= 2");
         p.nextToken();
         p.parseExpression();
 
@@ -409,6 +409,27 @@ public class ParserTest {
 
         assertErrorCountAndEOF(p);
     }
+
+    /* Functions */
+    @Test public void parseProcedures_ParsesEmptyFunction() {
+        Parser p = getParser("void foo() {}");
+        p.nextToken();
+        p.parseProcedures();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseProcedures_ParsesEmptyFunctionMultiple() {
+        Parser p = getParser("" +
+                "void foo() {}\n" +
+                "void foo() {}\n" +
+                "void foo() {}\n");
+        p.nextToken();
+        p.parseProcedures();
+
+        assertErrorCountAndEOF(p);
+    }
+
 
 
 
