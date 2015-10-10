@@ -184,6 +184,22 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseStatement_PrintStringWithFunctionCall() {
+        Parser p = getParser("print_s(get_string());");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndToken(p, 1, Token.TokenClass.IDENTIFIER);
+    }
+
+    @Test public void parseStatement_PrintStringWithFunctionCallWithArguments() {
+        Parser p = getParser("print_s(get_string(a, b, c));");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndToken(p, 1, Token.TokenClass.IDENTIFIER);
+    }
+
     @Test public void parseStatement_PrintInteger() {
         Parser p = getParser("print_i(1234);");
         p.nextToken();
@@ -192,8 +208,38 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseStatement_PrintIntegerWithFunctionCall() {
+        Parser p = getParser("print_i(get_num());");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_PrintIntegerWithFunctionCallWithArguments() {
+        Parser p = getParser("print_i(get_num(a, b, c));");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
     @Test public void parseStatement_PrintCharacter() {
         Parser p = getParser("print_c('c');");
+        p.nextToken();
+        p.parseStatement();
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_PrintCharacterWithFunctionCall() {
+        Parser p = getParser("print_c(foo());");
+        p.nextToken();
+        p.parseStatement();
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_PrintCharacterWithFunctionCallAndArguments() {
+        Parser p = getParser("print_c(foo(a, b, c));");
         p.nextToken();
         p.parseStatement();
         assertErrorCountAndEOF(p);
