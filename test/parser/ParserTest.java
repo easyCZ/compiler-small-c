@@ -50,63 +50,7 @@ public class ParserTest {
     );
 
     /* include */
-
-//    @Test public void parseIncludes_CorrectlyParsesSingleInclude() {
-//        Parser parser = getParserAndParse(INCLUDE_STATEMENT);
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parsesMultipleIncludeStatements() {
-//        Parser parser = getParser(duplicate(INCLUDE_STATEMENT, 3));
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    /* Var decls */
-//
-//    @Test public void parseIntegerVariableDeclaration() {
-//        Parser parser = getParserAndParse(INT_VAR_DECL);
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parseMultipleIntegerVariableDeclarations() {
-//        Parser parser = getParserAndParse(duplicate(INT_VAR_DECL, 3));
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parseCharacterVariableDeclaration() {
-//        Parser parser = getParserAndParse(CHAR_VAR_DECL);
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parserMultipleCharacterVariableDeclarations() {
-//        Parser parser = getParserAndParse(duplicate(CHAR_VAR_DECL, 3));
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parseVoidVariableDeclaration() {
-//        Parser parser = getParserAndParse(VOID_VAR_DECL);
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parseMultipleVoidVariableDeclarations() {
-//        Parser parser = getParserAndParse(duplicate(VOID_VAR_DECL, 3));
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    @Test public void parsesMixedVariableDeclarations() {
-//        List<Token> exp = new ArrayList<>(INT_VAR_DECL);
-//        exp.addAll(CHAR_VAR_DECL);
-//        exp.addAll(VOID_VAR_DECL);
-//
-//        Parser parser = getParserAndParse(exp);
-//        assertEquals(0, parser.getErrorCount());
-//    }
-//
-//    /* procedures */
-//    @Test public void parsesMainWithNoContent() {
-//        Parser parser = getParserAndParse(VOID_MAIN_EMPTY_FUNC);
-//        assertErrorCountAndEOF(parser);
-//    }
+    // TODO
 
     /* Comments */
     @Test public void failsWithSingleComment() {
@@ -411,12 +355,50 @@ public class ParserTest {
     }
 
     /* While */
-    // TODO
+    @Test public void parseStatement_ParsesWhile() {
+        Parser p = getParser("while (c < 10) {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesWhileWithJustVarRef() {
+        Parser p = getParser("while (c) {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesWhileWithFunctionCall() {
+        Parser p = getParser("while (foo()) {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesWhileWithTwoFunctionCalls() {
+        Parser p = getParser("while (foo() + bar()) {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseStatement_ParsesWhileWithTwoFunctionCallsAndComaprison() {
+        Parser p = getParser("while (foo() + bar() <= 'a') {}");
+        p.nextToken();
+        p.parseStatement();
+
+        assertErrorCountAndEOF(p);
+    }
 
     /* Body */
     @Test public void parseBody_EmptyIsValid() {
         Parser p = getParser("{{{{{{{{{{}}}}}}}}}}");
-        p.nextToken(); 
+        p.nextToken();
         p.parseBody();
 
         assertErrorCountAndEOF(p);
@@ -549,7 +531,14 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    /* Function calls */
+    @Test public void functionCall() {
+        Parser p = getParser("foo(a);");
+        p.nextToken();
+        p.parseStatement();
 
+        assertErrorCountAndEOF(p);
+    }
 
 
 

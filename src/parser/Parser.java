@@ -256,6 +256,7 @@ public class Parser {
     public void parseStatement() {
         if (isFuncationCall()) {
             parseFunctionCall();
+            expect(TokenClass.SEMICOLON);
             return;
         }
 
