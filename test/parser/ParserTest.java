@@ -492,6 +492,30 @@ public class ParserTest {
         assertErrorCountAndEOF(p);
     }
 
+    @Test public void parseLexicalExpression_ArtihmeticWithBrackets() {
+        Parser p = getParser("(1 + 2) * 3 == 3 * (1 + 1 + 1) / 1");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndEOF(p);
+    }
+
+    @Test public void parseLexicalExpression_BrokenArithmetic() {
+        Parser p = getParser("1 + 2 * 3 - (i = 4) == 7");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndToken(p, 1, Token.TokenClass.ASSIGN);
+    }
+
+    @Test public void parseLexicalExpression_BrokenArithmeticWithoutEquals() {
+        Parser p = getParser("1 + 2 * 3 - (i = 4)");
+        p.nextToken();
+        p.parseExpression();
+
+        assertErrorCountAndToken(p, 1, Token.TokenClass.ASSIGN);
+    }
+
     /* Functions */
     @Test public void parseProcedures_ParsesEmptyFunction() {
         Parser p = getParser("void foo() {}");
