@@ -13,7 +13,7 @@ main            ::= "void" "main" "(" ")" body
 body            ::= "{" vardecls stmtlist "}"
 procedures      ::= procedure procedures
                   |  <empty>
-procedure       ::= type IDENT "(" params ")" body
+procedure       ::= typeident "(" params ")" body
 params          ::= typeident paramRep
                   |  <empty>
 paramRep        ::= "," params
