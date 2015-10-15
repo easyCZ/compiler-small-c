@@ -1,5 +1,8 @@
 package parser;
 
+import ast.Procedure;
+import ast.Program;
+import ast.VarDecl;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
@@ -27,11 +30,11 @@ public class Parser {
         this.tokeniser = tokeniser;
     }
 
-    public void parse() {
+    public Program parse() {
         // get the first token
         nextToken();
 
-        parseProgram();
+        return parseProgram();
     }
 
     public int getErrorCount() {
@@ -130,14 +133,17 @@ public class Parser {
     }
 
 
-    private void parseProgram() {
+    private Program parseProgram() {
         parseIncludes();
-        parseVariableDeclarations();
-        parseProcedures();
-        parseMain();
+        List<VarDecl> varDecls = parseVariableDeclarations();
+        List<Procedure> procs = parseProcedures();
+        Procedure main = parseMain();
+
         expect(TokenClass.EOF);
+        return new Program(varDecls, procs, main);
     }
 
+    // includes are ignored, so does not need to return an AST node
     private void parseIncludes() {
 	    if (accept(TokenClass.INCLUDE)) {
             nextToken();
@@ -146,11 +152,13 @@ public class Parser {
         }
     }
 
-    private void parseVariableDeclarations() {
+    private List<VarDecl> parseVariableDeclarations() {
         if (isVariableDeclaration()) {
             parseVariableDeclaration();
             parseVariableDeclarations();
         }
+        // TODO
+        return null;
     }
 
     private void parseVariableDeclaration() {
@@ -158,11 +166,13 @@ public class Parser {
         expect(TokenClass.SEMICOLON);
     }
 
-    public void parseProcedures() {
+    public List<Procedure> parseProcedures() {
         if (isProcedure()) {
             parseProcedure();
             parseProcedures();
         }
+        // TODO
+        return null;
     }
 
     private void parseProcedure() {
@@ -215,7 +225,7 @@ public class Parser {
             expect(TokenClass.IDENTIFIER);
     }
 
-    private void parseMain() {
+    private Procedure parseMain() {
         nextToken(); // consume type
 
         expect(TokenClass.MAIN);
@@ -223,6 +233,9 @@ public class Parser {
         expect(TokenClass.RPAR);
 
         parseBody();
+
+        // TODO
+        return null;
     }
 
     public void parseBody() {
