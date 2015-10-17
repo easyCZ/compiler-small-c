@@ -1,11 +1,10 @@
 package parser;
 
-import ast.Procedure;
-import ast.Program;
-import ast.VarDecl;
+import ast.*;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
+import parser.wrappers.TypeIdentifier;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -152,18 +151,22 @@ public class Parser {
         }
     }
 
-    private List<VarDecl> parseVariableDeclarations() {
+    public List<VarDecl> parseVariableDeclarations() {
+        List<VarDecl> variableDeclarations = new LinkedList<>();
+
         if (isVariableDeclaration()) {
-            parseVariableDeclaration();
-            parseVariableDeclarations();
+            variableDeclarations.add(parseVariableDeclaration());
+            variableDeclarations.addAll(parseVariableDeclarations());
         }
-        // TODO
-        return null;
+
+        return variableDeclarations;
     }
 
-    private void parseVariableDeclaration() {
-        parseTypeIdent();
+    private VarDecl parseVariableDeclaration() {
+
+        TypeIdentifier typeIdentifier = parseTypeIdent();
         expect(TokenClass.SEMICOLON);
+        return new VarDecl(typeIdentifier.type, typeIdentifier.var);
     }
 
     public List<Procedure> parseProcedures() {
@@ -200,8 +203,20 @@ public class Parser {
     }
 
 
-    private void parseType() {
-        expect(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
+    private Type parseType() {
+        Token t = expect(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID);
+
+        assert t != null;
+        switch (t.tokenClass) {
+            case INT:
+                return Type.INT;
+            case CHAR:
+                return Type.CHAR;
+            case VOID:
+                return Type.VOID;
+        }
+
+        return null;
     }
 
     private boolean isProcedure() {
@@ -220,9 +235,10 @@ public class Parser {
         return isTypeIdentifier() && lookAhead(2).tokenClass == TokenClass.SEMICOLON;
     }
 
-    private void parseTypeIdent() {
-            parseType();
-            expect(TokenClass.IDENTIFIER);
+    private TypeIdentifier parseTypeIdent() {
+        Type type = parseType();
+        Token identifier = expect(TokenClass.IDENTIFIER);
+        return new TypeIdentifier(type, new Var(identifier.data));
     }
 
     private Procedure parseMain() {

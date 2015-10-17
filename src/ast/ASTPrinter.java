@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 public class ASTPrinter implements ASTVisitor<Void> {
@@ -44,7 +42,7 @@ public class ASTPrinter implements ASTVisitor<Void> {
         }
         p.main.accept(this);
         writer.print(")");
-	writer.flush();
+	    writer.flush();
         return null;
     }
 
