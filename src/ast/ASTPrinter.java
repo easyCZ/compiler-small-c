@@ -2,6 +2,7 @@ package ast;
 
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.While;
 
 import java.io.PrintWriter;
 
@@ -72,6 +73,12 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitStrLiteral(StrLiteral strLiteral) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public Void visitWhile(While whilez) {
         // TODO
         return null;
     }

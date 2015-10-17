@@ -3,6 +3,7 @@ package parser;
 import ast.*;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.While;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
@@ -308,20 +309,19 @@ public class Parser {
         switch (token.tokenClass) {
             case LBRA:
                 expect(TokenClass.LBRA);
-                parseVariableDeclarations();
-                parserStatementList();
+                List<VarDecl> varDecls = parseVariableDeclarations();
+                List<Stmt> statements = parserStatementList();
                 expect(TokenClass.RBRA);
-                // TODO: AST
-                return null;
+
+                return new Block(varDecls, statements);
 
             case WHILE:
                 expect(TokenClass.WHILE);
                 expect(TokenClass.LPAR);
-                parseExpression();
+                Expr expr = parseExpression();  // Returns null, TODO
                 expect(TokenClass.RPAR);
-                parseStatement();
-                // TODO: AST
-                return null;
+                Stmt stmt = parseStatement();
+                return new While(expr, stmt);
 
             case IF:
                 expect(TokenClass.IF);
@@ -520,7 +520,7 @@ public class Parser {
         return accept(TokenClass.ELSE);
     }
 
-    public void parseExpression() {
+    public Expr parseExpression() {
         parseLexicalExpression();
 
         if (isComparator(token)) {
@@ -532,6 +532,9 @@ public class Parser {
                     TokenClass.EQ);
             parseLexicalExpression();
         }
+
+        // TODO AST
+        return null;
     }
 
     private boolean isComparator(Token ahead) {

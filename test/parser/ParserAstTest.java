@@ -4,6 +4,7 @@ package parser;
 import ast.*;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.While;
 import lexer.Scanner;
 import lexer.Tokeniser;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ParserAstTest {
 
@@ -130,6 +132,15 @@ public class ParserAstTest {
         assertEquals(1, stmt.arguments.size());
 
         assertEquals("hello", ((StrLiteral)stmt.arguments.get(0)).string);
+    }
+
+    /* While */
+    @Test
+    public void while_parsed() {
+        While whilez = (While) getParser("while (x) {}").parseStatement();
+
+        assertEquals("x", ((Var) whilez.expr).name);
+        assertNotNull(whilez.statement);
     }
 
 
