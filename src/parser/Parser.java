@@ -170,24 +170,30 @@ public class Parser {
     }
 
     public List<Procedure> parseProcedures() {
+        List<Procedure> procedures = new LinkedList<>();
         if (isProcedure()) {
-            parseProcedure();
-            parseProcedures();
+            procedures.add(parseProcedure());
+            procedures.addAll(parseProcedures());
         }
-        // TODO
-        return null;
+        return procedures;
     }
 
-    private void parseProcedure() {
-        parseTypeIdent();
+    private Procedure parseProcedure() {
+        TypeIdentifier typeIdentifier = parseTypeIdent();
         expect(TokenClass.LPAR);
-        parseParams();
+        List<VarDecl> params = parseParams();
         expect(TokenClass.RPAR);
-        parseBody();
+        Block block = parseBody();
 
+        return new Procedure(
+                typeIdentifier.type,
+                typeIdentifier.var.name,
+                params,
+                block
+        );
     }
 
-    private void parseParams() {
+    private List<VarDecl> parseParams() {
         if (isTypeIdentifier()) {
             parseTypeIdent();
 
@@ -196,6 +202,9 @@ public class Parser {
                 parseParams();
             }
         }
+
+        // TODO: AST
+        return null;
     }
 
     private boolean isParamRepetition() {
@@ -250,15 +259,18 @@ public class Parser {
 
         parseBody();
 
-        // TODO
+        // TODO: AST
         return null;
     }
 
-    public void parseBody() {
+    public Block parseBody() {
         expect(TokenClass.LBRA);
         parseVariableDeclarations();
         parserStatementList();
         expect(TokenClass.RBRA);
+
+        // TODO: AST
+        return null;
     }
 
     private void parserStatementList() {

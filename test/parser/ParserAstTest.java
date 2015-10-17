@@ -1,6 +1,7 @@
 package parser;
 
 
+import ast.Procedure;
 import ast.Program;
 import ast.Type;
 import ast.VarDecl;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class ParserAstTest {
 
 
+    /* Variable Declarations */
     @Test
     public void variableDeclaration_SingleParsed() {
         List<VarDecl> varDecls = getParser("int i;").parseVariableDeclarations();
@@ -33,13 +35,36 @@ public class ParserAstTest {
         assertVardecl(Type.VOID, "blah", varDecls.get(2));
     }
 
+    /* Procedures */
+    @Test
+    public void procedures_SingleParsed() {
+        List<Procedure> procedures = getParser("void test() {}").parseProcedures();
+        assertProcedure(Type.VOID, "test", procedures.get(0));
+
+    }
+
+    @Test
+    public void procedures_MultipleParsed() {
+        List<Procedure> procedures = getParser("" +
+                "void test() {}" +
+                "char foo() {}" +
+                "int bar() {}").parseProcedures();
+        assertProcedure(Type.VOID, "test", procedures.get(0));
+        assertProcedure(Type.CHAR, "foo", procedures.get(1));
+        assertProcedure(Type.INT, "bar", procedures.get(2));
+
+    }
+
+    private void assertProcedure(Type type, String name, Procedure p) {
+        assertEquals(type, p.type);
+        assertEquals(name, p.name);
+
+        // TODO Assert remaining elements
+    }
+
     private void assertVardecl(Type type, String varName, VarDecl vardecl) {
         assertEquals(type, vardecl.type);
         assertEquals(varName, vardecl.var.name);
-    }
-
-    private List<VarDecl> getVariableDeclarations(String s) {
-        return getProgram(s).varDecls;
     }
 
     private Program getProgram(String s) {
