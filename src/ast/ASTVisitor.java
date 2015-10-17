@@ -12,5 +12,7 @@ public interface ASTVisitor<T> {
     public T visitVar(Var v);
     public T visitFunctionCallStmt(FunCallStmt funCallStmt);
 
+    public T visitStrLiteral(StrLiteral strLiteral);
+
     // to complete ... (should have one visit method for each concrete AST node class)
 }

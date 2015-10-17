@@ -123,6 +123,15 @@ public class ParserAstTest {
         }
     }
 
+    @Test
+    public void statement_PrintStringLiteral() {
+        FunCallStmt stmt = (FunCallStmt) getParser("print_s(\"hello\")").parseStatement();
+        assertEquals("print_s", stmt.name);
+        assertEquals(1, stmt.arguments.size());
+
+        assertEquals("hello", ((StrLiteral)stmt.arguments.get(0)).string);
+    }
+
 
     private void assertProcedure(Type type, String name, Procedure p) {
         assertEquals(type, p.type);

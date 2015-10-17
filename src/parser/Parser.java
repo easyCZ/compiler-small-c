@@ -294,13 +294,15 @@ public class Parser {
         }
 
         if (isPrintString()) {
-            expect(TokenClass.PRINT);
+            Token print = expect(TokenClass.PRINT);
             expect(TokenClass.LPAR);
-            expect(TokenClass.STRING_LITERAL);
+            Token argument = expect(TokenClass.STRING_LITERAL);
             expect(TokenClass.RPAR);
             expect(TokenClass.SEMICOLON);
-            // TODO: AST
-            return null;
+
+            List<Expr> arguments = new LinkedList<>();
+            arguments.add(new StrLiteral(argument.data));
+            return new FunCallStmt(print.data, arguments);
         }
 
         switch (token.tokenClass) {
