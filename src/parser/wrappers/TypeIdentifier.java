@@ -2,7 +2,7 @@ package parser.wrappers;
 
 
 import ast.Type;
-import ast.Var;
+import ast.expressions.Var;
 
 public class TypeIdentifier {
 

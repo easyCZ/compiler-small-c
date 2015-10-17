@@ -1,5 +1,8 @@
 package ast;
 
+import ast.expressions.Var;
+import ast.statements.FunCallStmt;
+
 import java.io.PrintWriter;
 
 public class ASTPrinter implements ASTVisitor<Void> {
@@ -60,7 +63,13 @@ public class ASTPrinter implements ASTVisitor<Void> {
         writer.print(")");
         return null;
     }
-    
+
+    @Override
+    public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
+        // TODO
+        return null;
+    }
+
 
     // to complete
     

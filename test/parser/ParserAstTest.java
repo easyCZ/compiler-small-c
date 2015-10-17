@@ -2,10 +2,13 @@ package parser;
 
 
 import ast.*;
+import ast.expressions.Var;
+import ast.statements.FunCallStmt;
 import lexer.Scanner;
 import lexer.Tokeniser;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -87,6 +90,39 @@ public class ParserAstTest {
         assertVardecl(Type.INT, "i", block.varDecls.get(0));
         assertVardecl(Type.CHAR, "x", block.varDecls.get(1));
     }
+
+    @Test
+    public void body_WithSingleStatement() {
+        // TODO
+    }
+
+    @Test
+    public void body_WithMultipleStatements() {
+        // TODO
+    }
+
+
+    /* Statements */
+    @Test
+    public void statement_FunctionCallNoArguments() {
+        FunCallStmt stmt = (FunCallStmt) getParser("foo()").parseStatement();
+        assertEquals("foo", stmt.name);
+        assertEquals(0, stmt.arguments.size());
+    }
+
+    @Test
+    public void statement_FunctionCallWithArguments() {
+        FunCallStmt stmt = (FunCallStmt) getParser("foo(a, b, c, d)").parseStatement();
+        assertEquals("foo", stmt.name);
+        assertEquals(4, stmt.arguments.size());
+
+        int i = 0;
+        for (String s : Arrays.asList("a", "b", "c", "d")) {
+            assertEquals(s, ((Var) stmt.arguments.get(i)).name);
+            i += 1;
+        }
+    }
+
 
     private void assertProcedure(Type type, String name, Procedure p) {
         assertEquals(type, p.type);

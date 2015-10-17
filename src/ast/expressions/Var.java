@@ -1,4 +1,7 @@
-package ast;
+package ast.expressions;
+
+import ast.ASTVisitor;
+import ast.Expr;
 
 public class Var extends Expr {
 

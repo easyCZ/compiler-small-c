@@ -1,5 +1,7 @@
 package ast;
 
+import ast.expressions.Var;
+
 public class VarDecl implements Tree {
 
     public final Type type;

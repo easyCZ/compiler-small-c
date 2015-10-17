@@ -1,6 +1,8 @@
 package parser;
 
 import ast.*;
+import ast.expressions.Var;
+import ast.statements.FunCallStmt;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
@@ -275,20 +277,20 @@ public class Parser {
     }
 
     private List<Stmt> parserStatementList() {
+        List<Stmt> statements = new LinkedList<>();
         if (isStatement()) {
-            parseStatement();
-            parserStatementList();
+            statements.add(parseStatement());
+            statements.addAll(parserStatementList());
         }
 
-        // TODO: AST
-        return null;
+        return statements;
     }
 
-    public void parseStatement() {
+    public Stmt parseStatement() {
         if (isFuncationCall()) {
-            parseFunctionCall();
+            FunCallStmt funCallStmt = parseFunctionCall();
             expect(TokenClass.SEMICOLON);
-            return;
+            return funCallStmt;
         }
 
         if (isPrintString()) {
@@ -297,7 +299,8 @@ public class Parser {
             expect(TokenClass.STRING_LITERAL);
             expect(TokenClass.RPAR);
             expect(TokenClass.SEMICOLON);
-            return;
+            // TODO: AST
+            return null;
         }
 
         switch (token.tokenClass) {
@@ -306,7 +309,8 @@ public class Parser {
                 parseVariableDeclarations();
                 parserStatementList();
                 expect(TokenClass.RBRA);
-                break;
+                // TODO: AST
+                return null;
 
             case WHILE:
                 expect(TokenClass.WHILE);
@@ -314,7 +318,8 @@ public class Parser {
                 parseExpression();
                 expect(TokenClass.RPAR);
                 parseStatement();
-                break;
+                // TODO: AST
+                return null;
 
             case IF:
                 expect(TokenClass.IF);
@@ -323,20 +328,23 @@ public class Parser {
                 expect(TokenClass.RPAR);
                 parseStatement();
                 parseElseStatement();
-                break;
+                // TODO: AST
+                return null;
 
             case IDENTIFIER:
                 expect(TokenClass.IDENTIFIER);
                 expect(TokenClass.ASSIGN);
                 parseLexicalExpression();
                 expect(TokenClass.SEMICOLON);
-                break;
+                // TODO: AST
+                return null;
 
             case RETURN:
                 expect(TokenClass.RETURN);
                 parseReturnOptional();
                 expect(TokenClass.SEMICOLON);
-                break;
+                // TODO: AST
+                return null;
 
             case PRINT:
                 expect(TokenClass.PRINT);
@@ -344,14 +352,16 @@ public class Parser {
                 parseLexicalExpression();
                 expect(TokenClass.RPAR);
                 expect(TokenClass.SEMICOLON);
-                break;
+                // TODO: AST
+                return null;
 
             case READ:
                 expect(TokenClass.READ);
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 expect(TokenClass.SEMICOLON);
-                break;
+                // TODO: AST
+                return null;
 
             default:
                 error(
@@ -360,6 +370,7 @@ public class Parser {
                         TokenClass.IF,
                         TokenClass.IDENTIFIER,
                         TokenClass.READ);
+                return null;
         }
     }
 
@@ -367,27 +378,38 @@ public class Parser {
         return token.tokenClass == TokenClass.PRINT && token.data.equals(Token.PRINT_S);
     }
 
-    public void parseFunctionCall() {
-        expect(TokenClass.IDENTIFIER);
+    public FunCallStmt parseFunctionCall() {
+        Token identifier = expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LPAR);
-        parseArgumentList();
+        List<Expr> arguments = parseArgumentList();
         expect(TokenClass.RPAR);
+
+        return new FunCallStmt(identifier.data, arguments);
     }
 
-    private void parseArgumentList() {
+    private List<Expr> parseArgumentList() {
+        List<Expr> arguments = new LinkedList<>();
+
         if (accept(TokenClass.IDENTIFIER)) {
-            expect(TokenClass.IDENTIFIER);
-            parseArgumentRepetition();
+            Token t = expect(TokenClass.IDENTIFIER);
+            arguments.add(new Var(t.data));
+            arguments.addAll(parseArgumentRepetition());
         }
+
+        return arguments;
     }
 
-    private void parseArgumentRepetition() {
+    private List<Expr> parseArgumentRepetition() {
+        List<Expr> arguments = new LinkedList<>();
         if (accept(TokenClass.COMMA)) {
             expect(TokenClass.COMMA);
-            expect(TokenClass.IDENTIFIER);
+            Token t = expect(TokenClass.IDENTIFIER);
+            arguments.add(new Var(t.data));
 
-            parseArgumentRepetition();
+            arguments.addAll(parseArgumentRepetition());
         }
+
+        return arguments;
     }
 
     private void parseReturnOptional() {
