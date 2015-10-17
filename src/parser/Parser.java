@@ -194,17 +194,19 @@ public class Parser {
     }
 
     private List<VarDecl> parseParams() {
+        List<VarDecl> params = new LinkedList<>();
+
         if (isTypeIdentifier()) {
-            parseTypeIdent();
+            TypeIdentifier ti = parseTypeIdent();
+            params.add(new VarDecl(ti.type, ti.var));
 
             if (isParamRepetition()) {
                 expect(TokenClass.COMMA);
-                parseParams();
+                params.addAll(parseParams());
             }
         }
 
-        // TODO: AST
-        return null;
+        return params;
     }
 
     private boolean isParamRepetition() {

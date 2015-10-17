@@ -52,14 +52,26 @@ public class ParserAstTest {
         assertProcedure(Type.VOID, "test", procedures.get(0));
         assertProcedure(Type.CHAR, "foo", procedures.get(1));
         assertProcedure(Type.INT, "bar", procedures.get(2));
+    }
 
+    @Test
+    public void procedures_WithSingleArgument() {
+        List<Procedure> procedures = getParser("void test(int i) {}").parseProcedures();
+        assertVardecl(Type.INT, "i", procedures.get(0).params.get(0));
+    }
+
+    @Test
+    public void procedures_WithMultipleArguments() {
+        List<Procedure> procedures = getParser("" +
+                "void test(int i, char foo, void bar) {}").parseProcedures();
+        assertVardecl(Type.INT, "i", procedures.get(0).params.get(0));
+        assertVardecl(Type.CHAR, "foo", procedures.get(0).params.get(1));
+        assertVardecl(Type.VOID, "bar", procedures.get(0).params.get(2));
     }
 
     private void assertProcedure(Type type, String name, Procedure p) {
         assertEquals(type, p.type);
         assertEquals(name, p.name);
-
-        // TODO Assert remaining elements
     }
 
     private void assertVardecl(Type type, String varName, VarDecl vardecl) {
