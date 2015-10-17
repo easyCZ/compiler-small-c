@@ -3,6 +3,7 @@ package ast;
 import java.util.List;
 
 public class Procedure implements Tree {
+
     public final Type type;
     public final String name;
     public final List<VarDecl> params;

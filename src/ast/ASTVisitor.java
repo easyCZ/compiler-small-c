@@ -1,6 +1,7 @@
 package ast;
 
 public interface ASTVisitor<T> {
+
     public T visitBlock(Block b);
     public T visitProcedure(Procedure p);
     public T visitProgram(Program p);
