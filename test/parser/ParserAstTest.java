@@ -1,10 +1,7 @@
 package parser;
 
 
-import ast.Procedure;
-import ast.Program;
-import ast.Type;
-import ast.VarDecl;
+import ast.*;
 import lexer.Scanner;
 import lexer.Tokeniser;
 import org.junit.Test;
@@ -67,6 +64,28 @@ public class ParserAstTest {
         assertVardecl(Type.INT, "i", procedures.get(0).params.get(0));
         assertVardecl(Type.CHAR, "foo", procedures.get(0).params.get(1));
         assertVardecl(Type.VOID, "bar", procedures.get(0).params.get(2));
+    }
+
+    /* Body */
+    @Test
+    public void body_WithNoDeclarations() {
+        Block block = getParser("{}").parseBody();
+        assertEquals(0, block.varDecls.size());
+    }
+
+    @Test
+    public void body_WithSingleDeclaration() {
+        Block block = getParser("{ int i; }").parseBody();
+        assertEquals(1, block.varDecls.size());
+        assertVardecl(Type.INT, "i", block.varDecls.get(0));
+    }
+
+    @Test
+    public void body_WithMultipleDeclarations() {
+        Block block = getParser("{ int i; char x;}").parseBody();
+        assertEquals(2, block.varDecls.size());
+        assertVardecl(Type.INT, "i", block.varDecls.get(0));
+        assertVardecl(Type.CHAR, "x", block.varDecls.get(1));
     }
 
     private void assertProcedure(Type type, String name, Procedure p) {

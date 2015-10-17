@@ -267,19 +267,21 @@ public class Parser {
 
     public Block parseBody() {
         expect(TokenClass.LBRA);
-        parseVariableDeclarations();
-        parserStatementList();
+        List<VarDecl> varDecls = parseVariableDeclarations();
+        List<Stmt> statements = parserStatementList();
         expect(TokenClass.RBRA);
 
-        // TODO: AST
-        return null;
+        return new Block(varDecls, statements);
     }
 
-    private void parserStatementList() {
+    private List<Stmt> parserStatementList() {
         if (isStatement()) {
             parseStatement();
             parserStatementList();
         }
+
+        // TODO: AST
+        return null;
     }
 
     public void parseStatement() {
