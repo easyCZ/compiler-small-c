@@ -145,12 +145,21 @@ public class ParserAstTest {
         assertNotNull(whilez.statement);
     }
 
+    /* If */
     @Test
     public void if_parsed() {
         If ifz = (If) getParser("if (x) {} else {}").parseStatement();
         assertEquals("x", ((Var) ifz.ifExpr).name);
         assertNotNull(ifz.ifStmt);
         assertNull(ifz.elseStmt);
+    }
+
+    /* main */
+    @Test
+    public void main_parsed() {
+        Procedure p = getParser("void main() {}").parseMain();
+        assertProcedure(Type.VOID, "main", p);
+        assertEquals(0, p.params.size());
     }
 
 

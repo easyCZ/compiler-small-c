@@ -256,17 +256,16 @@ public class Parser {
         return new TypeIdentifier(type, new Var(identifier.data));
     }
 
-    private Procedure parseMain() {
-        nextToken(); // consume type
+    public Procedure parseMain() {
+        Token t = expect(TokenClass.VOID);
+        Type type = Type.VOID;
 
         expect(TokenClass.MAIN);
         expect(TokenClass.LPAR);
         expect(TokenClass.RPAR);
 
-        parseBody();
-
-        // TODO: AST
-        return null;
+        Block body = parseBody();
+        return new Procedure(type, "main", new LinkedList<VarDecl>(), body);
     }
 
     public Block parseBody() {
@@ -303,7 +302,11 @@ public class Parser {
             expect(TokenClass.SEMICOLON);
 
             List<Expr> arguments = new LinkedList<>();
-            arguments.add(new StrLiteral(argument.data));
+
+            if (argument != null) {
+                arguments.add(new StrLiteral(argument.data));
+            }
+
             return new FunCallStmt(print.data, arguments);
         }
 
@@ -406,7 +409,8 @@ public class Parser {
         if (accept(TokenClass.COMMA)) {
             expect(TokenClass.COMMA);
             Token t = expect(TokenClass.IDENTIFIER);
-            arguments.add(new Var(t.data));
+
+            if (t != null) arguments.add(new Var(t.data));
 
             arguments.addAll(parseArgumentRepetition());
         }
