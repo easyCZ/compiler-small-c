@@ -521,20 +521,28 @@ public class Parser {
     }
 
     public Expr parseExpression() {
+        // TODO AST
+        Expr lhs = null;
         parseLexicalExpression();
 
         if (isComparator(token)) {
-            expect(TokenClass.GT,
+            Token t = expect(TokenClass.GT,
                     TokenClass.LT,
                     TokenClass.GE,
                     TokenClass.LE,
                     TokenClass.NE,
                     TokenClass.EQ);
+            // TODO AST
+            Op op = null;
+            // TODO AST
+            Expr rhs = null;
+
             parseLexicalExpression();
+            return new BinOp(lhs, op, rhs);
         }
 
         // TODO AST
-        return null;
+        return lhs;
     }
 
     private boolean isComparator(Token ahead) {

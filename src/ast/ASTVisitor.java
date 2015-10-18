@@ -17,5 +17,7 @@ public interface ASTVisitor<T> {
 
     T visitWhile(While whilez);
 
+    T visitBinOp(BinOp binOp);
+
     // to complete ... (should have one visit method for each concrete AST node class)
 }

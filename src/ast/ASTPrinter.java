@@ -83,6 +83,12 @@ public class ASTPrinter implements ASTVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visitBinOp(BinOp binOp) {
+        // TODO
+        return null;
+    }
+
 
     // to complete
     
