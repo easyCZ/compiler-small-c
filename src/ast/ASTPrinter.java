@@ -1,5 +1,6 @@
 package ast;
 
+import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
@@ -99,6 +100,12 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitIntLiteral(IntLiteral intLiteral) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public Void visitChrLiteral(ChrLiteral chrLiteral) {
         // TODO
         return null;
     }

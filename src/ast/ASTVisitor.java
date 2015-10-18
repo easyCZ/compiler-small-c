@@ -1,5 +1,6 @@
 package ast;
 
+import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
@@ -25,4 +26,5 @@ public interface ASTVisitor<T> {
 
     T visitIntLiteral(IntLiteral intLiteral);
 
+    T visitChrLiteral(ChrLiteral chrLiteral);
 }

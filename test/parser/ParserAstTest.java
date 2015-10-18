@@ -2,6 +2,7 @@ package parser;
 
 
 import ast.*;
+import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
@@ -190,6 +191,12 @@ public class ParserAstTest {
         assertEquals(0, ((IntLiteral) binOp.lhs).value);
         assertEquals(Op.SUB, binOp.op);
         assertEquals(12345, ((IntLiteral) binOp.rhs).value);
+    }
+
+    @Test
+    public void factor_character() {
+        ChrLiteral c = (ChrLiteral) getParser("'h'").parseFactor();
+        assertEquals('h', c.value);
     }
 
 

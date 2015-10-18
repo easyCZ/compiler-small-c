@@ -1,6 +1,7 @@
 package parser;
 
 import ast.*;
+import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
@@ -516,11 +517,11 @@ public class Parser {
                 );
 
             case CHARACTER:
-                expect(TokenClass.CHARACTER);
-                break;
+                Token c = expect(TokenClass.CHARACTER);
+                return new ChrLiteral(c.data.charAt(0));
 
             case READ:
-                expect(TokenClass.READ);
+                Token read = expect(TokenClass.READ);
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 break;
