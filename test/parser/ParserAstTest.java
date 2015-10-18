@@ -2,6 +2,7 @@ package parser;
 
 
 import ast.*;
+import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
@@ -161,6 +162,36 @@ public class ParserAstTest {
         assertProcedure(Type.VOID, "main", p);
         assertEquals(0, p.params.size());
     }
+
+    /* factors */
+    @Test
+    public void factor_Identifier() {
+        Var v = (Var) getParser("x").parseFactor();
+        assertEquals("x", v.name);
+    }
+
+    @Test
+    public void factor_Number() {
+        IntLiteral i = (IntLiteral) getParser("12345").parseFactor();
+        assertEquals(12345, i.value);
+    }
+
+    @Test
+    public void factor_negativeIdentifier() {
+        BinOp binOp = (BinOp) getParser("-x").parseFactor();
+        assertEquals(0, ((IntLiteral) binOp.lhs).value);
+        assertEquals(Op.SUB, binOp.op);
+        assertEquals("x", ((Var) binOp.rhs).name);
+    }
+
+    @Test
+    public void factor_negativeNumber() {
+        BinOp binOp = (BinOp) getParser("-12345").parseFactor();
+        assertEquals(0, ((IntLiteral) binOp.lhs).value);
+        assertEquals(Op.SUB, binOp.op);
+        assertEquals(12345, ((IntLiteral) binOp.rhs).value);
+    }
+
 
 
     private void assertProcedure(Type type, String name, Procedure p) {

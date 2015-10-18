@@ -1,5 +1,6 @@
 package ast;
 
+import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
@@ -22,5 +23,6 @@ public interface ASTVisitor<T> {
 
     T visitIf(If anIf);
 
-    // to complete ... (should have one visit method for each concrete AST node class)
+    T visitIntLiteral(IntLiteral intLiteral);
+
 }

@@ -1,5 +1,6 @@
 package ast;
 
+import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
@@ -92,6 +93,12 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitIf(If anIf) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public Void visitIntLiteral(IntLiteral intLiteral) {
         // TODO
         return null;
     }

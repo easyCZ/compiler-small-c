@@ -1,6 +1,7 @@
 package parser;
 
 import ast.*;
+import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
@@ -424,14 +425,15 @@ public class Parser {
         }
     }
 
-    public void parseLexicalExpression() {
+    public Expr parseLexicalExpression() {
         if (isTerm()) {
             parseTerm();
-            parseLexicalExpressionRepetition();
+            Expr second = parseLexicalExpressionRepetition();
         }
         else errorExpectedFactor();
 
-
+        // TODO: AST
+        return null;
     }
 
     private boolean isTerm() {
@@ -446,12 +448,14 @@ public class Parser {
         error(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR);
     }
 
-    private void parseLexicalExpressionRepetition() {
+    private Expr parseLexicalExpressionRepetition() {
         if (isLexicalExpressionRep()) {
             expect(TokenClass.PLUS, TokenClass.MINUS);
             parseTerm();
             parseLexicalExpressionRepetition();
         }
+        // TODO: AST
+        return null;
     }
 
     private boolean isLexicalExpressionRep() {
@@ -475,7 +479,7 @@ public class Parser {
         return accept(TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD);
     }
 
-    private void parseFactor() {
+    public Expr parseFactor() {
         if (isFuncationCall()) {
             parseFunctionCall();
         }
@@ -483,22 +487,33 @@ public class Parser {
         switch (token.tokenClass) {
             case LPAR:
                 expect(TokenClass.LPAR);
-                parseLexicalExpression();
+                Expr expr = parseLexicalExpression();
                 expect(TokenClass.RPAR);
-                break;
+                return expr;
 
             case IDENTIFIER:
-                expect(TokenClass.IDENTIFIER);
-                break;
+                Token identifier = expect(TokenClass.IDENTIFIER);
+                return new Var(identifier.data);
 
             case NUMBER:
-                expect(TokenClass.NUMBER);
-                break;
+                Token number = expect(TokenClass.NUMBER);
+                return new IntLiteral(Integer.parseInt(number.data));
 
             case MINUS:
                 expect(TokenClass.MINUS);
-                expect(TokenClass.IDENTIFIER, TokenClass.NUMBER);
-                break;
+                Token val = expect(TokenClass.IDENTIFIER, TokenClass.NUMBER);
+
+                IntLiteral zero = new IntLiteral(0);
+                if (val == null) return zero;
+
+                Op op = Op.SUB;
+                return new BinOp(
+                        zero,
+                        op,
+                        val.tokenClass == TokenClass.IDENTIFIER
+                            ? new Var(val.data)
+                            : new IntLiteral(Integer.parseInt(val.data))
+                );
 
             case CHARACTER:
                 expect(TokenClass.CHARACTER);
@@ -511,6 +526,9 @@ public class Parser {
                 break;
 
         }
+
+        // TODO: AST
+        return null;
     }
 
     private Stmt parseElseStatement() {
@@ -527,8 +545,7 @@ public class Parser {
 
     public Expr parseExpression() {
         // TODO AST
-        Expr lhs = null;
-        parseLexicalExpression();
+        Expr lhs = parseLexicalExpression();
 
         if (isComparator(token)) {
             Token t = expect(TokenClass.GT,
