@@ -3,6 +3,7 @@ package parser;
 import ast.*;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.If;
 import ast.statements.While;
 import lexer.Token;
 import lexer.Token.TokenClass;
@@ -318,20 +319,19 @@ public class Parser {
             case WHILE:
                 expect(TokenClass.WHILE);
                 expect(TokenClass.LPAR);
-                Expr expr = parseExpression();  // Returns null, TODO
+                Expr whileExpr = parseExpression();  // Returns null, TODO
                 expect(TokenClass.RPAR);
-                Stmt stmt = parseStatement();
-                return new While(expr, stmt);
+                Stmt whileStmt = parseStatement();
+                return new While(whileExpr, whileStmt);
 
             case IF:
                 expect(TokenClass.IF);
                 expect(TokenClass.LPAR);
-                parseExpression();
+                Expr ifExpr = parseExpression();
                 expect(TokenClass.RPAR);
-                parseStatement();
-                parseElseStatement();
-                // TODO: AST
-                return null;
+                Stmt ifStatement = parseStatement();
+                Stmt elseStatement = parseElseStatement();
+                return new If(ifExpr, ifStatement, elseStatement);
 
             case IDENTIFIER:
                 expect(TokenClass.IDENTIFIER);
@@ -509,11 +509,12 @@ public class Parser {
         }
     }
 
-    private void parseElseStatement() {
+    private Stmt parseElseStatement() {
         if (isElse()) {
             expect(TokenClass.ELSE);
-            parseStatement();
+            return parseStatement();
         }
+        return null;
     }
 
     private boolean isElse() {

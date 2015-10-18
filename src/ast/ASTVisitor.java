@@ -2,6 +2,7 @@ package ast;
 
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.If;
 import ast.statements.While;
 
 public interface ASTVisitor<T> {
@@ -18,6 +19,8 @@ public interface ASTVisitor<T> {
     T visitWhile(While whilez);
 
     T visitBinOp(BinOp binOp);
+
+    T visitIf(If anIf);
 
     // to complete ... (should have one visit method for each concrete AST node class)
 }

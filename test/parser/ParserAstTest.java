@@ -4,6 +4,7 @@ package parser;
 import ast.*;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
+import ast.statements.If;
 import ast.statements.While;
 import lexer.Scanner;
 import lexer.Tokeniser;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ParserAstTest {
 
@@ -141,6 +143,14 @@ public class ParserAstTest {
 
         assertEquals("x", ((Var) whilez.expr).name);
         assertNotNull(whilez.statement);
+    }
+
+    @Test
+    public void if_parsed() {
+        If ifz = (If) getParser("if (x) {} else {}").parseStatement();
+        assertEquals("x", ((Var) ifz.ifExpr).name);
+        assertNotNull(ifz.ifStmt);
+        assertNull(ifz.elseStmt);
     }
 
 
