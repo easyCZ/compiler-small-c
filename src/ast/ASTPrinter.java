@@ -141,13 +141,20 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitReturn(Return aReturn) {
-        // TODO
+        writer.print("Return(");
+        if (aReturn.hasReturn())
+            aReturn.returnz.accept(this);
+        writer.print(")");
         return null;
     }
 
     @Override
     public Void visitAssign(Assign assign) {
-        // TODO
+        writer.print("Assign(");
+        assign.var.accept(this);
+        writer.print(", ");
+        assign.expr.accept(this);
+        writer.print(")");
         return null;
     }
 
@@ -157,7 +164,4 @@ public class ASTPrinter implements ASTVisitor<Void> {
         return null;
     }
 
-
-    // to complete
-    
 }

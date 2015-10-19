@@ -5,7 +5,9 @@ import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.StrLiteral;
 import ast.expressions.Var;
+import ast.statements.Assign;
 import ast.statements.FunCallStmt;
+import ast.statements.Return;
 import ast.statements.While;
 import org.junit.Before;
 import org.junit.Test;
@@ -119,6 +121,27 @@ public class ASTPrinterTest {
         ChrLiteral chrLiteral = new ChrLiteral('h');
         printer.visitChrLiteral(chrLiteral);
         assertEquals("ChrLiteral(h)", writer.toString());
+    }
+
+    @Test
+    public void visitAssign() {
+        Assign assign = new Assign(new Var("x"), new IntLiteral(10));
+        printer.visitAssign(assign);
+        assertEquals("Assign(Var(x), IntLiteral(10))", writer.toString());
+    }
+
+    @Test
+    public void visitReturnWithNoExpr() {
+        Return returnz = new Return(null);
+        printer.visitReturn(returnz);
+        assertEquals("Return()", writer.toString());
+    }
+
+    @Test
+    public void visitReturnWithExpr() {
+        Return returnz = new Return(new IntLiteral(10));
+        printer.visitReturn(returnz);
+        assertEquals("Return(IntLiteral(10))", writer.toString());
     }
 
 
