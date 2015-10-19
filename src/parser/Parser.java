@@ -329,7 +329,6 @@ public class Parser {
                 expect(TokenClass.IF);
                 expect(TokenClass.LPAR);
                 Expr ifExpr = parseExpression();
-                System.out.println(ifExpr);
                 expect(TokenClass.RPAR);
                 Stmt ifStatement = parseStatement();
                 Stmt elseStatement = parseElseStatement();
