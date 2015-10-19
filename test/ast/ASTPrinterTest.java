@@ -80,6 +80,12 @@ public class ASTPrinterTest {
     }
 
     @Test
+    public void visitBlockEmpty() {
+        printer.visitBlock(new Block(new LinkedList<VarDecl>(), new LinkedList<Stmt>()));
+        assertEquals("Block()", writer.toString());
+    }
+
+    @Test
     public void visitBlockOnlyVardecls() {
         List<VarDecl> varDecls = new LinkedList<>();
         varDecls.add(new VarDecl(Type.INT, new Var("x")));
