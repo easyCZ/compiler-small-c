@@ -15,8 +15,18 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     public Void visitBlock(Block b) {
         writer.print("Block(");
-        // to complete
-        writer.print("(");
+
+        for (int i = 0; i < b.varDecls.size() - 1; i++) {
+            VarDecl varDecl = b.varDecls.get(i);
+            varDecl.accept(this);
+            writer.print(", ");
+        }
+        if (b.varDecls.size() > 0) {
+            VarDecl varDecl = b.varDecls.get(b.varDecls.size() - 1);
+            varDecl.accept(this);
+        }
+
+        writer.print(")");
         return null;
     }
 
@@ -52,7 +62,7 @@ public class ASTPrinter implements ASTVisitor<Void> {
     public Void visitVarDecl(VarDecl vd){
         writer.print("VarDecl(");
         vd.var.accept(this);
-        writer.print(","+vd.type);
+        writer.print(", "+vd.type);
         writer.print(")");
         return null;
     }
@@ -66,19 +76,32 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-        // TODO
+        writer.print("FunCallStmt(");
+        writer.print(funCallStmt.name);
+        for (Expr arg : funCallStmt.arguments) {
+            writer.print(", ");
+            arg.accept(this);
+        }
+        writer.print(")");
         return null;
     }
 
     @Override
     public Void visitStrLiteral(StrLiteral strLiteral) {
-        // TODO
+        writer.print("StrLiteral(");
+        writer.print(strLiteral.string);
+        writer.print(")");
         return null;
     }
 
     @Override
     public Void visitWhile(While whilez) {
-        // TODO
+        writer.print("While(");
+        whilez.expr.accept(this);
+        writer.print(", ");
+        whilez.statement.accept(this);
+        writer.print(")");
+
         return null;
     }
 
