@@ -4,10 +4,7 @@ import ast.*;
 import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
-import ast.statements.FunCallStmt;
-import ast.statements.If;
-import ast.statements.Return;
-import ast.statements.While;
+import ast.statements.*;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
@@ -340,11 +337,13 @@ public class Parser {
                 return new If(ifExpr, ifStatement, elseStatement);
 
             case IDENTIFIER:
-                expect(TokenClass.IDENTIFIER);
+                Token var = expect(TokenClass.IDENTIFIER);
                 expect(TokenClass.ASSIGN);
-                parseLexicalExpression();
+                Expr expr = parseLexicalExpression();
                 expect(TokenClass.SEMICOLON);
-                // TODO: AST
+
+                if (var != null & expr != null)
+                    return new Assign(new Var(var.data), expr);
                 return null;
 
             case RETURN:

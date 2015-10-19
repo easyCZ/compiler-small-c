@@ -5,10 +5,7 @@ import ast.*;
 import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
-import ast.statements.FunCallStmt;
-import ast.statements.If;
-import ast.statements.Return;
-import ast.statements.While;
+import ast.statements.*;
 import lexer.Scanner;
 import lexer.Tokeniser;
 import org.junit.Test;
@@ -241,6 +238,14 @@ public class ParserAstTest {
         Return returnz = (Return) getParser("return -x;").parseStatement();
         assertNotNull(returnz.returnz);
         assertTrue(returnz.hasReturn());
+    }
+
+    /* Assignment */
+    @Test
+    public void assign_Number() {
+        Assign assign = (Assign) getParser("foo = 10;").parseStatement();
+        assertEquals("foo", assign.var.name);
+        assertNotNull(assign.expr);
     }
 
 
