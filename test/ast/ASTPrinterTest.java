@@ -89,9 +89,9 @@ public class ASTPrinterTest {
         printer.visitBlock(new Block(varDecls, new LinkedList<Stmt>()));
         assertEquals("" +
                 "Block(" +
-                    "VarDecl(Var(x), INT), " +
-                    "VarDecl(Var(y), CHAR), " +
-                    "VarDecl(Var(z), VOID)" +
+                    "VarDecl(INT, Var(x)), " +
+                    "VarDecl(CHAR, Var(y)), " +
+                    "VarDecl(VOID, Var(z))" +
                 ")", writer.toString());
     }
 
@@ -129,9 +129,9 @@ public class ASTPrinterTest {
         printer.visitBlock(new Block(varDecls, stmts));
         assertEquals("" +
                 "Block(" +
-                "VarDecl(Var(x), INT), " +
-                "VarDecl(Var(y), CHAR), " +
-                "VarDecl(Var(z), VOID), " +
+                "VarDecl(INT, Var(x)), " +
+                "VarDecl(CHAR, Var(y)), " +
+                "VarDecl(VOID, Var(z)), " +
                 "Assign(Var(x), IntLiteral(10)), " +
                 "Assign(Var(y), IntLiteral(11)), " +
                 "Assign(Var(z), IntLiteral(12))" +
