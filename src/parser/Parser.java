@@ -6,6 +6,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
+import ast.statements.Return;
 import ast.statements.While;
 import lexer.Token;
 import lexer.Token.TokenClass;
@@ -348,10 +349,9 @@ public class Parser {
 
             case RETURN:
                 expect(TokenClass.RETURN);
-                parseReturnOptional();
+                Expr returnz = parseReturnOptional();
                 expect(TokenClass.SEMICOLON);
-                // TODO: AST
-                return null;
+                return new Return(returnz);
 
             case PRINT:
                 Token print = expect(TokenClass.PRINT);
@@ -424,10 +424,11 @@ public class Parser {
         return arguments;
     }
 
-    private void parseReturnOptional() {
+    private Expr parseReturnOptional() {
         if (!accept(TokenClass.SEMICOLON)) {
-            parseLexicalExpression();
+            return parseLexicalExpression();
         }
+        return null;
     }
 
     public Expr parseLexicalExpression() {

@@ -5,6 +5,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
+import ast.statements.Return;
 import ast.statements.While;
 
 import java.io.PrintWriter;
@@ -106,6 +107,12 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitChrLiteral(ChrLiteral chrLiteral) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public Void visitReturn(Return aReturn) {
         // TODO
         return null;
     }

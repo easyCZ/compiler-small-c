@@ -7,6 +7,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
+import ast.statements.Return;
 import ast.statements.While;
 import lexer.Scanner;
 import lexer.Tokeniser;
@@ -15,9 +16,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ParserAstTest {
 
@@ -227,6 +226,21 @@ public class ParserAstTest {
         FunCallStmt read = (FunCallStmt) getParser("print_c()").parseStatement();
         assertEquals("print_c", read.name);
         assertNotNull(read.arguments);
+    }
+
+    /* Return */
+    @Test
+    public void return_noArgumentsValid() {
+        Return returnz = (Return) getParser("return;").parseStatement();
+        assertNull(returnz.returnz);
+        assertFalse(returnz.hasReturn());
+    }
+
+    @Test
+    public void return_WithArguments() {
+        Return returnz = (Return) getParser("return -x;").parseStatement();
+        assertNotNull(returnz.returnz);
+        assertTrue(returnz.hasReturn());
     }
 
 

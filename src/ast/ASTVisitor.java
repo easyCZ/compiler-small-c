@@ -5,6 +5,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
 import ast.statements.If;
+import ast.statements.Return;
 import ast.statements.While;
 
 public interface ASTVisitor<T> {
@@ -27,4 +28,6 @@ public interface ASTVisitor<T> {
     T visitIntLiteral(IntLiteral intLiteral);
 
     T visitChrLiteral(ChrLiteral chrLiteral);
+
+    T visitReturn(Return aReturn);
 }
