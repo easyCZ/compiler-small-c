@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Program implements Tree {
@@ -16,5 +17,10 @@ public class Program implements Tree {
 
     public <T> T accept(ASTVisitor<T> v) {
 	return v.visitProgram(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Program(" + Arrays.toString(varDecls.toArray()) + ", " + Arrays.toString(procs.toArray()) + ", " + main + ")";
     }
 }

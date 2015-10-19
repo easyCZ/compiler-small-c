@@ -5,6 +5,7 @@ import ast.ASTVisitor;
 import ast.Expr;
 import ast.Stmt;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class FunCallStmt extends Stmt {
@@ -20,5 +21,10 @@ public class FunCallStmt extends Stmt {
     @Override
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitFunctionCallStmt(this);
+    }
+
+    @Override
+    public String toString() {
+        return "FunCallStmt(" + name + ", " + Arrays.toString(arguments.toArray()) + ")";
     }
 }

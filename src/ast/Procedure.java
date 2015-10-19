@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Procedure implements Tree {
@@ -18,5 +19,10 @@ public class Procedure implements Tree {
 
     public <T> T accept(ASTVisitor<T> v) {
 	return v.visitProcedure(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Procedure(" + type + ", " + name + ", " + Arrays.toString(params.toArray()) + ", " + block + ")";
     }
 }

@@ -19,4 +19,9 @@ public class While extends Stmt {
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitWhile(this);
     }
+
+    @Override
+    public String toString() {
+        return "While(" + expr + ", " + statement + ")";
+    }
 }

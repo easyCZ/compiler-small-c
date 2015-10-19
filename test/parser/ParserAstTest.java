@@ -2,10 +2,7 @@ package parser;
 
 
 import ast.*;
-import ast.expressions.ChrLiteral;
-import ast.expressions.FunCallExpr;
-import ast.expressions.IntLiteral;
-import ast.expressions.Var;
+import ast.expressions.*;
 import ast.statements.*;
 import lexer.Scanner;
 import lexer.Tokeniser;
@@ -159,6 +156,22 @@ public class ParserAstTest {
         assertEquals("x", ((Var) ifz.ifExpr).name);
         assertNotNull(ifz.ifStmt);
         assertNotNull(ifz.elseStmt);
+    }
+
+    @Test
+    public void if_parsedWithElseAndExpressionConditional() {
+        If ifz = (If) getParser("if (x == 10 / 2) {} else {}").parseStatement();
+
+        assertNotNull(ifz.ifStmt);
+        assertNotNull(ifz.elseStmt);
+        BinOp expr = (BinOp) ifz.ifExpr;
+
+        assertEquals("x", ((Var) expr.lhs).name);
+        assertEquals(Op.EQ, expr.op);
+        BinOp rhs = (BinOp) expr.rhs;
+        assertEquals(10, ((IntLiteral)rhs.lhs).value);
+        assertEquals(Op.DIV, rhs.op);
+        assertEquals(2, ((IntLiteral) rhs.rhs).value);
     }
 
     /* main */

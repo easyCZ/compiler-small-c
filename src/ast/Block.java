@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Block extends Stmt {
@@ -14,5 +15,10 @@ public class Block extends Stmt {
 
     public <T> T accept(ASTVisitor<T> v) {
 	    return v.visitBlock(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Block(" + Arrays.toString(varDecls.toArray()) + ", " + Arrays.toString(statements.toArray()) + ")";
     }
 }

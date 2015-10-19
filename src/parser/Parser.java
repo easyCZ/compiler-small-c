@@ -1,10 +1,7 @@
 package parser;
 
 import ast.*;
-import ast.expressions.ChrLiteral;
-import ast.expressions.FunCallExpr;
-import ast.expressions.IntLiteral;
-import ast.expressions.Var;
+import ast.expressions.*;
 import ast.statements.*;
 import lexer.Token;
 import lexer.Token.TokenClass;
@@ -332,6 +329,7 @@ public class Parser {
                 expect(TokenClass.IF);
                 expect(TokenClass.LPAR);
                 Expr ifExpr = parseExpression();
+                System.out.println(ifExpr);
                 expect(TokenClass.RPAR);
                 Stmt ifStatement = parseStatement();
                 Stmt elseStatement = parseElseStatement();

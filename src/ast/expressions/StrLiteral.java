@@ -1,5 +1,8 @@
-package ast;
+package ast.expressions;
 
+
+import ast.ASTVisitor;
+import ast.Expr;
 
 public class StrLiteral extends Expr {
 
@@ -13,5 +16,10 @@ public class StrLiteral extends Expr {
     @Override
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitStrLiteral(this);
+    }
+
+    @Override
+    public String toString() {
+        return "StrLiteral(" + string + ")";
     }
 }

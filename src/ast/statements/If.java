@@ -21,4 +21,9 @@ public class If extends Stmt {
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitIf(this);
     }
+
+    @Override
+    public String toString() {
+        return "If(" + ifExpr + ", " + ifStmt + (elseStmt != null ? ", " + elseStmt : "") + ");";
+    }
 }

@@ -15,4 +15,9 @@ public class VarDecl implements Tree {
      public <T> T accept(ASTVisitor<T> v) {
 	return v.visitVarDecl(this);
     }
+
+    @Override
+    public String toString() {
+        return "VarDecl(" + type + ", " + var + ")";
+    }
 }
