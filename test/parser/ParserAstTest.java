@@ -199,12 +199,34 @@ public class ParserAstTest {
         assertEquals('h', c.value);
     }
 
-    /* Print statement */
+    /* read statement */
     @Test
-    public void statement_Read() {
+    public void statement_ReadChar() {
         FunCallStmt read = (FunCallStmt) getParser("read_c()").parseStatement();
         assertEquals("read_c", read.name);
         assertEquals(0, read.arguments.size());
+    }
+
+    @Test
+    public void statement_ReadInt() {
+        FunCallStmt read = (FunCallStmt) getParser("read_i()").parseStatement();
+        assertEquals("read_i", read.name);
+        assertEquals(0, read.arguments.size());
+    }
+
+    /* Print statement */
+    @Test
+    public void statement_PrintInt() {
+        FunCallStmt read = (FunCallStmt) getParser("print_i()").parseStatement();
+        assertEquals("print_i", read.name);
+        assertNotNull(read.arguments);
+    }
+
+    @Test
+    public void statement_PrintChar() {
+        FunCallStmt read = (FunCallStmt) getParser("print_c()").parseStatement();
+        assertEquals("print_c", read.name);
+        assertNotNull(read.arguments);
     }
 
 

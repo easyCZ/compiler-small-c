@@ -354,12 +354,15 @@ public class Parser {
                 return null;
 
             case PRINT:
-                expect(TokenClass.PRINT);
+                Token print = expect(TokenClass.PRINT);
                 expect(TokenClass.LPAR);
-                parseLexicalExpression();
+                Expr argExpr = parseLexicalExpression();
                 expect(TokenClass.RPAR);
                 expect(TokenClass.SEMICOLON);
-                // TODO: AST
+
+                List<Expr> arguments = new LinkedList<Expr>();
+                if (argExpr != null) arguments.add(argExpr);
+                if (print != null) return new FunCallStmt(print.data, arguments);
                 return null;
 
             case READ:
