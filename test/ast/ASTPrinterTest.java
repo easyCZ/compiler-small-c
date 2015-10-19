@@ -1,10 +1,7 @@
 package ast;
 
 
-import ast.expressions.ChrLiteral;
-import ast.expressions.IntLiteral;
-import ast.expressions.StrLiteral;
-import ast.expressions.Var;
+import ast.expressions.*;
 import ast.statements.Assign;
 import ast.statements.FunCallStmt;
 import ast.statements.Return;
@@ -142,6 +139,34 @@ public class ASTPrinterTest {
         Return returnz = new Return(new IntLiteral(10));
         printer.visitReturn(returnz);
         assertEquals("Return(IntLiteral(10))", writer.toString());
+    }
+
+    @Test
+    public void visitFunCallExpr_NoArguments() {
+        FunCallExpr funCallExpr = new FunCallExpr("foo", new LinkedList<Expr>());
+        printer.visitFunCallExpr(funCallExpr);
+        assertEquals("FunCallExpr(foo)", writer.toString());
+    }
+
+    @Test
+    public void visitFunCallExpr_With1Argument() {
+        List<Expr> arguments = new LinkedList<>();
+        arguments.add(new Var("x"));
+
+        FunCallExpr funCallExpr = new FunCallExpr("foo", arguments);
+        printer.visitFunCallExpr(funCallExpr);
+        assertEquals("FunCallExpr(foo, Var(x))", writer.toString());
+    }
+
+    @Test
+    public void visitFunCallExpr_With2Arguments() {
+        List<Expr> arguments = new LinkedList<>();
+        arguments.add(new Var("x"));
+        arguments.add(new Var("y"));
+
+        FunCallExpr funCallExpr = new FunCallExpr("foo", arguments);
+        printer.visitFunCallExpr(funCallExpr);
+        assertEquals("FunCallExpr(foo, Var(x), Var(y))", writer.toString());
     }
 
 

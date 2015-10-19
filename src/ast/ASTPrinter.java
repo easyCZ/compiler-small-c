@@ -160,7 +160,13 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitFunCallExpr(FunCallExpr funCallExpr) {
-        // TODO
+        writer.print("FunCallExpr(");
+        writer.print(funCallExpr.name);
+        for (Expr e: funCallExpr.arguments) {
+            writer.print(", ");
+            e.accept(this);
+        }
+        writer.print(")");
         return null;
     }
 
