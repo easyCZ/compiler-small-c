@@ -133,7 +133,9 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitChrLiteral(ChrLiteral chrLiteral) {
-        // TODO
+        writer.print("ChrLiteral(");
+        writer.print(chrLiteral.value);
+        writer.print(")");
         return null;
     }
 

@@ -1,6 +1,7 @@
 package ast;
 
 
+import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.StrLiteral;
 import ast.expressions.Var;
@@ -112,6 +113,14 @@ public class ASTPrinterTest {
         printer.visitIntLiteral(intLiteral);
         assertEquals("IntLiteral(123)", writer.toString());
     }
+
+    @Test
+    public void visitChrLiteral() {
+        ChrLiteral chrLiteral = new ChrLiteral('h');
+        printer.visitChrLiteral(chrLiteral);
+        assertEquals("ChrLiteral(h)", writer.toString());
+    }
+
 
 
 }
