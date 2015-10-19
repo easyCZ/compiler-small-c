@@ -21,9 +21,27 @@ public class ASTPrinter implements ASTVisitor<Void> {
             varDecl.accept(this);
             writer.print(", ");
         }
+        // Handle the last vardecl
         if (b.varDecls.size() > 0) {
             VarDecl varDecl = b.varDecls.get(b.varDecls.size() - 1);
             varDecl.accept(this);
+        }
+
+        // Join the two with a dot
+        if (b.varDecls.size() > 0 && b.statements.size() > 0) {
+            writer.print(", ");
+        }
+
+        for (int i = 0; i < b.statements.size() - 1; i++) {
+            Stmt stmt = b.statements.get(i);
+            stmt.accept(this);
+            writer.print(", ");
+        }
+
+        // Handle the last statement
+        if (b.statements.size() > 0) {
+            Stmt stmt = b.statements.get(b.statements.size() -1);
+            stmt.accept(this);
         }
 
         writer.print(")");
@@ -33,10 +51,10 @@ public class ASTPrinter implements ASTVisitor<Void> {
     public Void visitProcedure(Procedure p) {
         writer.print("Procedure(");
         writer.print(p.type);
-        writer.print(","+p.name+",");
+        writer.print(", "+p.name+", ");
         for (VarDecl vd : p.params) {            
             vd.accept(this);
-            writer.print(",");
+            writer.print(", ");
         }
         p.block.accept(this);
         writer.print(")");
@@ -47,11 +65,11 @@ public class ASTPrinter implements ASTVisitor<Void> {
         writer.print("Program(");
         for (VarDecl vd : p.varDecls) {
             vd.accept(this);
-            writer.print(",");
+            writer.print(", ");
         }
         for (Procedure proc : p.procs) {
             proc.accept(this);
-            writer.print(",");
+            writer.print(", ");
         }
         p.main.accept(this);
         writer.print(")");
@@ -119,7 +137,15 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitIf(If anIf) {
-        // TODO
+        writer.print("If(");
+        anIf.ifExpr.accept(this);
+        writer.print(", ");
+        anIf.ifStmt.accept(this);
+        if (anIf.hasElse()) {
+            writer.print(", ");
+            anIf.elseStmt.accept(this);
+        }
+        writer.print(")");
         return null;
     }
 

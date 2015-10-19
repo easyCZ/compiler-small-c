@@ -17,6 +17,10 @@ public class If extends Stmt {
         this.elseStmt = elseStatement;
     }
 
+    public boolean hasElse() {
+        return elseStmt != null;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitIf(this);

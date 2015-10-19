@@ -2,10 +2,7 @@ package ast;
 
 
 import ast.expressions.*;
-import ast.statements.Assign;
-import ast.statements.FunCallStmt;
-import ast.statements.Return;
-import ast.statements.While;
+import ast.statements.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -99,6 +96,49 @@ public class ASTPrinterTest {
     }
 
     @Test
+    public void visitBlockOnlyStatments() {
+
+
+
+        List<Stmt> stmts = new LinkedList<>();
+        stmts.add(new Assign(new Var("x"), new IntLiteral(10)));
+        stmts.add(new Assign(new Var("y"), new IntLiteral(11)));
+        stmts.add(new Assign(new Var("z"), new IntLiteral(12)));
+
+        printer.visitBlock(new Block(new LinkedList<VarDecl>(), stmts));
+        assertEquals("" +
+                "Block(" +
+                    "Assign(Var(x), IntLiteral(10)), " +
+                    "Assign(Var(y), IntLiteral(11)), " +
+                    "Assign(Var(z), IntLiteral(12))" +
+                ")", writer.toString());
+    }
+
+    @Test
+    public void visitBlockMixed() {
+        List<VarDecl> varDecls = new LinkedList<>();
+        varDecls.add(new VarDecl(Type.INT, new Var("x")));
+        varDecls.add(new VarDecl(Type.CHAR, new Var("y")));
+        varDecls.add(new VarDecl(Type.VOID, new Var("z")));
+
+        List<Stmt> stmts = new LinkedList<>();
+        stmts.add(new Assign(new Var("x"), new IntLiteral(10)));
+        stmts.add(new Assign(new Var("y"), new IntLiteral(11)));
+        stmts.add(new Assign(new Var("z"), new IntLiteral(12)));
+
+        printer.visitBlock(new Block(varDecls, stmts));
+        assertEquals("" +
+                "Block(" +
+                "VarDecl(Var(x), INT), " +
+                "VarDecl(Var(y), CHAR), " +
+                "VarDecl(Var(z), VOID), " +
+                "Assign(Var(x), IntLiteral(10)), " +
+                "Assign(Var(y), IntLiteral(11)), " +
+                "Assign(Var(z), IntLiteral(12))" +
+                ")", writer.toString());
+    }
+
+    @Test
     public void visitBinOp() {
         BinOp binOp = new BinOp(new IntLiteral(10), Op.ADD, new IntLiteral(1));
         printer.visitBinOp(binOp);
@@ -167,6 +207,20 @@ public class ASTPrinterTest {
         FunCallExpr funCallExpr = new FunCallExpr("foo", arguments);
         printer.visitFunCallExpr(funCallExpr);
         assertEquals("FunCallExpr(foo, Var(x), Var(y))", writer.toString());
+    }
+
+    @Test
+    public void visitIf() {
+        If ifz = new If(new Var("x"), new Return(null), null);
+        printer.visitIf(ifz);
+        assertEquals("If(Var(x), Return())", writer.toString());
+    }
+
+    @Test
+    public void visitIfElse() {
+        If ifz = new If(new Var("x"), new Return(null), new Return(new Var("y")));
+        printer.visitIf(ifz);
+        assertEquals("If(Var(x), Return(), Return(Var(y)))", writer.toString());
     }
 
 
