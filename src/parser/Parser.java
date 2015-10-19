@@ -2,6 +2,7 @@ package parser;
 
 import ast.*;
 import ast.expressions.ChrLiteral;
+import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.*;
@@ -485,8 +486,10 @@ public class Parser {
     }
 
     public Expr parseFactor() {
+        
         if (isFuncationCall()) {
-            parseFunctionCall();
+            FunCallStmt funCallStmt = parseFunctionCall();
+            return new FunCallExpr(funCallStmt.name, funCallStmt.arguments);
         }
 
         switch (token.tokenClass) {

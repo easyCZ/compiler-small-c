@@ -1,6 +1,7 @@
 package ast;
 
 import ast.expressions.ChrLiteral;
+import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.*;
@@ -21,4 +22,6 @@ public interface ASTVisitor<T> {
     T visitChrLiteral(ChrLiteral chrLiteral);
     T visitReturn(Return aReturn);
     T visitAssign(Assign assign);
+
+    T visitFunCallExpr(FunCallExpr funCallExpr);
 }

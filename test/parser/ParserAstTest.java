@@ -3,6 +3,7 @@ package parser;
 
 import ast.*;
 import ast.expressions.ChrLiteral;
+import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.*;
@@ -193,6 +194,29 @@ public class ParserAstTest {
     public void factor_character() {
         ChrLiteral c = (ChrLiteral) getParser("'h'").parseFactor();
         assertEquals('h', c.value);
+    }
+
+    @Test
+    public void factor_FunctionCallNoArguments() {
+        FunCallExpr f = (FunCallExpr) getParser("foo()").parseFactor();
+        assertEquals("foo", f.name);
+        assertEquals(0, f.arguments.size());
+    }
+
+    @Test
+    public void factor_FunctionCallWithArguments() {
+        FunCallExpr f = (FunCallExpr) getParser("foo(bar, zoo)").parseFactor();
+        assertEquals("foo", f.name);
+        assertEquals(2, f.arguments.size());
+
+        List<Expr> arguments = f.arguments;
+
+        int i = 0;
+        for (String var : Arrays.asList("bar", "zoo")) {
+            assertEquals(var, ((Var) arguments.get(i)).name);
+            i += 1;
+        }
+
     }
 
     /* read statement */

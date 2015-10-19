@@ -1,19 +1,23 @@
 package ast.expressions;
 
+import ast.ASTVisitor;
 import ast.Expr;
 
-import java.util.LinkedList;
 import java.util.List;
 
 
-public class FunCallExpr {
+public class FunCallExpr extends Expr {
 
     public final String name;
     public final List<Expr> arguments;
 
-    public FunCallExpr(String name, LinkedList<Expr> arguments) {
+    public FunCallExpr(String name, List<Expr> arguments) {
         this.name = name;
         this.arguments = arguments;
     }
 
+    @Override
+    public <T> T accept(ASTVisitor<T> v) {
+        return v.visitFunCallExpr(this);
+    }
 }
