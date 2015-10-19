@@ -147,10 +147,18 @@ public class ParserAstTest {
     /* If */
     @Test
     public void if_parsed() {
-        If ifz = (If) getParser("if (x) {} else {}").parseStatement();
+        If ifz = (If) getParser("if (x) {}").parseStatement();
         assertEquals("x", ((Var) ifz.ifExpr).name);
         assertNotNull(ifz.ifStmt);
         assertNull(ifz.elseStmt);
+    }
+
+    @Test
+    public void if_parsedWithElse() {
+        If ifz = (If) getParser("if (x) {} else {}").parseStatement();
+        assertEquals("x", ((Var) ifz.ifExpr).name);
+        assertNotNull(ifz.ifStmt);
+        assertNotNull(ifz.elseStmt);
     }
 
     /* main */

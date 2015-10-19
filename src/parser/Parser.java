@@ -323,7 +323,7 @@ public class Parser {
             case WHILE:
                 expect(TokenClass.WHILE);
                 expect(TokenClass.LPAR);
-                Expr whileExpr = parseExpression();  // Returns null, TODO
+                Expr whileExpr = parseExpression();
                 expect(TokenClass.RPAR);
                 Stmt whileStmt = parseStatement();
                 return new While(whileExpr, whileStmt);
@@ -433,12 +433,11 @@ public class Parser {
 
     public Expr parseLexicalExpression() {
         if (isTerm()) {
-            parseTerm();
-            Expr second = parseLexicalExpressionRepetition();
+            Expr term = parseTerm();
+            return parseLexicalExpressionRepetition(term);
         }
         else errorExpectedFactor();
 
-        // TODO: AST
         return null;
     }
 
@@ -454,31 +453,35 @@ public class Parser {
         error(TokenClass.MINUS, TokenClass.IDENTIFIER, TokenClass.NUMBER, TokenClass.CHARACTER, TokenClass.LPAR);
     }
 
-    private Expr parseLexicalExpressionRepetition() {
+    private Expr parseLexicalExpressionRepetition(Expr lhs) {
         if (isLexicalExpressionRep()) {
-            expect(TokenClass.PLUS, TokenClass.MINUS);
-            parseTerm();
-            parseLexicalExpressionRepetition();
+            Token t = expect(TokenClass.PLUS, TokenClass.MINUS);
+            Expr term = parseTerm();
+            BinOp rhs = new BinOp(lhs, Op.getOp(t.tokenClass), term);
+            return parseLexicalExpressionRepetition(rhs);
         }
-        // TODO: AST
-        return null;
+        return lhs;
     }
 
     private boolean isLexicalExpressionRep() {
         return accept(TokenClass.PLUS, TokenClass.MINUS);
     }
 
-    public void parseTerm() {
-        parseFactor();
-        parseTermRepetition();
+    public Expr parseTerm() {
+        Expr factor = parseFactor();
+        return parseTermRepetition(factor);
     }
 
-    private void parseTermRepetition() {
+    private Expr parseTermRepetition(Expr lhs) {
         if (isTermRepetition()) {
-            expect(TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD);
-            parseFactor();
-            parseTermRepetition();
+
+            Token operation = expect(TokenClass.DIV, TokenClass.TIMES, TokenClass.MOD);
+            Expr rhs = parseTermRepetition(parseFactor());
+            if (operation != null && rhs != null) {
+                return new BinOp(lhs, Op.getOp(operation.tokenClass), rhs);
+            }
         }
+        return lhs;
     }
 
     private boolean isTermRepetition() {
@@ -554,7 +557,6 @@ public class Parser {
     }
 
     public Expr parseExpression() {
-        // TODO AST
         Expr lhs = parseLexicalExpression();
 
         if (isComparator(token)) {
@@ -564,16 +566,12 @@ public class Parser {
                     TokenClass.LE,
                     TokenClass.NE,
                     TokenClass.EQ);
-            // TODO AST
-            Op op = null;
-            // TODO AST
-            Expr rhs = null;
 
-            parseLexicalExpression();
+            Op op = Op.getOp(t.tokenClass);
+            Expr rhs = parseLexicalExpression();
             return new BinOp(lhs, op, rhs);
         }
 
-        // TODO AST
         return lhs;
     }
 
