@@ -363,11 +363,12 @@ public class Parser {
                 return null;
 
             case READ:
-                expect(TokenClass.READ);
+                Token read = expect(TokenClass.READ);
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
                 expect(TokenClass.SEMICOLON);
-                // TODO: AST
+                if (read != null)
+                    return new FunCallStmt(read.data, new LinkedList<Expr>());
                 return null;
 
             default:

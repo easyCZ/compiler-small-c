@@ -199,6 +199,14 @@ public class ParserAstTest {
         assertEquals('h', c.value);
     }
 
+    /* Print statement */
+    @Test
+    public void statement_Read() {
+        FunCallStmt read = (FunCallStmt) getParser("read_c()").parseStatement();
+        assertEquals("read_c", read.name);
+        assertEquals(0, read.arguments.size());
+    }
+
 
 
     private void assertProcedure(Type type, String name, Procedure p) {
