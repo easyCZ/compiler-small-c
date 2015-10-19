@@ -1,6 +1,7 @@
 package ast;
 
 
+import ast.expressions.IntLiteral;
 import ast.expressions.StrLiteral;
 import ast.expressions.Var;
 import ast.statements.FunCallStmt;
@@ -95,6 +96,21 @@ public class ASTPrinterTest {
                     "VarDecl(Var(y), CHAR), " +
                     "VarDecl(Var(z), VOID)" +
                 ")", writer.toString());
+    }
+
+    @Test
+    public void visitBinOp() {
+        BinOp binOp = new BinOp(new IntLiteral(10), Op.ADD, new IntLiteral(1));
+        printer.visitBinOp(binOp);
+
+        assertEquals("BinOp(IntLiteral(10), ADD, IntLiteral(1))", writer.toString());
+    }
+
+    @Test
+    public void visitIntLiteral() {
+        IntLiteral intLiteral = new IntLiteral(123);
+        printer.visitIntLiteral(intLiteral);
+        assertEquals("IntLiteral(123)", writer.toString());
     }
 
 

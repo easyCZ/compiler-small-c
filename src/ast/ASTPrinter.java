@@ -107,7 +107,13 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitBinOp(BinOp binOp) {
-        // TODO
+        writer.print("BinOp(");
+        binOp.lhs.accept(this);
+        writer.print(", ");
+        writer.print(binOp.op);
+        writer.print(", ");
+        binOp.rhs.accept(this);
+        writer.print(")");
         return null;
     }
 
@@ -119,7 +125,9 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     @Override
     public Void visitIntLiteral(IntLiteral intLiteral) {
-        // TODO
+        writer.print("IntLiteral(");
+        writer.print(intLiteral.value);
+        writer.print(")");
         return null;
     }
 
