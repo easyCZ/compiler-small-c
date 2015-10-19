@@ -216,7 +216,20 @@ public class ParserAstTest {
             assertEquals(var, ((Var) arguments.get(i)).name);
             i += 1;
         }
+    }
 
+    @Test
+    public void factor_ReadInteger() {
+        FunCallExpr f = (FunCallExpr) getParser("read_i()").parseFactor();
+        assertEquals("read_i", f.name);
+        assertEquals(0, f.arguments.size());
+    }
+
+    @Test
+    public void factor_ReadCharacter() {
+        FunCallExpr f = (FunCallExpr) getParser("read_c()").parseFactor();
+        assertEquals("read_c", f.name);
+        assertEquals(0, f.arguments.size());
     }
 
     /* read statement */

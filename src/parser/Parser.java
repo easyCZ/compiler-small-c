@@ -486,7 +486,7 @@ public class Parser {
     }
 
     public Expr parseFactor() {
-        
+
         if (isFuncationCall()) {
             FunCallStmt funCallStmt = parseFunctionCall();
             return new FunCallExpr(funCallStmt.name, funCallStmt.arguments);
@@ -531,11 +531,13 @@ public class Parser {
                 Token read = expect(TokenClass.READ);
                 expect(TokenClass.LPAR);
                 expect(TokenClass.RPAR);
-                break;
+
+                if (read != null)
+                    return new FunCallExpr(read.data, new LinkedList<Expr>());
+                return null;
 
         }
 
-        // TODO: AST
         return null;
     }
 
