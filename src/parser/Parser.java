@@ -454,8 +454,8 @@ public class Parser {
         if (isLexicalExpressionRep()) {
             Token t = expect(TokenClass.PLUS, TokenClass.MINUS);
             Expr term = parseTerm();
-            BinOp rhs = new BinOp(lhs, Op.getOp(t.tokenClass), term);
-            return parseLexicalExpressionRepetition(rhs);
+            Expr continuation = parseLexicalExpressionRepetition(term);
+            return new BinOp(lhs, Op.getOp(t.tokenClass), continuation);
         }
         return lhs;
     }

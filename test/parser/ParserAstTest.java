@@ -306,6 +306,36 @@ public class ParserAstTest {
         assertNotNull(assign.expr);
     }
 
+    /* Expressions */
+    @Test
+    public void expression_mix() {
+        BinOp binOp = (BinOp) getParser("2+3+4").parseLexicalExpression();
+        assertEquals(2, ((IntLiteral) binOp.lhs).value);
+        assertEquals(Op.ADD, binOp.op);
+        BinOp rhs = (BinOp) binOp.rhs;
+        assertEquals(3, ((IntLiteral) rhs.lhs).value);
+        assertEquals(Op.ADD, rhs.op);
+        assertEquals(4, ((IntLiteral) rhs.rhs).value);
+    }
+
+    @Test
+    public void expression_chain() {
+        BinOp binOp = (BinOp) getParser("i / 5 * 6").parseLexicalExpression();
+
+        Var i = (Var) binOp.lhs;
+        Op div = binOp.op;
+        BinOp rhs = (BinOp) binOp.rhs;
+        IntLiteral five = (IntLiteral) rhs.lhs;
+        IntLiteral six = (IntLiteral) rhs.rhs;
+        Op times = rhs.op;
+
+        assertEquals("i", i.name);
+        assertEquals(Op.DIV, div);
+        assertEquals(5, five.value);
+        assertEquals(Op.MUL, times);
+        assertEquals(6, six.value);
+    }
+
 
 
     private void assertProcedure(Type type, String name, Procedure p) {
