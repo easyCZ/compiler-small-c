@@ -336,6 +336,25 @@ public class ParserAstTest {
         assertEquals(6, six.value);
     }
 
+    @Test public void expression_MixedTimesAndPlus() {
+        BinOp binOp = (BinOp) getParser("2 * 3 + 4").parseLexicalExpression();
+
+        BinOp mul = (BinOp) binOp.lhs;
+        IntLiteral two = (IntLiteral) mul.lhs;
+        Op times = mul.op;
+        IntLiteral three = (IntLiteral) mul.rhs;
+
+        Op plus = binOp.op;
+        IntLiteral four = (IntLiteral) binOp.rhs;
+
+        assertEquals(2, two.value);
+        assertEquals(Op.MUL, times);
+        assertEquals(3, three.value);
+        assertEquals(Op.ADD, plus);
+        assertEquals(4, four.value);
+
+    }
+
 
 
     private void assertProcedure(Type type, String name, Procedure p) {

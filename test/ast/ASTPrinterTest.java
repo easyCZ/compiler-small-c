@@ -3,8 +3,11 @@ package ast;
 
 import ast.expressions.*;
 import ast.statements.*;
+import lexer.Scanner;
+import lexer.Tokeniser;
 import org.junit.Before;
 import org.junit.Test;
+import parser.Parser;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -227,6 +230,36 @@ public class ASTPrinterTest {
         If ifz = new If(new Var("x"), new Return(null), new Return(new Var("y")));
         printer.visitIf(ifz);
         assertEquals("If(Var(x), Return(), Return(Var(y)))", writer.toString());
+    }
+
+    @Test
+    public void assignment_full() {
+        String program = "void main() {\n" +
+                "    int i;\n" +
+                "\n" +
+                "    i = 9 / 3;\n" +
+                "    i = i % 2;\n" +
+                "    i = (i + 10) * (7 % -5);\n" +
+                "    i = i + 3 + i + 5;\n" +
+                "    i = i * 3 * 4;\n" +
+                "    i = i % 5 % 6;\n" +
+                "    i = i / 9;\n" +
+                "    i = i + 3 * 4;\n" +
+                "    i = i / 3 * 4;\n" +
+                "    i = i - 3 + 4;\n" +
+                "}";
+
+        Scanner s = new Scanner(program);
+        Tokeniser t = new Tokeniser(s);
+        Parser p = new Parser(t);
+        Program ast = p.parse();
+
+        printer.visitProgram(ast);
+
+        String out = writer.toString();
+        out = out.replaceAll(" ", "");
+
+        assertEquals(out, "Program(Procedure(VOID,main,Block(VarDecl(INT,Var(i)),Assign(Var(i),BinOp(IntLiteral(9),DIV,IntLiteral(3))),Assign(Var(i),BinOp(Var(i),MOD,IntLiteral(2))),Assign(Var(i),BinOp(BinOp(Var(i),ADD,IntLiteral(10)),MUL,BinOp(IntLiteral(7),MOD,BinOp(IntLiteral(0),SUB,IntLiteral(5))))),Assign(Var(i),BinOp(Var(i),ADD,BinOp(IntLiteral(3),ADD,BinOp(Var(i),ADD,IntLiteral(5))))),Assign(Var(i),BinOp(Var(i),MUL,BinOp(IntLiteral(3),MUL,IntLiteral(4)))),Assign(Var(i),BinOp(Var(i),MOD,BinOp(IntLiteral(5),MOD,IntLiteral(6)))),Assign(Var(i),BinOp(Var(i),DIV,IntLiteral(9))),Assign(Var(i),BinOp(Var(i),ADD,BinOp(IntLiteral(3),MUL,IntLiteral(4)))),Assign(Var(i),BinOp(Var(i),DIV,BinOp(IntLiteral(3),MUL,IntLiteral(4)))),Assign(Var(i),BinOp(Var(i),SUB,BinOp(IntLiteral(3),ADD,IntLiteral(4)))))))");
     }
 
 
