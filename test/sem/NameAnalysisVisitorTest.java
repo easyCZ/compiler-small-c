@@ -44,6 +44,7 @@ public class NameAnalysisVisitorTest {
         assertEquals(3, scope.getSymbolTable().size());
     }
 
+    /* VarDecl */
     @Test
     public void visitVarDecl_symbolAddedToScope() {
         sut.visitVarDecl(new VarDecl(Type.INT, new Var("i")));

@@ -23,6 +23,8 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
         for (VarDecl v : p.varDecls)
             visitVarDecl(v);
 
+        // TODO: Rest of program args
+
         return null;
     }
 
