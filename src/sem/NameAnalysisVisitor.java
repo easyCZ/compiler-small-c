@@ -3,6 +3,7 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
+import sem.symbols.VarSymbol;
 
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
@@ -15,6 +16,15 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	public NameAnalysisVisitor() {
 		this.scope = new Scope();
 	}
+
+    @Override
+    public Void visitProgram(Program p) {
+
+        for (VarDecl v : p.varDecls)
+            visitVarDecl(v);
+
+        return null;
+    }
 
 	@Override
 	public Void visitBlock(Block b) {
@@ -29,14 +39,14 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	}
 
 	@Override
-	public Void visitProgram(Program p) {
-		// To be completed...
-		return null;
-	}
-
-	@Override
 	public Void visitVarDecl(VarDecl vd) {
-		// To be completed...
+        Symbol symbol = scope.lookupCurrent(vd.var.name);
+
+        if (symbol != null)
+            error(String.format("Encountered duplicate declaration of %s", vd.var));
+        else
+            scope.put(new VarSymbol(vd));
+
 		return null;
 	}
 
@@ -95,4 +105,8 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	public Void visitFunCallExpr(FunCallExpr funCallExpr) {
 		return null;
 	}
+
+    public Scope getScope() {
+        return this.scope;
+    }
 }

@@ -1,5 +1,10 @@
 #include "io.h"
 
+
+int i;
+char c;
+void v;
+
 int increment(int i) {
     return i + 1;
 }
