@@ -6,6 +6,16 @@ import ast.statements.*;
 
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
+	private final Scope scope;
+
+	public NameAnalysisVisitor(Scope scope) {
+		this.scope = scope;
+	}
+
+	public NameAnalysisVisitor() {
+		this.scope = new Scope();
+	}
+
 	@Override
 	public Void visitBlock(Block b) {
 		// To be completed...
