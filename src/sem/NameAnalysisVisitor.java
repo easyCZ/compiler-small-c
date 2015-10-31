@@ -179,8 +179,6 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
         for (Expr expr : funCallExpr.arguments)
             expr.accept(this);
 
-        // Link back to declaration
-
 		return null;
 	}
 
