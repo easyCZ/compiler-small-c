@@ -49,7 +49,6 @@ public class NameAnalysisVisitorTest {
     private static final FunCallExpr barExpr = new FunCallExpr(BAR, EMPTY_EXPRESSIONS);
 
     private static final List<Expr> arguments = new ArrayList<Expr>() {{
-        add(foo);
         add(bar);
         add(zoo);
     }};
@@ -211,6 +210,7 @@ public class NameAnalysisVisitorTest {
 
         sut.visitFunCallExpr(fooExpr);
         assertEquals(0, sut.getErrorCount());
+        assertEquals(fooExpr.getProcedure(), fooProc);
     }
 
     @Test
@@ -218,18 +218,18 @@ public class NameAnalysisVisitorTest {
         scope.put(new ProcSymbol(fooProc));
 
         sut.visitFunCallExpr(fooExprWithArgs);
-        assertEquals(3, sut.getErrorCount());
+        assertEquals(2, sut.getErrorCount());
     }
 
     @Test
     public void visitFunCallExpr_WithArguments() {
         scope.put(new ProcSymbol(fooProc));
-        scope.put(new VarSymbol(intFoo));
         scope.put(new VarSymbol(charBar));
         scope.put(new VarSymbol(voidZoo));
 
         sut.visitFunCallExpr(fooExprWithArgs);
         assertEquals(0, sut.getErrorCount());
+        assertEquals(fooExprWithArgs.getProcedure(), fooProc);
     }
 
 
