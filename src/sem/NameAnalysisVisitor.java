@@ -5,9 +5,11 @@ import ast.expressions.*;
 import ast.statements.*;
 import sem.symbols.VarSymbol;
 
+import java.util.List;
+
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
-	private final Scope scope;
+	private Scope scope;
 
 	public NameAnalysisVisitor(Scope scope) {
 		this.scope = scope;
@@ -18,23 +20,34 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	}
 
     @Override
-    public Void visitProgram(Program p) {
+    public Void visitProgram(Program program) {
 
-        for (VarDecl v : p.varDecls)
-            visitVarDecl(v);
+        visitVarDecls(program.varDecls);
 
-        // TODO: Rest of program args
+//        TODO: Test
+//        for (Procedure p : program.procs) {
+//            p.accept(this);
+//        }
+//
+//        program.main.accept(this);
 
         return null;
     }
 
 	@Override
 	public Void visitBlock(Block b) {
-		// To be completed...
+		Scope oldScope = scope;
+
+        scope = new Scope(oldScope);
+        visitVarDecls(b.varDecls);
+        visitStatements(b.statements);
+
+        scope = oldScope;
+
 		return null;
 	}
 
-	@Override
+    @Override
 	public Void visitProcedure(Procedure p) {
 		// To be completed...
 		return null;
@@ -54,7 +67,20 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitVar(Var v) {
-		// To be completed...
+        Symbol symbol = scope.lookup(v.name);
+
+        // Symbol must be in the table
+        if (symbol == null) {
+            error(String.format("Attempted to use an undeclared variable %s", v.name));
+        }
+        else if (!symbol.isVar()) {
+            error(String.format("Attempted to use %s as a variable.", v.name));
+        }
+        else {
+            VarSymbol varSymbol = (VarSymbol) symbol;
+            v.setVarDecl(varSymbol.varDecl);
+        }
+
 		return null;
 	}
 
@@ -107,6 +133,16 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	public Void visitFunCallExpr(FunCallExpr funCallExpr) {
 		return null;
 	}
+
+    private void visitVarDecls(List<VarDecl> varDeclList) {
+        for (VarDecl v : varDeclList)
+            v.accept(this);
+    }
+
+    private void visitStatements(List<Stmt> statements) {
+        for (Stmt stmt : statements)
+            stmt.accept(this);
+    }
 
     public Scope getScope() {
         return this.scope;

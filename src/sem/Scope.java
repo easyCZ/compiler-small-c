@@ -1,7 +1,5 @@
 package sem;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +17,13 @@ public class Scope {
 	public Scope() { this(null); }
 	
 	public Symbol lookup(String name) {
-		// TODO
-        throw new NotImplementedException();
-//		return null;
+		Symbol current = lookupCurrent(name);
+
+        if (current == null && outer != null) {
+            return outer.lookup(name);
+        }
+
+        return current;
 	}
 	
 	public Symbol lookupCurrent(String name) {

@@ -8,4 +8,11 @@ public abstract class Symbol {
 		this.name = name;
 	}
 
+    public boolean isVar() {
+        return false;
+    }
+
+    public boolean isProc() {
+        return false;
+    }
 }

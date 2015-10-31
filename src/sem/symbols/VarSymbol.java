@@ -17,4 +17,10 @@ public class VarSymbol extends Symbol {
     public String toString() {
         return "VarSymbol(" + name + ")";
     }
+
+    @Override
+    public boolean isVar() {
+        return true;
+    }
+
 }
