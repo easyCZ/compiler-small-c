@@ -106,5 +106,33 @@ public class NameAnalysisVisitorTest {
         assertEquals(intFoo, foo.getVarDecl());
     }
 
+    /* Procedure */
+    @Test
+    public void visitProcedure_StoresPrcedureInScope() {
+        sut.visitProcedure(fooProc);
+        assertEquals(fooProc, ((ProcSymbol) scope.lookup(fooProc.name)).procedure);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitProcedure_FailsWithDuplicateProcedure() {
+        scope.put(new ProcSymbol(fooProc));
+
+        sut.visitProcedure(fooProc);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitProcedure_FailsWithATakenName() {
+        scope.put(new VarSymbol(intFoo));
+
+        sut.visitProcedure(fooProc);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    // TODO: visitProcedure with contents
+
+    
+
 
 }

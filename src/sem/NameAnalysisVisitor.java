@@ -3,6 +3,7 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
+import sem.symbols.ProcSymbol;
 import sem.symbols.VarSymbol;
 
 import java.util.List;
@@ -49,7 +50,25 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
     @Override
 	public Void visitProcedure(Procedure p) {
-		// To be completed...
+        // Should be null as it is not defined
+        Symbol symbol = scope.lookup(p.name);
+
+        if (symbol != null)
+            error(String.format("Encountered duplicate procedure definition '%s'", p.name));
+        else {
+            symbol = new ProcSymbol(p);
+            scope.put(symbol);
+
+            Scope oldScope = scope;
+            // process method contents
+            scope = new Scope(oldScope);
+            visitVarDecls(p.params);
+            p.block.accept(this);
+
+            // Return to proper scope
+            scope = oldScope;
+        }
+
 		return null;
 	}
 
