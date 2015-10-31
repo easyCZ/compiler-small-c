@@ -106,8 +106,26 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-        throw new NotImplementedException();
-//		return null;
+        // Check name is defined
+        Symbol symbol = scope.lookup(funCallStmt.name);
+
+        if (symbol == null) {
+            error(String.format("Undeclared procedure call '%s' used.", funCallStmt.name));
+            return null;
+        }
+        else if (!symbol.isProc()) {
+            error(String.format("Expression '%s' must be used as function call.", funCallStmt.name));
+            return null;
+        }
+
+        ProcSymbol procSymbol = (ProcSymbol) symbol;
+        funCallStmt.setProcedure(procSymbol.procedure);
+
+        // Check arguments
+        for (Expr expr : funCallStmt.arguments)
+            expr.accept(this);
+
+        return null;
 	}
 
 	@Override

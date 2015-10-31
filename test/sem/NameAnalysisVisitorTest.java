@@ -4,6 +4,7 @@ import ast.*;
 import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
+import ast.statements.FunCallStmt;
 import org.junit.Before;
 import org.junit.Test;
 import sem.symbols.ProcSymbol;
@@ -54,6 +55,7 @@ public class NameAnalysisVisitorTest {
     }};
 
     private static final FunCallExpr fooExprWithArgs = new FunCallExpr(FOO, arguments);
+    private static final FunCallStmt fooStmtWithArgs = new FunCallStmt(FOO, arguments);
 
     private static final BinOp onePlusTwo = new BinOp(ONE, Op.ADD, TWO);
     private static final BinOp fooPlusBar = new BinOp(foo, Op.ADD, bar);
@@ -230,6 +232,19 @@ public class NameAnalysisVisitorTest {
         sut.visitFunCallExpr(fooExprWithArgs);
         assertEquals(0, sut.getErrorCount());
         assertEquals(fooExprWithArgs.getProcedure(), fooProc);
+    }
+
+    /* FunCallStmt */
+    @Test
+    public void visitFunctionCallStmt_WithArgs() {
+        scope.put(new ProcSymbol(fooProc));
+        scope.put(new VarSymbol(charBar));
+        scope.put(new VarSymbol(voidZoo));
+
+        sut.visitFunctionCallStmt(fooStmtWithArgs);
+        assertEquals(0, sut.getErrorCount());
+        assertEquals(fooStmtWithArgs.getProcedure(), fooProc);
+
     }
 
 

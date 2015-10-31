@@ -3,6 +3,7 @@ package ast.statements;
 
 import ast.ASTVisitor;
 import ast.Expr;
+import ast.Procedure;
 import ast.Stmt;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ public class FunCallStmt extends Stmt {
 
     public final String name;
     public final List<Expr> arguments;
+    private Procedure procedure;
 
     public FunCallStmt(String name, List<Expr> arguments) {
         this.name = name;
@@ -26,5 +28,13 @@ public class FunCallStmt extends Stmt {
     @Override
     public String toString() {
         return "FunCallStmt(" + name + ", " + Arrays.toString(arguments.toArray()) + ")";
+    }
+
+    public Procedure getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(Procedure procedure) {
+        this.procedure = procedure;
     }
 }
