@@ -1,10 +1,12 @@
 package sem;
 
+import ast.Program;
+
 import java.util.ArrayList;
 
 public class SemanticAnalyzer {
 	
-	public int analyze(ast.Program prog) {
+	public int analyze(Program prog) {
 		// List of visitors
 		ArrayList<SemanticVisitor> visitors = new ArrayList<SemanticVisitor>() {{
 			add(new NameAnalysisVisitor());

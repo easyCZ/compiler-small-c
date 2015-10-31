@@ -7,8 +7,8 @@ package sem;
  * A base class providing basic error accumulation.
  */
 public abstract class BaseSemanticVisitor<T> implements SemanticVisitor<T> {
+
 	private int errors;
-	
 	
 	public BaseSemanticVisitor() {
 		errors = 0;

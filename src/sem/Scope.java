@@ -3,6 +3,7 @@ package sem;
 import java.util.Map;
 
 public abstract class Scope {
+
 	private Scope outer;
 	private Map<String, Symbol> symbolTable;
 	
