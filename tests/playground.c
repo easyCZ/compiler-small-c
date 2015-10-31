@@ -6,6 +6,7 @@ char c;
 void v;
 
 int increment(int i) {
+    i = foo() + bar();
     return i + 1;
 }
 

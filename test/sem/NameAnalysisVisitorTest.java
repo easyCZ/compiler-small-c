@@ -1,6 +1,8 @@
 package sem;
 
 import ast.*;
+import ast.expressions.FunCallExpr;
+import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +19,16 @@ import static org.junit.Assert.assertNotNull;
 
 public class NameAnalysisVisitorTest {
 
-    private static final Var foo = new Var("foo");
-    private static final Var bar = new Var("bar");
-    private static final Var zoo = new Var("zoo");
+    private static final String FOO = "foo";
+    private static final String BAR = "bar";
+    private static final String ZOO = "zoo";
+
+    private static final IntLiteral ONE = new IntLiteral(1);
+    private static final IntLiteral TWO = new IntLiteral(2);
+
+    private static final Var foo = new Var(FOO);
+    private static final Var bar = new Var(BAR);
+    private static final Var zoo = new Var(ZOO);
 
     private static final VarDecl intFoo = new VarDecl(Type.INT, foo);
     private static final VarDecl charBar = new VarDecl(Type.CHAR, bar);
@@ -27,12 +36,29 @@ public class NameAnalysisVisitorTest {
 
     private static final List<VarDecl> EMPTY_VARDECLS = new ArrayList<>();
     private static final List<Stmt> EMPTY_STATEMENTS = new ArrayList<>();
+    private static final List<Expr> EMPTY_EXPRESSIONS = new ArrayList<>();
     private static final Block EMPTY_BLOCK = new Block(EMPTY_VARDECLS, EMPTY_STATEMENTS);
 
-    private static final Procedure fooProc = new Procedure(Type.INT, "foo", EMPTY_VARDECLS, EMPTY_BLOCK);
+    private static final Procedure fooProc = new Procedure(Type.INT, FOO, EMPTY_VARDECLS, EMPTY_BLOCK);
+    private static final Procedure barProc = new Procedure(Type.CHAR, BAR, EMPTY_VARDECLS, EMPTY_BLOCK);
 
     private static final List<VarDecl> vardecls = Arrays.asList(intFoo, charBar, voidZoo);
     private static final Procedure MAIN = new Procedure(Type.VOID, "main", EMPTY_VARDECLS, EMPTY_BLOCK);
+
+    private static final FunCallExpr fooExpr = new FunCallExpr(FOO, EMPTY_EXPRESSIONS);
+    private static final FunCallExpr barExpr = new FunCallExpr(BAR, EMPTY_EXPRESSIONS);
+
+    private static final List<Expr> arguments = new ArrayList<Expr>() {{
+        add(foo);
+        add(bar);
+        add(zoo);
+    }};
+
+    private static final FunCallExpr fooExprWithArgs = new FunCallExpr(FOO, arguments);
+
+    private static final BinOp onePlusTwo = new BinOp(ONE, Op.ADD, TWO);
+    private static final BinOp fooPlusBar = new BinOp(foo, Op.ADD, bar);
+    private static final BinOp fooExprPlusBarExpr = new BinOp(fooExpr, Op.ADD, barExpr);
 
 
     private Scope scope;
@@ -51,7 +77,9 @@ public class NameAnalysisVisitorTest {
         Program program = new Program(vardecls, new ArrayList<Procedure>(), MAIN);
         sut.visitProgram(program);
 
-        assertEquals(3, scope.getSymbolTable().size());
+        assertEquals(intFoo, ((VarSymbol) scope.lookupCurrent(FOO)).varDecl);
+        assertEquals(charBar, ((VarSymbol) scope.lookupCurrent(BAR)).varDecl);
+        assertEquals(voidZoo, ((VarSymbol) scope.lookupCurrent(ZOO)).varDecl);
     }
 
     /* VarDecl */
@@ -132,7 +160,78 @@ public class NameAnalysisVisitorTest {
 
     // TODO: visitProcedure with contents
 
-    
+
+    /* Bin Op */
+    @Test
+    public void visitBinOp_visitsBothSidesForIntLiterals() {
+        sut.visitBinOp(onePlusTwo);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitBinOp_functionCallVarsUndeclaredFail() {
+        sut.visitBinOp(fooPlusBar);
+        assertEquals(2, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitBinOp_functionCallVarsDeclared() {
+        scope.put(new VarSymbol(intFoo));
+        scope.put(new VarSymbol(charBar));
+
+        sut.visitBinOp(fooPlusBar);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitBinOp_functionCallExpressionsUndeclared() {
+        sut.visitBinOp(fooExprPlusBarExpr);
+        assertEquals(2, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitBinOp_functionCallExpressionsDeclared() {
+        scope.put(new ProcSymbol(fooProc));
+        scope.put(new ProcSymbol(barProc));
+
+        sut.visitBinOp(fooExprPlusBarExpr);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    /* FunCallExpr */
+    @Test
+    public void visitFunCallExpr_failsWithUndefinedName() {
+        sut.visitFunCallExpr(fooExpr);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitFunCallExpr_nameDefined() {
+        scope.put(new ProcSymbol(fooProc));
+
+        sut.visitFunCallExpr(fooExpr);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitFunCallExpr_failsWithUndefinedArgument() {
+        scope.put(new ProcSymbol(fooProc));
+
+        sut.visitFunCallExpr(fooExprWithArgs);
+        assertEquals(3, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitFunCallExpr_WithArguments() {
+        scope.put(new ProcSymbol(fooProc));
+        scope.put(new VarSymbol(intFoo));
+        scope.put(new VarSymbol(charBar));
+        scope.put(new VarSymbol(voidZoo));
+
+        sut.visitFunCallExpr(fooExprWithArgs);
+        assertEquals(0, sut.getErrorCount());
+    }
+
 
 
 }

@@ -5,6 +5,7 @@ import ast.expressions.*;
 import ast.statements.*;
 import sem.symbols.ProcSymbol;
 import sem.symbols.VarSymbol;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -26,11 +27,11 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
         visitVarDecls(program.varDecls);
 
 //        TODO: Test
-//        for (Procedure p : program.procs) {
-//            p.accept(this);
-//        }
-//
-//        program.main.accept(this);
+        for (Procedure p : program.procs) {
+            p.accept(this);
+        }
+
+        program.main.accept(this);
 
         return null;
     }
@@ -105,7 +106,8 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-		return null;
+        throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
@@ -115,17 +117,23 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitWhile(While whilez) {
-		return null;
+        throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Void visitBinOp(BinOp binOp) {
-		return null;
+
+        binOp.lhs.accept(this);
+        binOp.rhs.accept(this);
+
+        return null;
 	}
 
 	@Override
 	public Void visitIf(If anIf) {
-		return null;
+        throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
@@ -140,16 +148,29 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitReturn(Return aReturn) {
-		return null;
+        throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Void visitAssign(Assign assign) {
-		return null;
+        throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Void visitFunCallExpr(FunCallExpr funCallExpr) {
+        // Check name is defined
+        Symbol name = scope.lookup(funCallExpr.name);
+
+        if (name == null) {
+            error(String.format("Undeclared procedure call '%s' used.", funCallExpr.name));
+        }
+
+        // Check arguments
+        for (Expr expr : funCallExpr.arguments)
+            expr.accept(this);
+        
 		return null;
 	}
 
@@ -163,7 +184,4 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
             stmt.accept(this);
     }
 
-    public Scope getScope() {
-        return this.scope;
-    }
 }
