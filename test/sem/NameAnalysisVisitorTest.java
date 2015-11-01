@@ -4,6 +4,7 @@ import ast.*;
 import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
+import ast.statements.Assign;
 import ast.statements.FunCallStmt;
 import org.junit.Before;
 import org.junit.Test;
@@ -246,6 +247,39 @@ public class NameAnalysisVisitorTest {
         assertEquals(fooStmtWithArgs.getProcedure(), fooProc);
 
     }
+
+    private static final Assign fooEqualsOne = new Assign(foo, ONE);
+    private static final Assign barEqualsFooExpr = new Assign(bar, fooExpr);
+
+    /* Assignment */
+    @Test
+    public void visitAssignment_failsWithLHSUndeclared() {
+        sut.visitAssign(fooEqualsOne);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitAssignment_failsWithRHSUndeclared() {
+        scope.put(new VarSymbol(charBar));
+        sut.visitAssign(barEqualsFooExpr);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitAssignment_failsWithLHSDeclaredAsProcedure() {
+        scope.put(new ProcSymbol(fooProc));
+        sut.visitAssign(fooEqualsOne);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitAssignment_passesWithBothSidesDeclared() {
+        scope.put(new VarSymbol(charBar));
+        scope.put(new ProcSymbol(fooProc));
+        sut.visitAssign(barEqualsFooExpr);
+        assertEquals(0, sut.getErrorCount());
+    }
+
 
 
 

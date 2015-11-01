@@ -172,8 +172,11 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitAssign(Assign assign) {
-        throw new NotImplementedException();
-//		return null;
+
+        assign.var.accept(this);
+        assign.expr.accept(this);
+
+        return null;
 	}
 
 	@Override
