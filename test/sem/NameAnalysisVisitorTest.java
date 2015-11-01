@@ -103,7 +103,7 @@ public class NameAnalysisVisitorTest {
     @Test
     public void visitVarDecl_symbolAddedToScope() {
         sut.visitVarDecl(new VarDecl(Type.INT, new Var("i")));
-        assertEquals(1, scope.getSymbolTable().size());
+        assertNotNull(scope.lookup("i"));
     }
 
     @Test
