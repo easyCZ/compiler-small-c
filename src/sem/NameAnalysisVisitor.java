@@ -6,6 +6,7 @@ import ast.statements.*;
 import sem.symbols.ProcSymbol;
 import sem.symbols.VarSymbol;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
@@ -25,10 +26,23 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
         visitVarDecls(program.varDecls);
 
-//        TODO: Test
-        for (Procedure p : program.procs) {
-            p.accept(this);
+        List<Procedure> procs = new ArrayList<>();
+        procs.addAll(program.procs);
+        procs.add(program.main);
+
+        for (Procedure p : procs) {
+            Symbol symbol = scope.lookup(p.name);
+
+            if (symbol != null)
+                error(String.format("Encountered duplicate procedure definition '%s'", p.name));
+            else {
+                symbol = new ProcSymbol(p);
+                scope.put(symbol);
+            }
         }
+
+        for (Procedure p : program.procs)
+            p.accept(this);
 
         program.main.accept(this);
 
@@ -48,26 +62,19 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 		return null;
 	}
 
+    /* Assume we're already checked for duplicate definitions
+     */
     @Override
 	public Void visitProcedure(Procedure p) {
-        // Should be null as it is not defined
-        Symbol symbol = scope.lookup(p.name);
+        Scope oldScope = scope;
 
-        if (symbol != null)
-            error(String.format("Encountered duplicate procedure definition '%s'", p.name));
-        else {
-            symbol = new ProcSymbol(p);
-            scope.put(symbol);
+        // process method contents
+        scope = new Scope(oldScope);
+        visitVarDecls(p.params);
+        p.block.accept(this);
 
-            Scope oldScope = scope;
-            // process method contents
-            scope = new Scope(oldScope);
-            visitVarDecls(p.params);
-            p.block.accept(this);
-
-            // Return to proper scope
-            scope = oldScope;
-        }
+        // Return to proper scope
+        scope = oldScope;
 
 		return null;
 	}
@@ -152,7 +159,7 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 	public Void visitIf(If anIf) {
         anIf.ifExpr.accept(this);
         anIf.ifStmt.accept(this);
-        anIf.elseStmt.accept(this);
+        if (anIf.hasElse()) anIf.elseStmt.accept(this);
 		return null;
 	}
 

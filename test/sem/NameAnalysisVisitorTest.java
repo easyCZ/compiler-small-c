@@ -43,6 +43,8 @@ public class NameAnalysisVisitorTest {
     private static final Procedure fooProc = new Procedure(Type.INT, FOO, EMPTY_VARDECLS, EMPTY_BLOCK);
     private static final Procedure barProc = new Procedure(Type.CHAR, BAR, EMPTY_VARDECLS, EMPTY_BLOCK);
 
+    private static final List<Procedure> procedures = Arrays.asList(fooProc, barProc);
+
     private static final List<VarDecl> vardecls = Arrays.asList(intFoo, charBar, voidZoo);
     private static final Procedure MAIN = new Procedure(Type.VOID, "main", EMPTY_VARDECLS, EMPTY_BLOCK);
 
@@ -81,6 +83,20 @@ public class NameAnalysisVisitorTest {
         assertEquals(intFoo, ((VarSymbol) scope.lookupCurrent(FOO)).varDecl);
         assertEquals(charBar, ((VarSymbol) scope.lookupCurrent(BAR)).varDecl);
         assertEquals(voidZoo, ((VarSymbol) scope.lookupCurrent(ZOO)).varDecl);
+    }
+
+    private static final Program programWithProcs = new Program(
+            EMPTY_VARDECLS,
+            procedures,
+            MAIN
+    );
+
+    @Test
+    public void visitProgram_ProceduresFailsWithATakenName() {
+        scope.put(new VarSymbol(intFoo));
+
+        sut.visitProgram(programWithProcs);
+        assertEquals(1, sut.getErrorCount());
     }
 
     /* VarDecl */
@@ -138,29 +154,12 @@ public class NameAnalysisVisitorTest {
     /* Procedure */
     @Test
     public void visitProcedure_StoresPrcedureInScope() {
+        scope.put(new ProcSymbol(fooProc));
+
         sut.visitProcedure(fooProc);
         assertEquals(fooProc, ((ProcSymbol) scope.lookup(fooProc.name)).procedure);
         assertEquals(0, sut.getErrorCount());
     }
-
-    @Test
-    public void visitProcedure_FailsWithDuplicateProcedure() {
-        scope.put(new ProcSymbol(fooProc));
-
-        sut.visitProcedure(fooProc);
-        assertEquals(1, sut.getErrorCount());
-    }
-
-    @Test
-    public void visitProcedure_FailsWithATakenName() {
-        scope.put(new VarSymbol(intFoo));
-
-        sut.visitProcedure(fooProc);
-        assertEquals(1, sut.getErrorCount());
-    }
-
-    // TODO: visitProcedure with contents
-
 
     /* Bin Op */
     @Test
