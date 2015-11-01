@@ -150,8 +150,10 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitIf(If anIf) {
-        throw new NotImplementedException();
-//		return null;
+        anIf.ifExpr.accept(this);
+        anIf.ifStmt.accept(this);
+        anIf.elseStmt.accept(this);
+		return null;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.Assign;
 import ast.statements.FunCallStmt;
+import ast.statements.If;
 import ast.statements.Return;
 import org.junit.Before;
 import org.junit.Test;
@@ -302,6 +303,19 @@ public class NameAnalysisVisitorTest {
         scope.put(new ProcSymbol(fooProc));
 
         sut.visitReturn(returnFooExpr);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    private static final If ifz = new If(fooExpr, fooStmtWithArgs, fooStmtWithArgs);
+
+    /* If */
+    @Test
+    public void visitIf_visitsExprAndStmts() {
+        scope.put(new ProcSymbol(fooProc));
+        scope.put(new VarSymbol(charBar));
+        scope.put(new VarSymbol(voidZoo));
+
+        sut.visitIf(ifz);
         assertEquals(0, sut.getErrorCount());
     }
 
