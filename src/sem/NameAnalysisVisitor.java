@@ -166,8 +166,8 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitReturn(Return aReturn) {
-        throw new NotImplementedException();
-//		return null;
+        if (aReturn.hasReturn()) aReturn.returnz.accept(this);
+		return null;
 	}
 
 	@Override

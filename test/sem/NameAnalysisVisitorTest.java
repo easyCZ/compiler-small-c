@@ -6,6 +6,7 @@ import ast.expressions.IntLiteral;
 import ast.expressions.Var;
 import ast.statements.Assign;
 import ast.statements.FunCallStmt;
+import ast.statements.Return;
 import org.junit.Before;
 import org.junit.Test;
 import sem.symbols.ProcSymbol;
@@ -277,6 +278,30 @@ public class NameAnalysisVisitorTest {
         scope.put(new VarSymbol(charBar));
         scope.put(new ProcSymbol(fooProc));
         sut.visitAssign(barEqualsFooExpr);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    private static final Return returnNone = new Return(null);
+    private static final Return returnFooExpr = new Return(fooExpr);
+
+    /* Return */
+    @Test
+    public void visitReturn_passesWhenNoReturnExpr() {
+        sut.visitReturn(returnNone);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitReturn_visitsReturnExprUndeclaredFails() {
+        sut.visitReturn(returnFooExpr);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitReturn_visitsReturnExprDeclaredPasses() {
+        scope.put(new ProcSymbol(fooProc));
+
+        sut.visitReturn(returnFooExpr);
         assertEquals(0, sut.getErrorCount());
     }
 
