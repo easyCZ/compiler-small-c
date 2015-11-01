@@ -23,6 +23,8 @@ int func( int a) {
 char sad() {
   int a;
   char v;
+  char b;
+  int n;
   a = a+1;
   v = read_c();
   print_c(a%4+b/2-n*3+'c'*5+'d');
