@@ -5,7 +5,6 @@ import ast.expressions.*;
 import ast.statements.*;
 import sem.symbols.ProcSymbol;
 import sem.symbols.VarSymbol;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -135,8 +134,9 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitWhile(While whilez) {
-        throw new NotImplementedException();
-//		return null;
+        whilez.expr.accept(this);
+        whilez.statement.accept(this);
+		return null;
 	}
 
 	@Override

@@ -4,10 +4,7 @@ import ast.*;
 import ast.expressions.FunCallExpr;
 import ast.expressions.IntLiteral;
 import ast.expressions.Var;
-import ast.statements.Assign;
-import ast.statements.FunCallStmt;
-import ast.statements.If;
-import ast.statements.Return;
+import ast.statements.*;
 import org.junit.Before;
 import org.junit.Test;
 import sem.symbols.ProcSymbol;
@@ -319,7 +316,17 @@ public class NameAnalysisVisitorTest {
         assertEquals(0, sut.getErrorCount());
     }
 
+    private static final While whilez = new While(fooExpr, fooStmtWithArgs);
 
+    /* While */
+    @Test
+    public void visitWhile_visitsExprAndStmt() {
+        scope.put(new ProcSymbol(fooProc));
+        scope.put(new VarSymbol(charBar));
+        scope.put(new VarSymbol(voidZoo));
 
+        sut.visitWhile(whilez);
+        assertEquals(0, sut.getErrorCount());
+    }
 
 }
