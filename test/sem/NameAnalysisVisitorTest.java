@@ -154,11 +154,18 @@ public class NameAnalysisVisitorTest {
     /* Procedure */
     @Test
     public void visitProcedure_StoresPrcedureInScope() {
+        sut.visitProcedure(fooProc);
+        assertEquals(fooProc, ((ProcSymbol) scope.lookup(fooProc.name)).procedure);
+        assertEquals(0, sut.getErrorCount());
+    }
+
+    @Test
+    public void visitProcedure_FailsWithDuplicateDeclaration() {
         scope.put(new ProcSymbol(fooProc));
 
         sut.visitProcedure(fooProc);
         assertEquals(fooProc, ((ProcSymbol) scope.lookup(fooProc.name)).procedure);
-        assertEquals(0, sut.getErrorCount());
+        assertEquals(1, sut.getErrorCount());
     }
 
     /* Bin Op */

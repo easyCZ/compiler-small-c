@@ -6,7 +6,6 @@ import ast.statements.*;
 import sem.symbols.ProcSymbol;
 import sem.symbols.VarSymbol;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
@@ -26,24 +25,9 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
         visitVarDecls(program.varDecls);
 
-        List<Procedure> procs = new ArrayList<>();
-        procs.addAll(program.procs);
-        procs.add(program.main);
-
-        for (Procedure p : procs) {
-            Symbol symbol = scope.lookup(p.name);
-
-            if (symbol != null)
-                error(String.format("Encountered duplicate procedure definition '%s'", p.name));
-            else {
-                symbol = new ProcSymbol(p);
-                scope.put(symbol);
-            }
-        }
-
-        for (Procedure p : program.procs)
+        for (Procedure p : program.procs) {
             p.accept(this);
-
+        }
         program.main.accept(this);
 
         return null;
@@ -66,6 +50,16 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
      */
     @Override
 	public Void visitProcedure(Procedure p) {
+
+        Symbol symbol = scope.lookup(p.name);
+
+        if (symbol != null)
+            error(String.format("Encountered duplicate procedure definition '%s'", p.name));
+        else {
+            symbol = new ProcSymbol(p);
+            scope.put(symbol);
+        }
+
         Scope oldScope = scope;
 
         // process method contents
