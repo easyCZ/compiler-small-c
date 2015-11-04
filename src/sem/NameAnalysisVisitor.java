@@ -45,7 +45,7 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 		return null;
 	}
-    
+
     @Override
 	public Void visitProcedure(Procedure p) {
 

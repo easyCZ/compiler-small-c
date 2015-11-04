@@ -3,87 +3,109 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
+	private Map<String, Type> environment;
+
+	public TypeCheckVisitor() {
+		environment = new HashMap<>();
+	}
+
+	public TypeCheckVisitor(Map<String, Type> env) {
+		this.environment = env;
+	}
+
 	@Override
 	public Type visitBlock(Block b) {
-		// To be completed...
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitProcedure(Procedure p) {
-		// To be completed...
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitProgram(Program p) {
-		// To be completed...
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitVarDecl(VarDecl vd) {
-		// To be completed...
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitVar(Var v) {
-		// To be completed...
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitFunctionCallStmt(FunCallStmt funCallStmt) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitStrLiteral(StrLiteral strLiteral) {
-		return null;
+		return Type.STRING;
 	}
 
 	@Override
 	public Type visitWhile(While whilez) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitBinOp(BinOp binOp) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitIf(If anIf) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitIntLiteral(IntLiteral intLiteral) {
-		return null;
+		return Type.INT;
 	}
 
 	@Override
 	public Type visitChrLiteral(ChrLiteral chrLiteral) {
-		return null;
+		return Type.CHAR;
 	}
 
 	@Override
 	public Type visitReturn(Return aReturn) {
-		return null;
+
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitAssign(Assign assign) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 	@Override
 	public Type visitFunCallExpr(FunCallExpr funCallExpr) {
-		return null;
+		throw new NotImplementedException();
+//		return null;
 	}
 
 }
