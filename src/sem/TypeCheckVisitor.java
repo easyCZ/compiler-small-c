@@ -40,8 +40,9 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitVarDecl(VarDecl vd) {
-		throw new NotImplementedException();
-//		return null;
+		// Void is disallowed
+        if (vd.type == Type.VOID) error("Variable declaration cannot be void");
+        return null;
 	}
 
 	@Override
@@ -104,8 +105,34 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitFunCallExpr(FunCallExpr funCallExpr) {
-		throw new NotImplementedException();
-//		return null;
+		Procedure definition = funCallExpr.getProcedure();
+
+        if (funCallExpr.arguments.size() != definition.params.size()) {
+            error(String.format(
+                    "Function call '%s' requires %d arguments, not %d",
+                    funCallExpr.name,
+                    definition.params.size(),
+                    funCallExpr.arguments.size()));
+            // Still return the type that it should have so we can continue
+            return definition.type;
+        }
+
+        for (int i = 0; i < funCallExpr.arguments.size(); i++) {
+            Expr funCallArg = funCallExpr.arguments.get(i);
+            VarDecl defCallArg = definition.params.get(i);
+
+            Type argType = funCallArg.accept(this);
+            Type defType = defCallArg.type;
+
+            if (argType != defType) {
+                error(String.format(
+                        "Function call '%s' expected argument of type %s but got %s at position %d",
+                        funCallExpr.name, defType, argType, i + 1
+                ));
+            }
+        }
+
+        return definition.type;
 	}
 
 }
