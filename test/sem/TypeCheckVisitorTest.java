@@ -1,9 +1,11 @@
 package sem;
 
 import ast.Type;
+import ast.VarDecl;
 import ast.expressions.ChrLiteral;
 import ast.expressions.IntLiteral;
 import ast.expressions.StrLiteral;
+import ast.expressions.Var;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,9 +16,11 @@ public class TypeCheckVisitorTest {
 
     private TypeCheckVisitor sut;
 
-    private static final IntLiteral ONE = new IntLiteral(1);
-    private static final ChrLiteral A = new ChrLiteral('a');
-    private static final StrLiteral WORD = new StrLiteral("word");
+    private static IntLiteral ONE = new IntLiteral(1);
+    private static ChrLiteral A = new ChrLiteral('a');
+    private static StrLiteral WORD = new StrLiteral("word");
+    private static Var X = new Var("x");
+    private static VarDecl X_DECL = new VarDecl(Type.INT, X);
 
     @Before
     public void setUp() throws Exception {
@@ -53,10 +57,17 @@ public class TypeCheckVisitorTest {
         assertNoErrors();
     }
 
+    @Test
+    public void var_LooksUpTypeInEnv() {
+        X.setVarDecl(X_DECL);
+        Type type = sut.visitVar(X);
+        assertEquals(X_DECL.type, type);
+        assertNoErrors();
+    }
+
     private void assertNoErrors() {
         assertEquals(0, sut.getErrorCount());
     }
 
-    @Test
-    public void var_
+
 }

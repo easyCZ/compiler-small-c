@@ -46,8 +46,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitVar(Var v) {
-		throw new NotImplementedException();
-//		return null;
+		v.type = v.getVarDecl().type;
+        return v.type;
 	}
 
 	@Override
