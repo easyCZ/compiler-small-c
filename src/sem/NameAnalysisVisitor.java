@@ -45,9 +45,7 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 		return null;
 	}
-
-    /* Assume we're already checked for duplicate definitions
-     */
+    
     @Override
 	public Void visitProcedure(Procedure p) {
 
