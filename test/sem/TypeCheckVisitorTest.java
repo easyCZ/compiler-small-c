@@ -5,6 +5,7 @@ import ast.Procedure;
 import ast.Type;
 import ast.VarDecl;
 import ast.expressions.*;
+import ast.statements.Assign;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -138,6 +139,27 @@ public class TypeCheckVisitorTest {
         FOO_XY.setProcedure(FOO_PROC_ARGS_REVERSED);
         Type type = sut.visitFunCallExpr(FOO_XY);
         assertEquals(2, sut.getErrorCount());
+        assertEquals(Type.INT, type);
+    }
+
+    /* assign */
+
+    private static final Assign X_EQUALS_ONE = new Assign(X, ONE);
+    private static final Assign Y_EQUALS_ONE = new Assign(Y, ONE);
+
+    @Test
+    public void assign_failsWithTypeMismatch() {
+        Y.setVarDecl(Y_DECL);
+        Type type = sut.visitAssign(Y_EQUALS_ONE);
+        assertEquals(1, sut.getErrorCount());
+        assertEquals(Type.CHAR, type);
+    }
+
+    @Test
+    public void assign_passesWithTypeMatch() {
+        X.setVarDecl(X_DECL);
+        Type type = sut.visitAssign(X_EQUALS_ONE);
+        assertNoErrors();
         assertEquals(Type.INT, type);
     }
 

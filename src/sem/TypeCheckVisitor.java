@@ -99,8 +99,17 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitAssign(Assign assign) {
-		throw new NotImplementedException();
-//		return null;
+        Type type = assign.expr.accept(this);
+        Type lhsType = assign.var.getVarDecl().type;
+        if (type != lhsType) {
+            error(String.format(
+                    "Illegal assignment of %s %s to %s",
+                    assign.var.type,
+                    assign.var.name,
+                    type
+            ));
+        }
+        return lhsType;
 	}
 
 	@Override
