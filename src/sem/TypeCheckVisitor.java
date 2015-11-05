@@ -103,7 +103,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         Type lhsType = assign.var.getVarDecl().type;
         if (type != lhsType) {
             error(String.format(
-                    "Illegal assignment of %s %s to %s",
+                    "Illegal assignment %s %s = %s",
                     assign.var.type,
                     assign.var.name,
                     type
@@ -118,7 +118,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
         if (funCallExpr.arguments.size() != definition.params.size()) {
             error(String.format(
-                    "Function call '%s' requires %d arguments, not %d",
+                    "Function call expression '%s' requires %d arguments, not %d",
                     funCallExpr.name,
                     definition.params.size(),
                     funCallExpr.arguments.size()));
@@ -135,11 +135,18 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
             if (argType != defType) {
                 error(String.format(
-                        "Function call '%s' expected argument of type %s but got %s at position %d",
+                        "Function call expression '%s' expected argument of type %s but got %s at position %d",
                         funCallExpr.name, defType, argType, i + 1
                 ));
             }
         }
+
+        // Check it is not returning void
+        if (definition.type == Type.VOID)
+            error(String.format(
+                    "Function call expression '%s' is not allowed to return VOID",
+                    funCallExpr.name
+            ));
 
         return definition.type;
 	}

@@ -48,6 +48,10 @@ public class TypeCheckVisitorTest {
             Type.INT, "foo", Arrays.asList(Y_DECL, X_DECL), null
     );
 
+    private static Procedure FOO_VOID = new Procedure(
+            Type.VOID, "foo", Arrays.asList(X_DECL, Y_DECL), null
+    );
+
     private static FunCallExpr FOO_X = new FunCallExpr("foo", FOO_X_ARG);
     private static FunCallExpr FOO_XY = new FunCallExpr("foo", FOO_XY_ARGS);
 
@@ -140,6 +144,14 @@ public class TypeCheckVisitorTest {
         Type type = sut.visitFunCallExpr(FOO_XY);
         assertEquals(2, sut.getErrorCount());
         assertEquals(Type.INT, type);
+    }
+
+    @Test
+    public void funCallExpr_voidNotAllowed() {
+        FOO_XY.setProcedure(FOO_VOID);
+        Type type = sut.visitFunCallExpr(FOO_XY);
+        assertEquals(1, sut.getErrorCount());
+        assertEquals(Type.VOID, type);
     }
 
     /* assign */
