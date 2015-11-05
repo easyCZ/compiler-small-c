@@ -4,7 +4,6 @@ import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
 import sem.BaseSemanticVisitor;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +45,12 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitProgram(Program p) {
-		throw new NotImplementedException();
-//		return null;
+        for (VarDecl varDecl : p.varDecls)
+            varDecl.accept(this);
+        for (Procedure proc : p.procs)
+            proc.accept(this);
+
+        return p.main.accept(this);
 	}
 
 	@Override
@@ -65,8 +68,37 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitFunctionCallStmt(FunCallStmt funCallStmt) {
-		throw new NotImplementedException();
-//		return null;
+        Procedure definition = funCallStmt.getProcedure();
+        if (definition.isNative()) {
+            return definition.type;
+        }
+
+        if (funCallStmt.arguments.size() != definition.params.size()) {
+            error(String.format(
+                    "Function call expression '%s' requires %d arguments, not %d",
+                    funCallStmt.name,
+                    definition.params.size(),
+                    funCallStmt.arguments.size()));
+            // Still return the type that it should have so we can continue
+            return definition.type;
+        }
+
+        for (int i = 0; i < funCallStmt.arguments.size(); i++) {
+            Expr funCallArg = funCallStmt.arguments.get(i);
+            VarDecl defCallArg = definition.params.get(i);
+
+            Type argType = funCallArg.accept(this);
+            Type defType = defCallArg.type;
+
+            if (argType != defType) {
+                error(String.format(
+                        "Function call expression '%s' expected argument of type %s but got %s at position %d",
+                        funCallStmt.name, defType, argType, i + 1
+                ));
+            }
+        }
+
+        return definition.type;
 	}
 
 	@Override
