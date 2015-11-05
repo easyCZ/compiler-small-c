@@ -3,6 +3,7 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.Assign;
+import ast.statements.If;
 import ast.statements.Return;
 import ast.statements.While;
 import org.junit.Before;
@@ -580,14 +581,40 @@ public class TypeCheckVisitorTest {
         assertNoErrors();
     }
 
-    /* Block */
+    private static final If IF_ONE= new If(ONE, EMPTY_BLOCK);
+    private static final If IF_A = new If(A, EMPTY_BLOCK);
+    private static final If IF_ONE_ELSE = new If(ONE, EMPTY_BLOCK, EMPTY_BLOCK);
+    private static final If IF_A_ELSE = new If(A, EMPTY_BLOCK, EMPTY_BLOCK);
 
-//    private static final Block BLOCK_WITH_STMTS = new Block(EMPTY_VARDECL, )
+    /* If */
+    @Test
+    public void if_requiresIntAsExpr() {
+        Type t = sut.visitIf(IF_ONE);
+        assertEquals(Type.VOID, t);
+        assertNoErrors();
+    }
 
     @Test
-    public void block_returnsTheLastType() {
-//        Type t = sut.visitBlock()
+    public void if_failsWithCharAsExpr() {
+        Type t = sut.visitIf(IF_A);
+        assertEquals(Type.VOID, t);
+        assertEquals(1, sut.getErrorCount());
     }
+
+    @Test
+    public void ifElse_requiresIntAsExpr() {
+        Type t = sut.visitIf(IF_ONE_ELSE);
+        assertEquals(Type.VOID, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void ifElse_failsWithCharAsExpr() {
+        Type t = sut.visitIf(IF_A_ELSE);
+        assertEquals(Type.VOID, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
 
 
     private void assertNoErrors() {

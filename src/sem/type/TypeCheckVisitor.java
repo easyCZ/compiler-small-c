@@ -133,8 +133,16 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitIf(If anIf) {
-		throw new NotImplementedException();
-//		return null;
+        Type condition = anIf.ifExpr.accept(this);
+        if (condition != Type.INT) error(String.format(
+                "Condition needs to resolve to an integer. %s encountered.",
+                condition
+        ));
+
+        anIf.ifStmt.accept(this);
+        if (anIf.hasElse()) anIf.elseStmt.accept(this);
+
+        return Type.VOID;
 	}
 
 	@Override

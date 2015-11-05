@@ -17,6 +17,12 @@ public class If extends Stmt {
         this.elseStmt = elseStatement;
     }
 
+    public If(Expr ifExpr, Stmt ifStmt) {
+        this.ifExpr = ifExpr;
+        this.ifStmt = ifStmt;
+        this.elseStmt = null;
+    }
+
     public boolean hasElse() {
         return elseStmt != null;
     }
