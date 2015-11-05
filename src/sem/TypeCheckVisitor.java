@@ -56,8 +56,18 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitWhile(While whilez) {
-		throw new NotImplementedException();
-//		return null;
+        // Expr needs to be an int
+        Type exprType = whilez.expr.accept(this);
+
+        if (exprType != Type.INT) {
+            error(String.format(
+                    "While (expression) needs to be of type INT. Encountered %s",
+                    exprType
+            ));
+        }
+
+        whilez.statement.accept(this);
+        return Type.INT;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.Assign;
+import ast.statements.While;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,6 +54,10 @@ public class TypeCheckVisitorTest {
 
     private static FunCallExpr FOO_X = new FunCallExpr("foo", FOO_X_ARG);
     private static FunCallExpr FOO_XY = new FunCallExpr("foo", FOO_XY_ARGS);
+
+    private static List<VarDecl> EMPTY_VARDECL = new ArrayList<>();
+    private static List<Stmt> EMPTY_STMTS = new ArrayList<>();
+    private static Block EMPTY_BLOCK = new Block(EMPTY_VARDECL, EMPTY_STMTS);
 
 
     @Before
@@ -505,6 +510,39 @@ public class TypeCheckVisitorTest {
         Type t = sut.visitBinOp(A_EQ_TWO);
         assertEquals(Type.INT, t);
         assertEquals(1, sut.getErrorCount());
+    }
+
+    /* While */
+
+    private static final While WHILE_ONE = new While(ONE, EMPTY_BLOCK);
+    private static final While WHILE_A = new While(A, EMPTY_BLOCK);
+    private static final While WHILE_VOID = new While(X, EMPTY_BLOCK);
+
+    @Test
+    public void while_ExpressionMustBeInt() {
+        Type t = sut.visitWhile(WHILE_ONE);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void while_ExpressionFailsWithChar() {
+        Type t = sut.visitWhile(WHILE_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void while_FailsWithVoid() {
+        X.setVarDecl(VOID_DECL);
+        Type t = sut.visitWhile(WHILE_VOID);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void while_VisitsAllStatements() {
+        // TODO
     }
 
 
