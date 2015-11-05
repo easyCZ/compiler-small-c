@@ -3,6 +3,7 @@ package sem;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.Assign;
+import ast.statements.Return;
 import ast.statements.While;
 import org.junit.Before;
 import org.junit.Test;
@@ -543,6 +544,42 @@ public class TypeCheckVisitorTest {
     @Test
     public void while_VisitsAllStatements() {
         // TODO
+    }
+
+    /* Return */
+    private static final Return RETURN_ONE = new Return(ONE);
+    private static final Return RETURN_VOID = new Return(X);
+    private static final Return RETURN_NULL = new Return(null);
+
+    @Test
+    public void return_ReturnsTypeOfExpr() {
+        Type t = sut.visitReturn(RETURN_ONE);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void return_VoidIfExprVoid() {
+        X.setVarDecl(VOID_DECL);
+        Type t = sut.visitReturn(RETURN_VOID);
+        assertEquals(Type.VOID, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void return_ReturnsVoidIfNoExpr() {
+        Type t = sut.visitReturn(RETURN_NULL);
+        assertEquals(Type.VOID, t);
+        assertNoErrors();
+    }
+
+    /* Block */
+
+//    private static final Block BLOCK_WITH_STMTS = new Block(EMPTY_VARDECL, )
+
+    @Test
+    public void block_returnsTheLastType() {
+//        Type t = sut.visitBlock()
     }
 
 

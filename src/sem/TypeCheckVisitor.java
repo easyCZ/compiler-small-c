@@ -14,13 +14,15 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitBlock(Block b) {
+        // Returns the type of the latest statement
         for (VarDecl varDecl : b.varDecls)
             varDecl.accept(this);
 
+        Type type = null;
         for (Stmt stmt : b.statements)
-            stmt.accept(this);
+            type = stmt.accept(this);
 
-        return null;
+        return type;
 	}
 
 	@Override
@@ -134,9 +136,13 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitReturn(Return aReturn) {
+        // Should perhaps check method signature
 
-		throw new NotImplementedException();
-//		return null;
+        Type t = Type.VOID;
+        if (aReturn.hasReturn()) {
+            t = aReturn.returnz.accept(this);
+        }
+        return t;
 	}
 
 	@Override
