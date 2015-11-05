@@ -1,9 +1,6 @@
 package sem;
 
-import ast.Expr;
-import ast.Procedure;
-import ast.Type;
-import ast.VarDecl;
+import ast.*;
 import ast.expressions.*;
 import ast.statements.Assign;
 import org.junit.Before;
@@ -22,7 +19,9 @@ public class TypeCheckVisitorTest {
     private TypeCheckVisitor sut;
 
     private static IntLiteral ONE = new IntLiteral(1);
+    private static IntLiteral TWO = new IntLiteral(2);
     private static ChrLiteral A = new ChrLiteral('a');
+    private static ChrLiteral B = new ChrLiteral('b');
     private static StrLiteral WORD = new StrLiteral("word");
 
     private static Var X = new Var("x");
@@ -175,6 +174,338 @@ public class TypeCheckVisitorTest {
         assertEquals(Type.INT, type);
     }
 
+    private static final BinOp ONE_MINUS_TWO = new BinOp(ONE, Op.SUB, TWO);
+    private static final BinOp ONE_PLUS_TWO = new BinOp(ONE, Op.ADD, TWO);
+    private static final BinOp ONE_TIMES_TWO = new BinOp(ONE, Op.MUL, TWO);
+    private static final BinOp ONE_DIV_TWO = new BinOp(ONE, Op.DIV, TWO);
+    private static final BinOp ONE_MOD_TWO = new BinOp(ONE, Op.MOD, TWO);
+
+    private static final BinOp A_PLUS_ONE = new BinOp(A, Op.ADD, ONE);
+    private static final BinOp A_MINUS_ONE = new BinOp(A, Op.SUB, ONE);
+    private static final BinOp A_TIMES_ONE = new BinOp(A, Op.MUL, ONE);
+    private static final BinOp A_DIV_ONE = new BinOp(A, Op.DIV, ONE);
+    private static final BinOp A_MOD_ONE = new BinOp(A, Op.MOD, ONE);
+
+    private static final BinOp ONE_PLUS_A = new BinOp(ONE, Op.ADD, A);
+    private static final BinOp ONE_MINUS_A = new BinOp(ONE, Op.SUB, A);
+    private static final BinOp ONE_TIMES_A = new BinOp(ONE, Op.MUL, A);
+    private static final BinOp ONE_DIV_A = new BinOp(ONE, Op.DIV, A);
+    private static final BinOp ONE_MOD_A = new BinOp(ONE, Op.MOD, A);
+
+
+    /* BinOP */
+    @Test
+    public void binOp_AddAllowsOnlyInts() {
+        Type t = sut.visitBinOp(ONE_PLUS_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_SubAllowsOnlyInts() {
+        Type t = sut.visitBinOp(ONE_MINUS_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_MultiplyAllowsOnlyInts() {
+        Type t = sut.visitBinOp(ONE_TIMES_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_DivAllowsOnlyInts() {
+        Type t = sut.visitBinOp(ONE_DIV_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_ModAllowsOnlyInts() {
+        Type t = sut.visitBinOp(ONE_MOD_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_AddFailsWithChars() {
+        Type t = sut.visitBinOp(ONE_PLUS_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_AddFailsWithChars2() {
+        Type t = sut.visitBinOp(A_PLUS_ONE);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_SubFailsWithChars() {
+        Type t = sut.visitBinOp(ONE_MINUS_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_SubFailsWithChars2() {
+        Type t = sut.visitBinOp(A_MINUS_ONE);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_MulFailsWithChars() {
+        Type t = sut.visitBinOp(ONE_TIMES_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_MulFailsWithChars2() {
+        Type t = sut.visitBinOp(A_TIMES_ONE);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_DivFailsWithChars() {
+        Type t = sut.visitBinOp(ONE_DIV_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_DivFailsWithChars2() {
+        Type t = sut.visitBinOp(A_DIV_ONE);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_ModFailsWithChars() {
+        Type t = sut.visitBinOp(ONE_MOD_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_ModFailsWithChars2() {
+        Type t = sut.visitBinOp(A_MOD_ONE);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    // Legit
+    private static final BinOp ONE_GT_TWO = new BinOp(ONE, Op.GT, TWO);
+    private static final BinOp ONE_LT_TWO = new BinOp(ONE, Op.LT, TWO);
+    private static final BinOp ONE_GE_TWO = new BinOp(ONE, Op.GE, TWO);
+    private static final BinOp ONE_LE_TWO = new BinOp(ONE, Op.LE, TWO);
+    private static final BinOp ONE_NE_TWO = new BinOp(ONE, Op.NE, TWO);
+    private static final BinOp ONE_EQ_TWO = new BinOp(ONE, Op.EQ, TWO);
+
+    // Legit
+    private static final BinOp A_GT_B = new BinOp(A, Op.GT, B);
+    private static final BinOp A_LT_B = new BinOp(A, Op.LT, B);
+    private static final BinOp A_GE_B = new BinOp(A, Op.GE, B);
+    private static final BinOp A_LE_B = new BinOp(A, Op.LE, B);
+    private static final BinOp A_NE_B = new BinOp(A, Op.NE, B);
+    private static final BinOp A_EQ_B = new BinOp(A, Op.EQ, B);
+
+    // Illegal
+    private static final BinOp ONE_GT_A = new BinOp(ONE, Op.GT, A);
+    private static final BinOp ONE_LT_A = new BinOp(ONE, Op.LT, A);
+    private static final BinOp ONE_GE_A = new BinOp(ONE, Op.GE, A);
+    private static final BinOp ONE_LE_A = new BinOp(ONE, Op.LE, A);
+    private static final BinOp ONE_NE_A = new BinOp(ONE, Op.NE, A);
+    private static final BinOp ONE_EQ_A = new BinOp(ONE, Op.EQ, A);
+
+    // Illegal
+    private static final BinOp A_GT_TWO = new BinOp(A, Op.GT, TWO);
+    private static final BinOp A_LT_TWO = new BinOp(A, Op.LT, TWO);
+    private static final BinOp A_GE_TWO = new BinOp(A, Op.GE, TWO);
+    private static final BinOp A_LE_TWO = new BinOp(A, Op.LE, TWO);
+    private static final BinOp A_NE_TWO = new BinOp(A, Op.NE, TWO);
+    private static final BinOp A_EQ_TWO = new BinOp(A, Op.EQ, TWO);
+
+
+
+    @Test
+    public void binOp_GtPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_GT_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_GtPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_GT_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_GtFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_GT_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_GtFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_GT_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    /* LT */
+    @Test
+    public void binOp_LtPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_LT_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_LtPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_LT_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_LtFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_LT_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_LtFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_LT_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+
+    /* GE */
+    @Test
+    public void binOp_GEPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_GE_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_GEPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_GE_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_GEFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_GE_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_GEFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_GE_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    /* LE */
+    @Test
+    public void binOp_LEPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_LE_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_LEPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_LE_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_LEFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_LE_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_LEFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_LE_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    /* NE */
+    @Test
+    public void binOp_NEPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_NE_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_NEPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_NE_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_NEFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_NE_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_NEFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_NE_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    /* EQ */
+    @Test
+    public void binOp_EQPassesIntAndInt() {
+        Type t = sut.visitBinOp(ONE_EQ_TWO);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_EQPassesCharAndChar() {
+        Type t = sut.visitBinOp(A_EQ_B);
+        assertEquals(Type.INT, t);
+        assertNoErrors();
+    }
+
+    @Test
+    public void binOp_EQFailsWithIntAndChar() {
+        Type t = sut.visitBinOp(ONE_EQ_A);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
+
+    @Test
+    public void binOp_EQFailsWithCharAndInt() {
+        Type t = sut.visitBinOp(A_EQ_TWO);
+        assertEquals(Type.INT, t);
+        assertEquals(1, sut.getErrorCount());
+    }
 
 
     private void assertNoErrors() {

@@ -5,20 +5,12 @@ import ast.expressions.*;
 import ast.statements.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
-	private Map<String, Type> environment;
-
-	public TypeCheckVisitor() {
-		environment = new HashMap<>();
-	}
-
-	public TypeCheckVisitor(Map<String, Type> env) {
-		this.environment = env;
-	}
+	private static final List<Op> ARITHMETIC_OPS = Arrays.asList(Op.ADD, Op.SUB, Op.MUL, Op.DIV, Op.MOD);
 
 	@Override
 	public Type visitBlock(Block b) {
@@ -70,8 +62,43 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitBinOp(BinOp binOp) {
-		throw new NotImplementedException();
-//		return null;
+		Op op = binOp.op;
+
+        // Arithmetics
+        if (ARITHMETIC_OPS.contains(op)) {
+            // Both sides need to be ints
+            Type lhs = binOp.lhs.accept(this);
+            Type rhs = binOp.rhs.accept(this);
+
+            if (lhs != Type.INT) error(String.format(
+                    "Invalid type found on LHS = %s. Arithmetic expression require INT types on both sides.",
+                    lhs
+            ));
+
+            if (rhs != Type.INT) error(String.format(
+                    "Invalid type found on RHS = %s. Arithmetic expression require INT types on both sides.",
+                    lhs
+            ));
+
+        }
+        // Comparisons
+        else {
+            // Both sides need to be the same type
+            Type lhs = binOp.lhs.accept(this);
+            Type rhs = binOp.rhs.accept(this);
+
+            if (lhs != rhs) {
+                error(String.format(
+                        "Expected BinaryOp LHS = RHS, found %s = %s.",
+                        lhs,
+                        rhs
+                ));
+            }
+
+        }
+
+        // Let the analysis continue without null dragons
+        return Type.INT;
 	}
 
 	@Override
