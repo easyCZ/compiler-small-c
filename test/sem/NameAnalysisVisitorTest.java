@@ -7,8 +7,10 @@ import ast.expressions.Var;
 import ast.statements.*;
 import org.junit.Before;
 import org.junit.Test;
-import sem.symbols.ProcSymbol;
-import sem.symbols.VarSymbol;
+import sem.name.NameAnalysisVisitor;
+import sem.name.Scope;
+import sem.name.symbols.ProcSymbol;
+import sem.name.symbols.VarSymbol;
 
 import java.util.ArrayList;
 import java.util.Arrays;

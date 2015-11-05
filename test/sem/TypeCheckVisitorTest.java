@@ -7,6 +7,7 @@ import ast.statements.Return;
 import ast.statements.While;
 import org.junit.Before;
 import org.junit.Test;
+import sem.type.TypeCheckVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -553,6 +554,8 @@ public class TypeCheckVisitorTest {
 
     @Test
     public void return_ReturnsTypeOfExpr() {
+        sut.procedureType = Type.INT;
+
         Type t = sut.visitReturn(RETURN_ONE);
         assertEquals(Type.INT, t);
         assertNoErrors();
@@ -560,6 +563,8 @@ public class TypeCheckVisitorTest {
 
     @Test
     public void return_VoidIfExprVoid() {
+        sut.procedureType = Type.VOID;
+
         X.setVarDecl(VOID_DECL);
         Type t = sut.visitReturn(RETURN_VOID);
         assertEquals(Type.VOID, t);
@@ -568,6 +573,8 @@ public class TypeCheckVisitorTest {
 
     @Test
     public void return_ReturnsVoidIfNoExpr() {
+        sut.procedureType = Type.VOID;
+
         Type t = sut.visitReturn(RETURN_NULL);
         assertEquals(Type.VOID, t);
         assertNoErrors();

@@ -1,6 +1,7 @@
 package sem;
 
 import ast.Program;
+import sem.name.NameAnalysisVisitor;
 
 import java.util.ArrayList;
 

@@ -1,10 +1,11 @@
-package sem;
+package sem.name;
 
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
-import sem.symbols.ProcSymbol;
-import sem.symbols.VarSymbol;
+import sem.BaseSemanticVisitor;
+import sem.name.symbols.ProcSymbol;
+import sem.name.symbols.VarSymbol;
 
 import java.util.List;
 

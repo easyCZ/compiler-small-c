@@ -1,7 +1,7 @@
-package sem;
+package sem.name;
 
 import ast.Procedure;
-import sem.symbols.ProcSymbol;
+import sem.name.symbols.ProcSymbol;
 
 import java.util.HashMap;
 import java.util.Map;

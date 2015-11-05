@@ -1,4 +1,4 @@
-package sem;
+package sem.name;
 
 public abstract class Symbol {
 

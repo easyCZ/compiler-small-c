@@ -1,8 +1,8 @@
-package sem.symbols;
+package sem.name.symbols;
 
 
 import ast.Procedure;
-import sem.Symbol;
+import sem.name.Symbol;
 
 public class ProcSymbol extends Symbol {
 

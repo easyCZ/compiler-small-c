@@ -1,14 +1,18 @@
-package sem;
+package sem.type;
 
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
+import sem.BaseSemanticVisitor;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
+
+    public Type procedureType;
+    public String procedureName;
 
 	private static final List<Op> ARITHMETIC_OPS = Arrays.asList(Op.ADD, Op.SUB, Op.MUL, Op.DIV, Op.MOD);
 
@@ -27,8 +31,17 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitProcedure(Procedure p) {
-		throw new NotImplementedException();
-//		return null;
+        procedureType = p.type;
+        procedureName = p.name;
+
+        for (VarDecl vd: p.params)
+            vd.accept(this);
+
+        Type t = p.block.accept(this);
+
+        // Reset
+        procedureType = null;
+        return p.type;
 	}
 
 	@Override
@@ -136,12 +149,19 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitReturn(Return aReturn) {
-        // Should perhaps check method signature
 
         Type t = Type.VOID;
         if (aReturn.hasReturn()) {
             t = aReturn.returnz.accept(this);
         }
+
+        if (procedureType != t) error(String.format(
+                "Unexpected return type %s from procedure '%s'. %s required.",
+                t,
+                procedureName,
+                procedureType
+        ));
+
         return t;
 	}
 
