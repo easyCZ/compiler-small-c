@@ -14,8 +14,13 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitBlock(Block b) {
-		throw new NotImplementedException();
-//		return null;
+        for (VarDecl varDecl : b.varDecls)
+            varDecl.accept(this);
+
+        for (Stmt stmt : b.statements)
+            stmt.accept(this);
+
+        return null;
 	}
 
 	@Override
