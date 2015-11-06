@@ -2,6 +2,7 @@ package sem;
 
 import ast.Program;
 import sem.name.NameAnalysisVisitor;
+import sem.type.TypeCheckVisitor;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class SemanticAnalyzer {
 		// List of visitors
 		ArrayList<SemanticVisitor> visitors = new ArrayList<SemanticVisitor>() {{
 			add(new NameAnalysisVisitor());
-//			add(new TypeCheckVisitor());
+			add(new TypeCheckVisitor());
 		}};
 		// Error accumulator
 		int errors = 0;
