@@ -69,6 +69,15 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 	@Override
 	public Type visitFunctionCallStmt(FunCallStmt funCallStmt) {
         Procedure definition = funCallStmt.getProcedure();
+
+        if (definition == null) {
+            // Undeclared function call stmt
+            error(String.format(
+                    "Function call %s is undeclared.", funCallStmt.name
+            ));
+            return Type.VOID;
+        }
+
         if (definition.isNative()) {
             return definition.type;
         }
