@@ -24,8 +24,8 @@ public class Scope {
 
     private void initBuiltIns() {
         symbolTable.put("print_i", new ProcSymbol(Procedure.PRINT_I));
-        symbolTable.put("print_s", new ProcSymbol(Procedure.PRINT_C));
-        symbolTable.put("print_c", new ProcSymbol(Procedure.PRINT_S));
+        symbolTable.put("print_s", new ProcSymbol(Procedure.PRINT_S));
+        symbolTable.put("print_c", new ProcSymbol(Procedure.PRINT_C));
         symbolTable.put("read_i", new ProcSymbol(Procedure.READ_I));
         symbolTable.put("read_c", new ProcSymbol(Procedure.READ_C));
     }
