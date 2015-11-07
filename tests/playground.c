@@ -25,6 +25,7 @@ void print_fac(int n) {
 }
 
 int shadow(int a, int iteration_counter) {
+  count = count + 1;
   print_i(a);
   print_i(iteration_counter);
 }
@@ -32,7 +33,7 @@ int shadow(int a, int iteration_counter) {
 void main() {
   count = 15;
 
-  if (read_i()) {
+  if (read_c()) {
     print_fac(count);
   }
 

@@ -43,7 +43,7 @@ public class Procedure implements Tree {
     public static final Procedure PRINT_C = new Procedure(Type.VOID, "print_c", CHAR_ARGS, EMPTY_BLOCK);
     public static final Procedure PRINT_I = new Procedure(Type.VOID, "print_i", INT_ARGS, EMPTY_BLOCK);
     public static final Procedure READ_I = new Procedure(Type.INT, "read_i", NO_VARDECLS, EMPTY_BLOCK);
-    public static final Procedure READ_C = new Procedure(Type.VOID, "read_c", NO_VARDECLS, EMPTY_BLOCK);
+    public static final Procedure READ_C = new Procedure(Type.CHAR, "read_c", NO_VARDECLS, EMPTY_BLOCK);
 
 
 }
