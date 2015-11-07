@@ -78,10 +78,6 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
             return Type.VOID;
         }
 
-        if (definition.isNative()) {
-            return definition.type;
-        }
-
         if (funCallStmt.arguments.size() != definition.params.size()) {
             error(String.format(
                     "Function call expression '%s' requires %d arguments, not %d",
@@ -232,6 +228,14 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 	@Override
 	public Type visitFunCallExpr(FunCallExpr funCallExpr) {
 		Procedure definition = funCallExpr.getProcedure();
+
+        if (definition == null) {
+            // Undeclared function call stmt
+            error(String.format(
+                    "Function call %s is undeclared.", funCallExpr.name
+            ));
+            return Type.VOID;
+        }
 
         if (funCallExpr.arguments.size() != definition.params.size()) {
             error(String.format(

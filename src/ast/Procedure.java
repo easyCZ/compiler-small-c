@@ -3,6 +3,7 @@ package ast;
 import ast.expressions.Var;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Procedure implements Tree {
@@ -32,11 +33,11 @@ public class Procedure implements Tree {
         return "Procedure(" + type + ", " + name + ", " + Arrays.toString(params.toArray()) + ", " + block + ")";
     }
 
-    private static final List<VarDecl> STRING_ARGS = Arrays.asList(new VarDecl(Type.STRING, new Var("s")));
-    private static final List<VarDecl> CHAR_ARGS = Arrays.asList(new VarDecl(Type.CHAR, new Var("c")));
-    private static final List<VarDecl> INT_ARGS = Arrays.asList(new VarDecl(Type.INT, new Var("i")));
-    private static final List<VarDecl> NO_VARDECLS = Arrays.asList();
-    private static final List<Stmt> NO_STMTS = Arrays.asList();
+    private static final List<VarDecl> STRING_ARGS = Collections.singletonList(new VarDecl(Type.STRING, new Var("s")));
+    private static final List<VarDecl> CHAR_ARGS = Collections.singletonList(new VarDecl(Type.CHAR, new Var("c")));
+    private static final List<VarDecl> INT_ARGS = Collections.singletonList(new VarDecl(Type.INT, new Var("i")));
+    private static final List<VarDecl> NO_VARDECLS = Collections.emptyList();
+    private static final List<Stmt> NO_STMTS = Collections.emptyList();
     private static final Block EMPTY_BLOCK = new Block(NO_VARDECLS, NO_STMTS);
     public static final Procedure PRINT_S = new Procedure(
             Type.VOID, "print_s", STRING_ARGS, EMPTY_BLOCK);
