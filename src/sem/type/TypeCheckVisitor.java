@@ -62,7 +62,16 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitVar(Var v) {
-		v.type = v.getVarDecl().type;
+        VarDecl varDecl = v.getVarDecl();
+
+        if (varDecl == null) {
+            error(String.format(
+                    "Encountered undeclared variable %s",
+                    v.name
+            ));
+            return Type.VOID;
+        }
+		v.type = varDecl.type;
         return v.type;
 	}
 

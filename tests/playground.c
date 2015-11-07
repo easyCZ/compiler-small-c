@@ -35,7 +35,7 @@ void main() {
 
   if (read_c()) {
     print_fac(count);
-    print_factorial(count);
+    print_fac(countz);
   }
 
 
