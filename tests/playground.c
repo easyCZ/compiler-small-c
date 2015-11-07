@@ -32,5 +32,9 @@ int shadow(int a, int iteration_counter) {
 void main() {
   count = 15;
 
-  print_fac(count);
+  if (read_i()) {
+    print_fac(count);
+  }
+
+
 }
