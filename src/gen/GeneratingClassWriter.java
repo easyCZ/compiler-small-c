@@ -7,6 +7,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import java.util.HashMap;
+
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.getInternalName;
 
@@ -14,6 +16,12 @@ import static org.objectweb.asm.Type.getInternalName;
 public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Void> {
 
     private static final String CLASS_NAME = "Main";
+    private static final HashMap<ast.Type, String> TYPE_MAP = new HashMap() {{
+        put(ast.Type.STRING, "String");
+        put(ast.Type.CHAR, ast.Type.CHAR.toString().toLowerCase());
+        put(ast.Type.INT, ast.Type.INT.toString().toLowerCase());
+        put(ast.Type.VOID, ast.Type.VOID.toString().toLowerCase());
+    }};
 
     public GeneratingClassWriter() {
         super(COMPUTE_MAXS);
@@ -62,7 +70,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         if (p.isMain())
             return visitMain(p);
 
-        return null;
+        return visitGlobalProcedure(p);
     }
 
     @Override
@@ -143,6 +151,35 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         // Add implicit return
         main.visitInsn(RETURN);
+
+        return null;
+    }
+
+    private Void visitGlobalProcedure(Procedure p) {
+        String type = TYPE_MAP.get(p.type);
+        String args = "";
+        for (VarDecl varDecl : p.params)
+            args += ", " + TYPE_MAP.get(varDecl.type);
+        args = args.replaceFirst(", ", "");
+
+        // TODO: Return proper type
+        String procedure = String.format("%s %s(%s)", "void", p.name, args);
+        org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
+
+        MethodVisitor proc = visitMethod(
+                ACC_PUBLIC + ACC_STATIC,
+                method.getName(),
+                method.getDescriptor(),
+                null,
+                null
+        );
+
+        p.block.accept(this);
+
+
+        // Add return for now
+        // TODO: Remove
+        proc.visitInsn(RETURN);
 
         return null;
     }

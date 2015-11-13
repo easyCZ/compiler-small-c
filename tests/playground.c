@@ -3,21 +3,21 @@
 int iteration_counter;
 int count;
 
-int factorial(int n) {
+int factorial(int n, int k) {
   int smaller;
 
   iteration_counter = iteration_counter + 1;
   if (n == 1) return 1;
   else {
     smaller = n - 1;
-    return n * factorial(smaller);
+    return n * factorial(smaller, smaller);
   }
 }
 
 void print_fac(int n) {
   int fac;
 
-  fac = factorial(n);
+  fac = factorial(n, n);
 
   print_s("(: ");
   print_i(fac);
