@@ -28,6 +28,10 @@ public class Procedure implements Tree {
         return Arrays.asList("print_s", "print_i", "print_c", "read_c", "read_i").contains(name);
     }
 
+    public boolean isMain() {
+        return this.name.equals("main");
+    }
+
     @Override
     public String toString() {
         return "Procedure(" + type + ", " + name + ", " + Arrays.toString(params.toArray()) + ", " + block + ")";
