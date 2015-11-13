@@ -54,25 +54,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         return null;
     }
 
-    private Void visitMain(Procedure p) {
-        MethodVisitor main = visitMethod(
-                ACC_PUBLIC + ACC_STATIC,
-                "main",
-                "([Ljava/lang/String;)V",   // String[] args, Void return
-                null,
-                null
-        );
-
-        // Build contents
-        p.block.accept(this);
-
-        // Add implicit return
-        main.visitInsn(RETURN);
-
-        return null;
-    }
-
-
     @Override
     public Void visitVarDecl(VarDecl vd) {
         return null;
@@ -135,5 +116,23 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     private void createClass() {
         visit(V1_7, ACC_PUBLIC, CLASS_NAME, null, getInternalName(Object.class), null);
+    }
+
+    private Void visitMain(Procedure p) {
+        MethodVisitor main = visitMethod(
+                ACC_PUBLIC + ACC_STATIC,
+                "main",
+                "([Ljava/lang/String;)V",   // String[] args, Void return
+                null,
+                null
+        );
+
+        // Build contents
+        p.block.accept(this);
+
+        // Add implicit return
+        main.visitInsn(RETURN);
+
+        return null;
     }
 }
