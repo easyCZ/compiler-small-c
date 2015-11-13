@@ -5,6 +5,7 @@ import ast.expressions.*;
 import ast.statements.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.getInternalName;
@@ -25,7 +26,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         // Create global variables
         for (VarDecl varDecl : program.varDecls)
-            varDecl.accept(this);
+            visitGlobalVarDecl(varDecl);
 
         // Create static methods
         for (Procedure p : program.procs)
@@ -38,6 +39,16 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         visitEnd();
 
         return null;
+    }
+
+    private void visitGlobalVarDecl(VarDecl varDecl) {
+        visitField(
+                ACC_PUBLIC + ACC_STATIC,
+                varDecl.var.name,
+                Type.getDescriptor(int.class),
+                null,   // signature
+                null    // value
+        ).visitEnd();
     }
 
     @Override
