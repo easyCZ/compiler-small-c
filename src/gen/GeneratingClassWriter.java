@@ -61,6 +61,10 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitBlock(Block b) {
+
+//        LocalVariablesSorter localVariablesSorter = new LocalVariablesSorter()
+
+
         return null;
     }
 
@@ -173,6 +177,19 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
                 null,
                 null
         );
+
+        proc.visitCode();
+
+        proc.visitLocalVariable("test",
+                Type.getDescriptor(int.class),
+                "I",
+                null,
+                null,
+                0);
+        proc.visitMaxs(0, 0);
+
+
+
 
         p.block.accept(this);
 
