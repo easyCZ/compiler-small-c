@@ -6,19 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_STATIC;
 
 public class CodeGenerator {
 
     private static final String FILENAME = "out/Main.class";
 
-    // Main Class
-    private static final String CLASS_NAME = "Main";
-    private static final String MAIN_METHOD = "main";
-
-    private static final int PUBLIC = ACC_PUBLIC;
-    private static final int PUBLIC_STATIC = ACC_PUBLIC + ACC_STATIC;
 
     public void emitProgram(Program program) {
         // TODO: emit a java class named Main that contains your program and write it to the file out/Main.class
