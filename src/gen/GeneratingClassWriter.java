@@ -68,7 +68,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitBlock(Block b) {
-        Label blockStart = new Label();
 
         for (int i = 0 ; i < b.varDecls.size(); i++) {
             VarDecl varDecl = b.varDecls.get(i);
@@ -83,7 +82,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             stmt.accept(this);
         }
 
-        Label blockEnd = new Label();
+
+
         return null;
     }
 
@@ -140,6 +140,18 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         else if (binOp.op == Op.DIV) {
             currentMethod.visitInsn(IDIV);
         }
+        else if (binOp.op == Op.EQ) {
+            Label label = new Label();
+
+            currentMethod.visitJumpInsn(IF_ICMPNE, label);
+            currentMethod.visitInsn(ICONST_1);
+
+            currentMethod.visitLabel(label);
+            currentMethod.visitInsn(ICONST_0);
+
+            // Stack holds 1 if equal, zero otherwise
+
+        }
         else {
             throw new NotImplementedException();
         }
@@ -150,6 +162,26 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitIf(If anIf) {
+
+        // 1 on stack for true, 0 for false
+        anIf.ifExpr.accept(this);
+
+        // Add 1 to stack for comparison
+        currentMethod.visitInsn(ICONST_1);
+
+        Label elseLabel = new Label();
+        Label nextStmt = new Label();
+        currentMethod.visitJumpInsn(IF_ICMPNE, elseLabel);
+
+        anIf.ifStmt.accept(this);
+        // Jump to after else
+        currentMethod.visitJumpInsn(GOTO, nextStmt);
+
+        currentMethod.visitLabel(elseLabel);
+        if (anIf.hasElse()) anIf.elseStmt.accept(this);
+
+        currentMethod.visitLabel(nextStmt);
+
         return null;
     }
 

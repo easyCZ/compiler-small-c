@@ -12,15 +12,22 @@ public class Playground {
         c = 'a';
         str = "hello";
 
+//        boolean bool = k == 9;
+
+        if (true) {
+//            k = 10;
+        }
+        else {
+            k = 10;
+        }
+
         return k + 7;
     }
 
     public int test(int i, int x) {
-        int f = 1;
-        int a = i + x;
-
-        a = i + i + x;
-        return a;
+        if (i == 1) x = 1;
+        else x = 2;
+        return x;
     }
 
 
