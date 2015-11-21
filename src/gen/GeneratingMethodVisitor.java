@@ -1,7 +1,12 @@
 package gen;
 
-/**
- * Created by easy on 21/11/2015.
- */
-public class GeneratingMethodVisitor {
+
+import org.objectweb.asm.MethodVisitor;
+
+public class GeneratingMethodVisitor extends MethodVisitor {
+
+
+    public GeneratingMethodVisitor(int i, MethodVisitor methodVisitor) {
+        super(i, methodVisitor);
+    }
 }

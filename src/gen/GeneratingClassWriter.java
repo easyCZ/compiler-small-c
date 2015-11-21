@@ -7,8 +7,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.getInternalName;
@@ -29,6 +31,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     public GeneratingClassWriter() {
         super(COMPUTE_MAXS);
     }
+
+    private Map<String, Integer> vars;
 
     @Override
     public Void visitProgram(Program program) {
@@ -69,6 +73,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         for (int i = 0 ; i < b.varDecls.size(); i++) {
             VarDecl varDecl = b.varDecls.get(i);
             varDecl.setByteCodePos(i + 1);
+
+            vars.put(varDecl.var.name, vars.size() + 1);
 
             varDecl.accept(this);
         }
@@ -118,6 +124,27 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitBinOp(BinOp binOp) {
+        binOp.lhs.accept(this);
+        binOp.rhs.accept(this);
+        // Should have the two vars on the top of the stack
+
+        if (binOp.op == Op.ADD) {
+            currentMethod.visitInsn(IADD);
+        }
+        else if (binOp.op == Op.SUB) {
+            currentMethod.visitInsn(ISUB);
+        }
+        else if (binOp.op == Op.MUL) {
+            currentMethod.visitInsn(IMUL);
+        }
+        else if (binOp.op == Op.DIV) {
+            currentMethod.visitInsn(IDIV);
+        }
+        else {
+            throw new NotImplementedException();
+        }
+
+        // Result is on the top of the stack
         return null;
     }
 
@@ -134,6 +161,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitChrLiteral(ChrLiteral chrLiteral) {
+        currentMethod.visitIntInsn(BIPUSH, (int) chrLiteral.value);
         return null;
     }
 
@@ -144,11 +172,12 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitAssign(Assign assign) {
+//        ast.Type type = assign.var.getVarDecl().type;
+//        if (type == ast.Type.INT){
         assign.expr.accept(this);
-
         // Now we should have the value of Expr on the top of the stack
         // We need to store it
-        currentMethod.visitVarInsn(ISTORE, 1);
+        currentMethod.visitVarInsn(ISTORE, vars.get(assign.var.name));
 
         // Probs need to visitLocalVar
 
@@ -173,8 +202,16 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
                 null
         );
 
+        vars = new HashMap<String, Integer>();
+        int i = 1;
+        for (VarDecl varDecl : p.params) {
+            vars.put(varDecl.var.name, i);
+        }
+
         main.visitCode();
         currentMethod = main;
+
+
 
 //        Label start = new Label();
 //        main.visitLabel(start);
@@ -226,6 +263,14 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // TODO: Return proper type
         String procedure = String.format("%s %s(%s)", "void", p.name, args);
         org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
+
+        // Build args
+        vars = new HashMap<String, Integer>();
+
+        int i = 1;
+        for (VarDecl varDecl : p.params) {
+            vars.put(varDecl.var.name, i);
+        }
 
         MethodVisitor proc = visitMethod(
                 ACC_PUBLIC + ACC_STATIC,

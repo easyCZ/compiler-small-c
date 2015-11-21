@@ -5,8 +5,12 @@ public class Playground {
 
     public int lonely() {
         int k;
+        char c;
+        String str;
 
         k = 99;
+        c = 'a';
+        str = "hello";
 
         return k + 7;
     }
