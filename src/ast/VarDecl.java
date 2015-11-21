@@ -7,6 +7,8 @@ public class VarDecl implements Tree {
     public final Type type;
     public final Var var;
 
+    private int byteCodePos;
+
     public VarDecl(Type type, Var var) {
         this.type = type;
         this.var = var;
@@ -19,5 +21,13 @@ public class VarDecl implements Tree {
     @Override
     public String toString() {
         return "VarDecl(" + type + ", " + var + ")";
+    }
+
+    public int getByteCodePos() {
+        return byteCodePos;
+    }
+
+    public void setByteCodePos(int byteCodePos) {
+        this.byteCodePos = byteCodePos;
     }
 }
