@@ -7,7 +7,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -174,44 +173,9 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
 
         }
-//
-//        else if (binOp.op == Op.EQ) {
-//            Label elseBlock = new Label();
-//            currentMethod.visitJumpInsn(IF_ICMPNE, elseBlock);
-//
-//            Label nextInst = new Label();
-//
-//            // Then
-//            currentMethod.visitInsn(ICONST_1); // push 1
-//            currentMethod.visitJumpInsn(GOTO, nextInst);
-//
-//            // Else
-//            currentMethod.visitLabel(elseBlock);
-//            currentMethod.visitInsn(ICONST_0);  // push 0
-//
-//            // Next Instruction
-//            currentMethod.visitLabel(nextInst);
+//        else {
+//            throw new NotImplementedException();
 //        }
-//        else if (binOp.op == Op.LT) {
-//            Label elseBlock = new Label();
-//            currentMethod.visitJumpInsn(IF_ICMPGE, elseBlock);
-//
-//            Label nextInstruction = new Label();
-//
-//            // Then
-//            currentMethod.visitInsn(ICONST_1);
-//            currentMethod.visitJumpInsn(GOTO, nextInstruction);
-//
-//            // Else
-//            currentMethod.visitLabel(elseBlock);
-//            currentMethod.visitInsn(ICONST_0);
-//
-//            // Next instruction
-//            currentMethod.visitLabel(nextInstruction);
-//        }
-        else {
-            throw new NotImplementedException();
-        }
 
         // Result is on the top of the stack
         return null;
