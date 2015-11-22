@@ -31,13 +31,9 @@ public class Playground {
     }
 
     public static void play(int i) {
-        int j;
 
         if (i == 67) {
-            j = 1 + 1;
-        }
-        else {
-            j = 2 + 2;
+            i = 10;
         }
     }
 

@@ -84,9 +84,9 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         for (int i = 0 ; i < b.varDecls.size(); i++) {
             VarDecl varDecl = b.varDecls.get(i);
-            varDecl.setByteCodePos(i + 1);
 
-            vars.put(varDecl.var.name, vars.size() + 1);
+            vars.put(varDecl.var.name, vars.size());
+            varDecl.setByteCodePos(vars.get(varDecl.var.name));
 
             varDecl.accept(this);
         }
@@ -111,11 +111,16 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitVarDecl(VarDecl vd) {
+        int position = vd.getByteCodePos();
+        currentMethod.visitInsn(ICONST_0);
+        currentMethod.visitIntInsn(ISTORE, position);
         return null;
     }
 
     @Override
     public Void visitVar(Var v) {
+        // Need to load a variable onto the stack
+        currentMethod.visitIntInsn(ILOAD, vars.get(v.name));
         return null;
     }
 
@@ -255,9 +260,13 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         );
 
         vars = new HashMap<String, Integer>();
-        int i = 1;
+
+        // Main has one argument
+        vars.put("args", 0);
+
         for (VarDecl varDecl : p.params) {
-            vars.put(varDecl.var.name, i);
+            vars.put(varDecl.var.name, vars.size());
+            varDecl.accept(this);
         }
 
         main.visitCode();
@@ -301,7 +310,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // Add implicit return
         main.visitInsn(RETURN);
 
-        main.visitMaxs(1, 1);
+        main.visitMaxs(2, 2);
         main.visitEnd();
 
         return null;
@@ -321,7 +330,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // Build args
         vars = new HashMap<String, Integer>();
 
-        int i = 1;
+        int i = 0;
         for (VarDecl varDecl : p.params) {
             vars.put(varDecl.var.name, i);
         }
