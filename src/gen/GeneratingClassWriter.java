@@ -212,14 +212,10 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitAssign(Assign assign) {
-//        ast.Type type = assign.var.getVarDecl().type;
-//        if (type == ast.Type.INT){
         assign.expr.accept(this);
         // Now we should have the value of Expr on the top of the stack
         // We need to store it
         currentMethod.visitVarInsn(ISTORE, vars.get(assign.var.name));
-
-        // Probs need to visitLocalVar
 
         return null;
     }
