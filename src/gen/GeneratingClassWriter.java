@@ -141,13 +141,21 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             currentMethod.visitInsn(IDIV);
         }
         else if (binOp.op == Op.EQ) {
-            Label label = new Label();
+            Label notEqual = new Label();
+            Label nextInst = new Label();
 
-            currentMethod.visitJumpInsn(IF_ICMPNE, label);
+            currentMethod.visitJumpInsn(IF_ICMPNE, notEqual);
             currentMethod.visitInsn(ICONST_1);
 
-            currentMethod.visitLabel(label);
+            currentMethod.visitJumpInsn(GOTO, nextInst);
+
+            currentMethod.visitLabel(notEqual);
             currentMethod.visitInsn(ICONST_0);
+            currentMethod.visitFrame(F_SAME, 0, null, 0, null);
+
+
+            currentMethod.visitLabel(nextInst);
+            currentMethod.visitInsn(NOP);
 
             // Stack holds 1 if equal, zero otherwise
 
@@ -168,19 +176,23 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         // Add 1 to stack for comparison
         currentMethod.visitInsn(ICONST_1);
-
         Label elseLabel = new Label();
         Label nextStmt = new Label();
+
+
         currentMethod.visitJumpInsn(IF_ICMPNE, elseLabel);
+        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
         anIf.ifStmt.accept(this);
         // Jump to after else
         currentMethod.visitJumpInsn(GOTO, nextStmt);
 
         currentMethod.visitLabel(elseLabel);
+        currentMethod.visitFrame(F_APPEND, 0, null, 2, new Object[]{INTEGER, INEG});
         if (anIf.hasElse()) anIf.elseStmt.accept(this);
 
         currentMethod.visitLabel(nextStmt);
+        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
         return null;
     }
@@ -275,6 +287,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         // Build contents
         p.block.accept(this);
+
+//        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
         // Add implicit return
         main.visitInsn(RETURN);

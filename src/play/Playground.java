@@ -30,6 +30,17 @@ public class Playground {
         return x;
     }
 
+    public static void play(int i) {
+        int j;
+
+        if (i == 67) {
+            j = 1 + 1;
+        }
+        else {
+            j = 2 + 2;
+        }
+    }
+
 
     public static void main(String[] args) {
         int i = 1 + 1;
