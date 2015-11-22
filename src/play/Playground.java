@@ -41,6 +41,17 @@ public class Playground {
         }
     }
 
+    public static void bools(int i) {
+        boolean b;
+        int j;
+
+        if (127 + i == 99) b = true;
+        else b = false;
+
+        if (b) j = 98;
+        else j = 100;
+    }
+
 
     public static void main(String[] args) {
         int i = 1 + 1;

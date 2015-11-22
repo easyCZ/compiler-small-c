@@ -29,7 +29,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     private MethodVisitor currentMethod;
 
     public GeneratingClassWriter() {
-        super(COMPUTE_MAXS);
+        super(COMPUTE_FRAMES);
     }
 
     private Map<String, Integer> vars;
@@ -141,24 +141,21 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             currentMethod.visitInsn(IDIV);
         }
         else if (binOp.op == Op.EQ) {
-            Label notEqual = new Label();
+            Label elseBlock = new Label();
+            currentMethod.visitJumpInsn(IF_ICMPNE, elseBlock);
+
             Label nextInst = new Label();
 
-            currentMethod.visitJumpInsn(IF_ICMPNE, notEqual);
-            currentMethod.visitInsn(ICONST_1);
-
+            // Then
+            currentMethod.visitInsn(ICONST_1); // push 1
             currentMethod.visitJumpInsn(GOTO, nextInst);
 
-            currentMethod.visitLabel(notEqual);
-            currentMethod.visitInsn(ICONST_0);
-            currentMethod.visitFrame(F_SAME, 0, null, 0, null);
+            // Else
+            currentMethod.visitLabel(elseBlock);
+            currentMethod.visitInsn(ICONST_0);  // push 0
 
-
+            // Next Instruction
             currentMethod.visitLabel(nextInst);
-            currentMethod.visitInsn(NOP);
-
-            // Stack holds 1 if equal, zero otherwise
-
         }
         else {
             throw new NotImplementedException();
@@ -170,7 +167,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitIf(If anIf) {
-
         // 1 on stack for true, 0 for false
         anIf.ifExpr.accept(this);
 
@@ -179,20 +175,20 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         Label elseLabel = new Label();
         Label nextStmt = new Label();
 
-
+        // If
         currentMethod.visitJumpInsn(IF_ICMPNE, elseLabel);
-        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
+        // Then
         anIf.ifStmt.accept(this);
         // Jump to after else
         currentMethod.visitJumpInsn(GOTO, nextStmt);
 
+        // Else
         currentMethod.visitLabel(elseLabel);
-        currentMethod.visitFrame(F_APPEND, 0, null, 2, new Object[]{INTEGER, INEG});
         if (anIf.hasElse()) anIf.elseStmt.accept(this);
 
+        // Next isntruction
         currentMethod.visitLabel(nextStmt);
-        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
         return null;
     }
