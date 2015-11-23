@@ -3,13 +3,15 @@
 
 void main() {
     int i;
+    int j;
 
-    if (i == 99) {
-        i = 12;
+    i = 0;
+    j = 9;
+
+    while (i * j <= 99) {
+        i = i + 1;
+        j = i;
     }
-//    else {
-//        j = 2 + 2;
-//    }
 
 
 

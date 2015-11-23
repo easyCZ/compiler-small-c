@@ -137,6 +137,25 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitWhile(While whilez) {
+        Label condition = new Label();
+        Label next = new Label();
+
+        currentMethod.visitLabel(condition);
+        // Evaluate the condition
+        whilez.expr.accept(this);
+
+        // Compare the result against 1
+        currentMethod.visitInsn(ICONST_1);
+        currentMethod.visitJumpInsn(IF_ICMPNE, next);
+
+        // Execute body
+        whilez.statement.accept(this);
+
+        // Jump to condition again
+        currentMethod.visitJumpInsn(GOTO, condition);
+
+        currentMethod.visitLabel(next);
+
         return null;
     }
 
