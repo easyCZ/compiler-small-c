@@ -3,10 +3,9 @@ package play;
 
 public class Playground {
 
-    public static void test(int i) {
-        while (i <= 99) {
-            i = i * 4 + 3;
-        }
+    public static int test() {
+        if (10 < 1) return 1;
+        else return 2;
     }
 
 

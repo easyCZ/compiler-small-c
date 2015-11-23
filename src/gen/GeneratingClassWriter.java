@@ -111,9 +111,9 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitVarDecl(VarDecl vd) {
-        int position = vd.getByteCodePos();
-        currentMethod.visitInsn(ICONST_0);
-        currentMethod.visitIntInsn(ISTORE, position);
+//        int position = vd.getByteCodePos();
+//        currentMethod.visitInsn(ICONST_0);
+//        currentMethod.visitIntInsn(ISTORE, position);
         return null;
     }
 
@@ -247,6 +247,13 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitReturn(Return aReturn) {
+        if (aReturn.hasReturn()) {
+            aReturn.returnz.accept(this);
+            currentMethod.visitInsn(IRETURN);
+        }
+        else {
+            currentMethod.visitInsn(RETURN);
+        }
         return null;
     }
 
@@ -291,40 +298,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         main.visitCode();
         currentMethod = main;
 
-
-
-//        Label start = new Label();
-//        main.visitLabel(start);
-
-        // 1 on top
-//        main.visitInsn();
-//        main.visitVarInsn(ISTORE, 1);
-//
-//        main.visitInsn(NULL);
-//        main.visitVarInsn(ISTORE, 2);
-
-        // Addition
-//        main.visitIntInsn(ILOAD, 1);
-//        main.visitIntInsn(ILOAD, 1);
-//        main.visitInsn(IADD);
-//        main.visitVarInsn(ISTORE, 2);
-//
-////        main.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-////        main.visitVarInsn(ILOAD, 2;
-////        main.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
-//
-////        Label end = new Label();
-////        main.visitLabel(end);
-//
-//        main.visitLocalVariable("i", "I", null, null, null, 1);
-//        main.visitLocalVariable("k", "I", null, null, null, 2);
-
-
-
         // Build contents
         p.block.accept(this);
-
-//        currentMethod.visitFrame(F_SAME, 0, null, 0, null);
 
         // Add implicit return
         main.visitInsn(RETURN);
@@ -343,7 +318,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         args = args.replaceFirst(", ", "");
 
         // TODO: Return proper type
-        String procedure = String.format("%s %s(%s)", "void", p.name, args);
+        String procedure = String.format("%s %s(%s)", type, p.name, args);
         org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
 
         // Build args
@@ -365,23 +340,14 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         proc.visitCode();
         currentMethod = proc;
 
-//        proc.visitLocalVariable("test",
-//                Type.getDescriptor(int.class),
-//                "I",
-//                null,
-//                null,
-//                0);
-//        proc.visitMaxs(0, 0);
-
-
-
-
         p.block.accept(this);
 
 
-        // Add return for now
-        // TODO: Remove
-        proc.visitInsn(RETURN);
+        // Manually add a void return
+        if (p.type == ast.Type.VOID)
+            proc.visitInsn(RETURN);
+
+        currentMethod.visitMaxs(1, 1);
 
         return null;
     }
