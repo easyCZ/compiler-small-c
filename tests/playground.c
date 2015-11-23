@@ -6,11 +6,13 @@ int test(int i, int j) {
 }
 
 void main() {
-    int i;
-    int j;
+    int a;
+    int b;
+    int c;
 
-    i = 1;
-    j = 2;
-    test(i, j);
+    a = 1;
+    b = 2;
+    c = 1 + test(a, b);
+
 
 }

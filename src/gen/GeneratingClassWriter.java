@@ -128,16 +128,18 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-        Procedure p = funCallStmt.getProcedure();
-        org.objectweb.asm.commons.Method method = buildMethod(p.type, p.name, p.params);
+        return visitFuncationCall(funCallStmt.getProcedure(), funCallStmt.arguments);
+    }
+
+    public Void visitFuncationCall(Procedure procedure, List<Expr> arguments) {
+        org.objectweb.asm.commons.Method method = buildMethod(procedure.type, procedure.name, procedure.params);
 
         // Load arguments onto stack
-        for (VarDecl varDecl : p.params) {
-            currentMethod.visitIntInsn(ILOAD, vars.get(varDecl.var.name));
+        for (Expr expr : arguments) {
+            expr.accept(this);
         }
 
-        currentMethod.visitMethodInsn(INVOKESTATIC, CLASS_NAME, funCallStmt.name, method.getDescriptor());
-
+        currentMethod.visitMethodInsn(INVOKESTATIC, CLASS_NAME, procedure.name, method.getDescriptor());
         return null;
     }
 
@@ -208,9 +210,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
 
         }
-//        else {
-//            throw new NotImplementedException();
-//        }
 
         // Result is on the top of the stack
         return null;
@@ -280,7 +279,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitFunCallExpr(FunCallExpr funCallExpr) {
-        return null;
+        return visitFuncationCall(funCallExpr.getProcedure(), funCallExpr.arguments);
     }
 
     private void createClass() {
