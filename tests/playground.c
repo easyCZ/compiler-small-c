@@ -2,6 +2,15 @@
 
 
 int test(int i, int j) {
+    {
+
+
+        i = 10;
+    }
+    {
+        int i;
+        i = 5;
+    }
     return i + j;
 }
 

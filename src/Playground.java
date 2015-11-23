@@ -1,6 +1,20 @@
 public class Playground {
 
+    public static int value;
+
     public static int test(int i) {
+//        value = 1;
+        {
+//            int i;
+            i = 17;
+//            i = a + value;
+        }
+        {
+            int b;
+            b = 24;
+            i = i + b;
+        }
+
         return i;
     }
 
