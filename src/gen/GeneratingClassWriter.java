@@ -126,7 +126,18 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-//        funCallStmt.
+        String type = TYPE_MAP.get(funCallStmt.getProcedure().type);
+        String args = "";
+        for (VarDecl varDecl : funCallStmt.getProcedure().params)
+            args += ", " + TYPE_MAP.get(varDecl.type);
+        args = args.replaceFirst(", ", "");
+
+        // TODO: Return proper type
+        String procedure = String.format("%s %s(%s)", type, funCallStmt.getProcedure().name, args);
+        org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
+
+        currentMethod.visitMethodInsn(INVOKESTATIC, CLASS_NAME, funCallStmt.name, method.getDescriptor());
+
         return null;
     }
 
