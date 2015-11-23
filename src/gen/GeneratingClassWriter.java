@@ -3,6 +3,8 @@ package gen;
 import ast.*;
 import ast.expressions.*;
 import ast.statements.*;
+import gen.util.BinOpBytecodeMap;
+import gen.util.TypeMap;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -20,31 +22,15 @@ import static org.objectweb.asm.Type.getInternalName;
 public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Void> {
 
     private static final String CLASS_NAME = "Main";
-    private static final HashMap<ast.Type, String> TYPE_MAP = new HashMap() {{
-        put(ast.Type.STRING, "String");
-        put(ast.Type.CHAR, ast.Type.CHAR.toString().toLowerCase());
-        put(ast.Type.INT, ast.Type.INT.toString().toLowerCase());
-        put(ast.Type.VOID, ast.Type.VOID.toString().toLowerCase());
-    }};
+    private static final Map<ast.Type, String> TYPE_MAP = new TypeMap();
+    private static final Map<ast.Op, Integer> BINOP_BYTECODE_MAP = new BinOpBytecodeMap();
 
     private MethodVisitor currentMethod;
 
-    private Map<ast.Op, Integer> binOpMap;
+
 
     public GeneratingClassWriter() {
         super(COMPUTE_FRAMES);
-
-        binOpMap = new HashMap<>();
-
-        binOpMap.put(Op.EQ, IF_ICMPNE);
-        binOpMap.put(Op.NE, IF_ICMPEQ);
-
-        binOpMap.put(Op.LT, IF_ICMPGE);
-        binOpMap.put(Op.GT, IF_ICMPLE);
-
-        binOpMap.put(Op.LE, IF_ICMPGT);
-        binOpMap.put(Op.GE, IF_ICMPLT);
-
     }
 
     private Map<String, Integer> vars;
@@ -190,8 +176,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         else if (binOp.op == Op.DIV) {
             currentMethod.visitInsn(IDIV);
         }
-        else if (binOpMap.containsKey(binOp.op)) {
-            int instruction = binOpMap.get(binOp.op);
+        else if (BINOP_BYTECODE_MAP.containsKey(binOp.op)) {
+            int instruction = BINOP_BYTECODE_MAP.get(binOp.op);
             Label elseBlock = new Label();
             currentMethod.visitJumpInsn(instruction, elseBlock);
 
