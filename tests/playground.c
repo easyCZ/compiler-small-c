@@ -1,15 +1,16 @@
 #include "io.h"
 
 
-int test() {
-    return 1;
+int test(int i, int j) {
+    return i + j;
 }
 
 void main() {
     int i;
+    int j;
 
-    test();
-
-
+    i = 1;
+    j = 2;
+    test(i, j);
 
 }

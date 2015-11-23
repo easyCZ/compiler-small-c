@@ -7,8 +7,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -126,15 +128,13 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-        String type = TYPE_MAP.get(funCallStmt.getProcedure().type);
-        String args = "";
-        for (VarDecl varDecl : funCallStmt.getProcedure().params)
-            args += ", " + TYPE_MAP.get(varDecl.type);
-        args = args.replaceFirst(", ", "");
+        Procedure p = funCallStmt.getProcedure();
+        org.objectweb.asm.commons.Method method = buildMethod(p.type, p.name, p.params);
 
-        // TODO: Return proper type
-        String procedure = String.format("%s %s(%s)", type, funCallStmt.getProcedure().name, args);
-        org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
+        // Load arguments onto stack
+        for (VarDecl varDecl : p.params) {
+            currentMethod.visitIntInsn(ILOAD, vars.get(varDecl.var.name));
+        }
 
         currentMethod.visitMethodInsn(INVOKESTATIC, CLASS_NAME, funCallStmt.name, method.getDescriptor());
 
@@ -322,15 +322,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     }
 
     private Void visitGlobalProcedure(Procedure p) {
-        String type = TYPE_MAP.get(p.type);
-        String args = "";
-        for (VarDecl varDecl : p.params)
-            args += ", " + TYPE_MAP.get(varDecl.type);
-        args = args.replaceFirst(", ", "");
-
-        // TODO: Return proper type
-        String procedure = String.format("%s %s(%s)", type, p.name, args);
-        org.objectweb.asm.commons.Method method = org.objectweb.asm.commons.Method.getMethod(procedure);
+        org.objectweb.asm.commons.Method method = buildMethod(p.type, p.name, p.params);
 
         // Build args
         vars = new HashMap<String, Integer>();
@@ -361,5 +353,16 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         currentMethod.visitMaxs(1, 1);
 
         return null;
+    }
+
+    private Method buildMethod(ast.Type type, String name, List<VarDecl> args) {
+        String methodType = TYPE_MAP.get(type);
+        String methodArguments = "";
+        for (VarDecl varDecl : args)
+            methodArguments += ", " + TYPE_MAP.get(varDecl.type);
+        methodArguments = methodArguments.replaceFirst(", ", "");
+
+        String procedure = String.format("%s %s(%s)", methodType, name, methodArguments);
+        return org.objectweb.asm.commons.Method.getMethod(procedure);
     }
 }
