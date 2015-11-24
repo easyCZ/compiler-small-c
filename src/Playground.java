@@ -27,6 +27,10 @@ public class Playground {
         IO.print_i(i);
         IO.print_s("Hello World!\n");
         IO.print_c('c');
+
+        int n = IO.read_i();
+        int c = IO.read_c();
+        IO.print_i(n);
     }
 
 }
