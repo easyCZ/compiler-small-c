@@ -5,9 +5,7 @@ import ast.expressions.*;
 import ast.statements.*;
 import gen.util.BinOpBytecodeMap;
 import gen.util.TypeMap;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
@@ -22,15 +20,18 @@ import static org.objectweb.asm.Type.getInternalName;
 public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Void> {
 
     private static final String CLASS_NAME = "Main";
+    private static final String INTEGER = "I";
     private static final Map<ast.Type, String> TYPE_MAP = new TypeMap();
     private static final Map<ast.Op, Integer> BINOP_BYTECODE_MAP = new BinOpBytecodeMap();
 
     private MethodVisitor currentMethod;
 
-
+    private Map<String, VarDecl> globals;
 
     public GeneratingClassWriter() {
         super(COMPUTE_FRAMES);
+
+        globals = new HashMap<>();
     }
 
     private Map<String, Integer> vars;
@@ -58,6 +59,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     }
 
     private void visitGlobalVarDecl(VarDecl varDecl) {
+        globals.put(varDecl.var.name, varDecl);
         visitField(
                 ACC_PUBLIC + ACC_STATIC,
                 varDecl.var.name,
@@ -107,8 +109,23 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitVar(Var v) {
-        // Need to load a variable onto the stack
-        currentMethod.visitIntInsn(ILOAD, vars.get(v.name));
+        // Load global
+        if (globals.containsKey(v.name)) {
+            VarDecl varDecl = globals.get(v.name);
+
+            currentMethod.visitFieldInsn(
+                    GETSTATIC,
+                    CLASS_NAME,
+                    varDecl.var.name,
+                    INTEGER);
+
+        }
+        // Load local
+        else {
+            // Need to load a variable onto the stack
+            currentMethod.visitIntInsn(ILOAD, vars.get(v.name));
+        }
+
         return null;
     }
 
@@ -255,10 +272,25 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitAssign(Assign assign) {
+        // Put the value of Expr on top of the stack
         assign.expr.accept(this);
-        // Now we should have the value of Expr on the top of the stack
-        // We need to store it
-        currentMethod.visitVarInsn(ISTORE, vars.get(assign.var.name));
+
+        // We need to store it to var, can be global or local
+        Var var = assign.var;
+
+        // Save as global
+        if (globals.containsKey(var.name)) {
+            VarDecl varDecl = globals.get(var.name);
+            currentMethod.visitFieldInsn(
+                    PUTSTATIC,
+                    CLASS_NAME,
+                    varDecl.var.name,
+                    INTEGER);
+        }
+        // Save as local
+        else {
+            currentMethod.visitVarInsn(ISTORE, vars.get(assign.var.name));
+        }
 
         return null;
     }

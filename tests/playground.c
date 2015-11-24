@@ -1,5 +1,7 @@
 #include "io.h"
 
+int k;
+
 
 int test(int i, int j) {
     {
@@ -18,6 +20,8 @@ void main() {
     int a;
     int b;
     int c;
+
+    k = 17;
 
     a = 1;
     b = 2;
