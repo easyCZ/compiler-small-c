@@ -4,16 +4,21 @@ int k;
 
 
 int test(int i, int j) {
-    {
-
-
-        i = 10;
-    }
+k = 25;
     {
         int i;
-        i = 5;
+
+        i = 10;
+        {
+            int i;
+            i = 17;
+        }
     }
-    return i + j;
+    {
+        i = i + 5;
+    }
+    k = 1;
+    return i + k;
 }
 
 void main() {

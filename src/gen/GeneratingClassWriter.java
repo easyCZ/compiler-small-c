@@ -72,12 +72,12 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     @Override
     public Void visitBlock(Block b) {
 
+        Map<String, Integer> old = new HashMap<>(vars);
+
         for (int i = 0 ; i < b.varDecls.size(); i++) {
             VarDecl varDecl = b.varDecls.get(i);
-
-            vars.put(varDecl.var.name, vars.size());
-            varDecl.setByteCodePos(vars.get(varDecl.var.name));
-
+            int next = getIndex(vars);
+            vars.put(varDecl.var.name, next);
             varDecl.accept(this);
         }
 
@@ -85,7 +85,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             stmt.accept(this);
         }
 
-
+        vars = old;
 
         return null;
     }
@@ -347,6 +347,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         int i = 0;
         for (VarDecl varDecl : p.params) {
             vars.put(varDecl.var.name, i);
+            i += 1;
         }
 
         MethodVisitor proc = visitMethod(
@@ -381,5 +382,18 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         String procedure = String.format("%s %s(%s)", methodType, name, methodArguments);
         return org.objectweb.asm.commons.Method.getMethod(procedure);
+    }
+
+    private int getIndex(Map<String, Integer> scope) {
+        int currentMax = getCurrentMax(scope);
+        return currentMax + 1;
+    }
+
+    private int getCurrentMax(Map<String, Integer> scope) {
+        int max = 0;
+        for (Integer value : scope.values()) {
+            if (value >= max) max = value;
+        }
+        return max;
     }
 }
