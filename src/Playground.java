@@ -1,3 +1,5 @@
+
+
 public class Playground {
 
     public static int value;
@@ -22,7 +24,9 @@ public class Playground {
 
     public static void main(String[] args) {
         int i = Playground.test(1);
-        System.out.println(i);
+        IO.print_i(i);
+        IO.print_s("Hello World!\n");
+        IO.print_c('c');
     }
 
 }

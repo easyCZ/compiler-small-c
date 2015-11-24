@@ -19,7 +19,8 @@ import static org.objectweb.asm.Type.getInternalName;
 
 public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Void> {
 
-    private static final String CLASS_NAME = "Main";
+    private static final String MAIN_CLASS = "Main";
+    private static final String IO_CLASS = "IO";
     private static final String INTEGER = "I";
     private static final Map<ast.Type, String> TYPE_MAP = new TypeMap();
     private static final Map<ast.Op, Integer> BINOP_BYTECODE_MAP = new BinOpBytecodeMap();
@@ -115,7 +116,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
             currentMethod.visitFieldInsn(
                     GETSTATIC,
-                    CLASS_NAME,
+                    MAIN_CLASS,
                     varDecl.var.name,
                     INTEGER);
 
@@ -137,12 +138,39 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     public Void visitFuncationCall(Procedure procedure, List<Expr> arguments) {
         org.objectweb.asm.commons.Method method = buildMethod(procedure.type, procedure.name, procedure.params);
 
+        if (procedure.name.equals(Procedure.PRINT_S.name))
+            return visitPrintString(procedure, arguments);
+
+
         // Load arguments onto stack
         for (Expr expr : arguments) {
             expr.accept(this);
         }
 
-        currentMethod.visitMethodInsn(INVOKESTATIC, CLASS_NAME, procedure.name, method.getDescriptor());
+        if (procedure.name.equals(Procedure.PRINT_I.name))
+            return visitPrintInteger(procedure, arguments);
+        if (procedure.name.equals(Procedure.PRINT_C.name))
+            return visitPrintCharacter(procedure, arguments);
+
+
+        currentMethod.visitMethodInsn(INVOKESTATIC, MAIN_CLASS, procedure.name, method.getDescriptor());
+        return null;
+    }
+
+    private Void visitPrintCharacter(Procedure procedure, List<Expr> arguments) {
+        currentMethod.visitMethodInsn(INVOKESTATIC, IO_CLASS, procedure.name, "(C)V");
+        return null;
+    }
+
+    private Void visitPrintString(Procedure procedure, List<Expr> arguments) {
+        StrLiteral string = (StrLiteral) arguments.get(0);
+        currentMethod.visitLdcInsn(string.string);
+        currentMethod.visitMethodInsn(INVOKESTATIC, IO_CLASS, procedure.name, "(Ljava/lang/String;)V");
+        return null;
+    }
+
+    private Void visitPrintInteger(Procedure procedure, List<Expr> arguments) {
+        currentMethod.visitMethodInsn(INVOKESTATIC, IO_CLASS, procedure.name, "(I)V");
         return null;
     }
 
@@ -283,7 +311,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             VarDecl varDecl = globals.get(var.name);
             currentMethod.visitFieldInsn(
                     PUTSTATIC,
-                    CLASS_NAME,
+                    MAIN_CLASS,
                     varDecl.var.name,
                     INTEGER);
         }
@@ -301,7 +329,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
     }
 
     private void createClass() {
-        visit(V1_7, ACC_PUBLIC, CLASS_NAME, null, getInternalName(Object.class), null);
+        visit(V1_7, ACC_PUBLIC, MAIN_CLASS, null, getInternalName(Object.class), null);
     }
 
     private Void visitMain(Procedure p) {
