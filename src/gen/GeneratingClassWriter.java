@@ -178,7 +178,17 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     private Void visitPrintString(Procedure procedure, List<Expr> arguments) {
         StrLiteral string = (StrLiteral) arguments.get(0);
-        currentMethod.visitLdcInsn(string.string);
+        String stringToPrint = string.string
+                .replaceAll("\\\\t", "\t")
+                .replaceAll("\\\\b", "\b")
+                .replaceAll("\\\\n", "\n")
+                .replaceAll("\\\\r", "\r")
+                .replaceAll("\\\\f", "\f")
+                .replaceAll("\\\\'", "\'")
+                .replaceAll("\\\\\"", "\"");
+//                .replaceAll("\\\\", "\\");
+
+        currentMethod.visitLdcInsn(stringToPrint);
         currentMethod.visitMethodInsn(INVOKESTATIC, IO_CLASS, procedure.name, "(Ljava/lang/String;)V");
         return null;
     }
