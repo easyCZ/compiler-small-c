@@ -264,6 +264,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             currentMethod.visitLabel(nextInst);
 
 
+        } else if (binOp.op == Op.MOD) {
+            currentMethod.visitInsn(IREM);
         }
 
         // Result is on the top of the stack
@@ -384,7 +386,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // Add implicit return
         main.visitInsn(RETURN);
 
-        main.visitMaxs(2, 2);
+        main.visitMaxs(3, 3);
         main.visitEnd();
 
         return null;
@@ -420,7 +422,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         if (p.type == ast.Type.VOID)
             proc.visitInsn(RETURN);
 
-        currentMethod.visitMaxs(1, 1);
+        currentMethod.visitMaxs(3, 3);
 
         return null;
     }

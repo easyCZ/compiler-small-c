@@ -1,21 +1,32 @@
-// Solve Towers of Hanoi with three pillars and n disks.
-// This program prints the solution trace.
-// Written by Daniel Hillerström
+/**
+ * Determines whether a given number is palindromic.
+ *
+ * A number n = a1a2a3,...,aN is said to be palindromic if
+ * for all I in {1,...,N}: aI = a(N+1-I).
+ *
+ * Written by Daniel Hillerström
+ */
 #include "io.h"
 
-void solve_toh(int ndisks, char a, char b, char c) {
-  if (ndisks > 0) {
-    ndisks = ndisks - 1;
-    solve_toh(ndisks, a, c, b);
-    print_c(a); print_s(" -> "); print_c(b); print_s("\n");
-    solve_toh(ndisks, c, b, a);
+void main() {
+  int i; // temporary (pointer) variable
+  int n; // The number in question
+  int reverse; // the reverse of the number
+
+  // Read an integer from stdin
+  print_s("Enter integer> "); n = read_i();
+
+  // Initial reverse; and pointer variable
+  reverse = 0;
+  i = n;
+
+  while (i != 0) {
+    reverse = (reverse * 10) + (i % 10);
+    i       = i / 10;
   }
+
+  print_i(n);
+  if (n == reverse) print_s(" is palindromic.\n");
+  else print_s(" is not palindromic.\n");
 }
 
-void main() {
-  int ndisks;
-  char a; char b; char c;
-  a = 'A'; b = 'B'; c = 'C';
-  print_s("Enter number of disks> "); ndisks = read_i();
-  solve_toh(ndisks, a, b, c);
-}
