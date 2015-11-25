@@ -4,7 +4,7 @@
  * A number n = a1a2a3,...,aN is said to be palindromic if 
  * for all I in {1,...,N}: aI = a(N+1-I).
  *
- * Written by Daniel Hillerström
+ * Written by Daniel
  */
 #include "io.h"
 

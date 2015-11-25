@@ -278,12 +278,12 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         anIf.ifExpr.accept(this);
 
         // Add 1 to stack for comparison
-        currentMethod.visitInsn(ICONST_1);
+        currentMethod.visitInsn(ICONST_0);
         Label elseLabel = new Label();
         Label nextStmt = new Label();
 
         // If
-        currentMethod.visitJumpInsn(IF_ICMPNE, elseLabel);
+        currentMethod.visitJumpInsn(IF_ICMPEQ, elseLabel);
 
         // Then
         anIf.ifStmt.accept(this);
@@ -421,6 +421,10 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // Manually add a void return
         if (p.type == ast.Type.VOID)
             proc.visitInsn(RETURN);
+        else {
+            proc.visitInsn(ICONST_0);
+            proc.visitInsn(IRETURN);
+        }
 
         currentMethod.visitMaxs(3, 3);
 
