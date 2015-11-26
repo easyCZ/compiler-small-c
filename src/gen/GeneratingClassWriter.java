@@ -302,13 +302,37 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitIntLiteral(IntLiteral intLiteral) {
-        currentMethod.visitIntInsn(BIPUSH, intLiteral.value);
+        int value = intLiteral.value;
+
+        if (value >= 32768) {
+            // can only push at most 2^16, need to do masking
+            int upper = value >> 15;
+            int lower = value & 0x1FFF;
+
+            if ((upper << 15) + lower != value) {
+                System.err.println("Failed to properly mask int " + value);
+                System.err.println("Upper: " + (upper << 15));
+                System.err.println("Lower: " + (lower));
+            }
+
+            currentMethod.visitIntInsn(SIPUSH, upper);
+            currentMethod.visitIntInsn(BIPUSH, 15);
+            currentMethod.visitInsn(ISHL);
+            currentMethod.visitIntInsn(SIPUSH, lower);
+            currentMethod.visitInsn(IADD);
+        }
+
+        else {
+            currentMethod.visitIntInsn(SIPUSH, intLiteral.value);
+        }
+
+
         return null;
     }
 
     @Override
     public Void visitChrLiteral(ChrLiteral chrLiteral) {
-        currentMethod.visitIntInsn(BIPUSH, (int) chrLiteral.value);
+        currentMethod.visitIntInsn(SIPUSH, (int) chrLiteral.value);
         return null;
     }
 
