@@ -302,19 +302,28 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         if (value >= 32768) {
             // can only push at most 2^16, need to do masking
-            int upper = value >> 15;
-            int lower = value & 0x1FFF;
+            int upper = (value >> 16) & 0x0000FFFF;
+            int lower = value & 0x0000FFFF;
 
-            if ((upper << 15) + lower != value) {
+            int lowerUpper = lower >> 8;
+            int lowerLower = lower & 0x000000FF;
+
+
+            if ((upper << 16) + (lowerUpper << 8) + lowerLower != value) {
                 System.err.println("Failed to properly mask int " + value);
-                System.err.println("Upper: " + (upper << 15));
+                System.err.println("Upper: " + (upper << 16));
                 System.err.println("Lower: " + (lower));
             }
 
             currentMethod.visitIntInsn(SIPUSH, upper);
-            currentMethod.visitIntInsn(BIPUSH, 15);
+            currentMethod.visitIntInsn(BIPUSH, 16);
             currentMethod.visitInsn(ISHL);
-            currentMethod.visitIntInsn(SIPUSH, lower);
+            currentMethod.visitIntInsn(SIPUSH, lowerUpper);
+            currentMethod.visitIntInsn(BIPUSH, 8);
+            currentMethod.visitInsn(ISHL);
+            currentMethod.visitInsn(IADD);
+
+            currentMethod.visitIntInsn(SIPUSH, lowerLower);
             currentMethod.visitInsn(IADD);
         }
 
