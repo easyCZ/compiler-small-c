@@ -82,37 +82,59 @@ void use_service(int service) {
   else {
     if (service == 1) {
       print_s("info: Service 'Withdraw' selected\n");
-      print_s("Your current balance is: ");print_i(balance);print_s("\n");
+      print_s("Your current balance is: ");
+      print_i(balance);
+      print_s("\n");
       print_s("Enter amount to withdraw> ");
+
       amount = read_i();
       read_c(); // consume enter
+
       if (amount >= 0) {
-	status = withdraw(amount);
-	if (status < 0) {
-	  print_s("error: You got an insufficient balance. Your basic account does not allow overdrafts.\n");
-	  print_s("       Consider upgrading to a premium account.\n");
-	} else {
-	  dispense(amount);
-	}
-      } else {
-	print_s("error: You cannot withdraw a negative amount!\n");
+
+	    status = withdraw(amount);
+
+	    if (status < 0) {
+	      print_s("error: You got an insufficient balance. Your basic account does not allow overdrafts.\n");
+	      print_s("       Consider upgrading to a premium account.\n");
+	    }
+
+	    else {
+	      dispense(amount);
+	    }
       }
-    } else {
+
+      else {
+	    print_s("error: You cannot withdraw a negative amount!\n");
+      }
+    }
+
+    else {
       print_s("info: Service 'Deposit' selected\n");
-      print_s("Your current balance is: ");print_i(balance);print_s("\n");
+      print_s("Your current balance is: ");
+      print_i(balance);
+      print_s("\n");
       print_s("Enter amount to deposit> ");
+
       amount = read_i();
       read_c(); // consume enter
+
       if (amount <= 0) {
-	print_s("error: Cannot deposit non-positive amount.\n");
-      } else {
-	status = deposit(amount);
-	if (status < 0) {
-	  print_s("error: Could not deposit money, please try again.\n");
-	} else {
-	  print_s("Successfully deposited ");print_i(amount);print_s(".\n");
-	}
+	    print_s("error: Cannot deposit non-positive amount.\n");
       }
+      else {
+	    status = deposit(amount);
+	    if (status < 0) {
+	      print_s("error: Could not deposit money, please try again.\n");
+	    }
+
+	    else {
+	      print_s("Successfully deposited ");
+	      print_i(amount);
+	      print_s(".\n");
+	    }
+      }
+
     }
   }
 }

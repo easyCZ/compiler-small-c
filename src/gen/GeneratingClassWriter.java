@@ -123,7 +123,13 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitFunctionCallStmt(FunCallStmt funCallStmt) {
-        return visitFuncationCall(funCallStmt.getProcedure(), funCallStmt.arguments);
+        visitFuncationCall(funCallStmt.getProcedure(), funCallStmt.arguments);
+        // Need to pop the value if the function has a returnm
+        // we don't want it on the stack
+        if (funCallStmt.getProcedure().type != ast.Type.VOID) {
+            currentMethod.visitInsn(POP);
+        }
+        return null;
     }
 
     public Void visitFuncationCall(Procedure procedure, List<Expr> arguments) {
@@ -433,14 +439,16 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
 
         // Manually add a void return
-        if (p.type == ast.Type.VOID)
+        if (p.type == ast.Type.VOID) {
+//            proc.visitFrame(F_CHOP, 2, null, 2, null);
             proc.visitInsn(RETURN);
+        }
         else {
             proc.visitInsn(ICONST_0);
             proc.visitInsn(IRETURN);
         }
 
-        currentMethod.visitMaxs(0, 0);
+        currentMethod.visitMaxs(2, 3);
         currentMethod.visitEnd();
 
         return null;
