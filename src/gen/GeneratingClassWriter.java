@@ -142,7 +142,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         if (procedure.name.equals(Procedure.READ_C.name))
             return visitReadCharacter(procedure);
         if (procedure.name.equals(Procedure.PRINT_I.name))
-            return visitPrintInteger(procedure, arguments);
+            return visitPrintInteger(procedure);
         if (procedure.name.equals(Procedure.PRINT_C.name))
             return visitPrintCharacter(procedure);
 
@@ -183,7 +183,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         return null;
     }
 
-    private Void visitPrintInteger(Procedure procedure, List<Expr> arguments) {
+    private Void visitPrintInteger(Procedure procedure) {
         currentMethod.visitMethodInsn(INVOKESTATIC, IO_CLASS, procedure.name, "(I)V");
         return null;
     }
