@@ -75,25 +75,19 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         Map<String, Integer> old = new HashMap<>(vars);
 
-        for (int i = 0 ; i < b.varDecls.size(); i++) {
-            VarDecl varDecl = b.varDecls.get(i);
+        for (VarDecl varDecl : b.varDecls) {
             int next = getIndex(vars);
             vars.put(varDecl.var.name, next);
-            varDecl.accept(this);
         }
 
-        for (Stmt stmt : b.statements) {
-            stmt.accept(this);
-        }
+        for (Stmt stmt : b.statements) stmt.accept(this);
 
         vars = old;
-
         return null;
     }
 
     @Override
     public Void visitProcedure(Procedure p) {
-
         if (p.isMain())
             return visitMain(p);
 
@@ -102,16 +96,19 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
     @Override
     public Void visitVarDecl(VarDecl vd) {
-//        int position = vd.getByteCodePos();
-//        currentMethod.visitInsn(ICONST_0);
-//        currentMethod.visitIntInsn(ISTORE, position);
         return null;
     }
 
     @Override
     public Void visitVar(Var v) {
+
+        if (vars.containsKey(v.name)) {
+            // Need to load a variable onto the stack
+            currentMethod.visitIntInsn(ILOAD, vars.get(v.name));
+        }
+
         // Load global
-        if (globals.containsKey(v.name)) {
+        else if (globals.containsKey(v.name)) {
             VarDecl varDecl = globals.get(v.name);
 
             currentMethod.visitFieldInsn(
@@ -119,12 +116,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
                     MAIN_CLASS,
                     varDecl.var.name,
                     INTEGER);
-
-        }
-        // Load local
-        else {
-            // Need to load a variable onto the stack
-            currentMethod.visitIntInsn(ILOAD, vars.get(v.name));
         }
 
         return null;
@@ -140,7 +131,6 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
 
         if (procedure.name.equals(Procedure.PRINT_S.name))
             return visitPrintString(procedure, arguments);
-
 
         // Load arguments onto stack
         for (Expr expr : arguments) {
@@ -277,7 +267,7 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
         // 1 on stack for true, 0 for false
         anIf.ifExpr.accept(this);
 
-        // Add 1 to stack for comparison
+        // Add 0 to stack for comparison
         currentMethod.visitInsn(ICONST_0);
         Label elseLabel = new Label();
         Label nextStmt = new Label();
@@ -401,8 +391,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             varDecl.accept(this);
         }
 
-        main.visitCode();
         currentMethod = main;
+        main.visitCode();
 
         // Build contents
         p.block.accept(this);
@@ -450,7 +440,8 @@ public class GeneratingClassWriter extends ClassWriter implements ASTVisitor<Voi
             proc.visitInsn(IRETURN);
         }
 
-        currentMethod.visitMaxs(3, 3);
+        currentMethod.visitMaxs(0, 0);
+        currentMethod.visitEnd();
 
         return null;
     }
