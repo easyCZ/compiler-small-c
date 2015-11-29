@@ -1,3 +1,7 @@
+# Small-C Compiler
+Course assignment at the University of Edinburgh
+
+
 # Deadlines #
 
 1. [Part 1 (parser)](desc/PART1/),  Thursday 15 October 2015  at 4pm, weight = 10%
@@ -37,7 +41,7 @@ You can choose to use a development environment for your project. DICE machines 
 
 Alternatively, you can use Emacs, vim, or your favourite text editor. Choose whichever you are confident with.
 
-## Obtaining your own copy of the CT-15-16 repository 
+## Obtaining your own copy of the CT-15-16 repository
 We are going to be using the Git revision control system during the course. Git is installed on DICE machines. If you use your own machine then make sure to install Git.
 
 You will need to have your own copy of the CT-15-16 repository. In order to fork this repository hover the cursor over the "three dots"-icon to the left, and then click "Fork" as shown in the figure below:
