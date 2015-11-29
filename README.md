@@ -1,3 +1,7 @@
+# Small-C Compiler
+Course assignment at the University of Edinburgh
+
+
 # Deadlines #
 
 1. [Part 1 (parser)](desc/PART1/),  Thursday 15 October 2015  at 4pm, weight = 10%
